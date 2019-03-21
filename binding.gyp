@@ -6,12 +6,12 @@
         "src/rpi-rgb-led-matrix.cc"
       ],
       'include_dirs': [
+        "<!@(node -p \"require('node-addon-api').include\")",
         "./rpi-rgb-led-matrix/include"
-        "<!@(node -p \"require('node-addon-api').include\")"
       ],
       'dependencies': [
-        "./binding.gyp:rpi-rgb-led-matrix",
-        "<!(node -p \"require('node-addon-api').gyp\")"
+        "<!(node -p \"require('node-addon-api').gyp\")",
+        "./binding.gyp:rpi-rgb-led-matrix"
       ],
       'cflags': [ '-Wall', '-Wextra', '-Wno-missing-field-initializers', '-Wno-unused-private-field', '-Wno-unused-variable' ],
       'cflags!': [ '-fno-exceptions' ],
