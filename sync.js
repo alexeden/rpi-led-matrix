@@ -33,7 +33,7 @@ rsync
   .output(data => quiet || console.log(chalk.blue(`📤\t${data.toString().split('\n').slice(0, 1).join('')}`)))
   .execute((error, code) => {
     if (error) {
-      console.error(chalk.red('👎\tError: ', error));
+      console.error(chalk.red('👎\t', error));
     }
     else {
       console.log(chalk.green(`👍\tDone! [exit code ${code}]\n\n`));
