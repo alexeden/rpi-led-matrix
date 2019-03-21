@@ -5,9 +5,10 @@
   "main": "src/index.ts",
   "scripts": {
     "rebuild": "node-gyp rebuild",
-    "postinstall": "npm run rebuild",
     "build": "rimraf dist && node-gyp build",
-    "sync-submodule": "(cd rpi-rgb-led-matrix && git fetch && git merge origin/master)"
+    "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json",
+    "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",
+    "merge-submodule-upstream": "(cd rpi-rgb-led-matrix && git fetch && git merge origin/master)"
   },
   "author": "Alex Eden",
   "license": "ISC",
