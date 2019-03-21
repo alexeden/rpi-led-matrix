@@ -1,0 +1,20 @@
+{
+  "name": "rpi-rgb-led-matrix-node",
+  "version": "1.0.0",
+  "description": "Node bindings for hzeller/rpi-rgb-led-matrix",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Alex Eden",
+  "license": "ISC",
+  "dependencies": {
+    "bindings": "^1.5.0",
+    "node-addon-api": "^1.6.2"
+  },
+  "devDependencies": {
+    "@types/node": "^11.11.4",
+    "tslint": "^5.14.0",
+    "typescript": "^3.3.4000"
+  }
+}
