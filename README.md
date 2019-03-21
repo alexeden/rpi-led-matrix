@@ -1,6 +1,6 @@
 ## Developing Locally
 
-- Make sure you have SSH (passwordless) access to your Raspberry Pi.
+- Make sure you have [passwordless SSH](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) access to your Raspberry Pi.
 - Clone/fork this repo onto both your local machine and your Raspberry Pi.
 - `npm install` inside both repos.
 - Locally, create a file called `sync.config.json` with these values:
