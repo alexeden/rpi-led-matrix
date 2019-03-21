@@ -1,7 +1,7 @@
 {
   "name": "rpi-rgb-led-matrix-node",
   "version": "1.0.0",
-  "description": "Node Typescript bindings for hzeller/rpi-rgb-led-matrix",
+  "description": "Node.js Typescript bindings for hzeller/rpi-rgb-led-matrix",
   "main": "src/index.ts",
   "scripts": {
     "rebuild": "node-gyp rebuild",
