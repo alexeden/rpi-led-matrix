@@ -1,10 +1,12 @@
 {
   "name": "rpi-rgb-led-matrix-node",
   "version": "1.0.0",
-  "description": "Node bindings for hzeller/rpi-rgb-led-matrix",
+  "description": "Node Typescript bindings for hzeller/rpi-rgb-led-matrix",
   "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "rebuild": "node-gyp rebuild",
+    "postinstall": "npm run rebuild",
+    "build": "rimraf dist && node-gyp build"
   },
   "author": "Alex Eden",
   "license": "ISC",
@@ -14,6 +16,7 @@
   },
   "devDependencies": {
     "@types/node": "^11.11.4",
+    "rimraf": "^2.6.3",
     "tslint": "^5.14.0",
     "typescript": "^3.3.4000"
   }
