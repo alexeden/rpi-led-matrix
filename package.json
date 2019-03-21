@@ -6,7 +6,8 @@
   "scripts": {
     "rebuild": "node-gyp rebuild",
     "postinstall": "npm run rebuild",
-    "build": "rimraf dist && node-gyp build"
+    "build": "rimraf dist && node-gyp build",
+    "sync-submodule": "(cd rpi-rgb-led-matrix && git fetch && git merge origin/master)"
   },
   "author": "Alex Eden",
   "license": "ISC",
