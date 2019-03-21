@@ -1,8 +1,10 @@
 {
-  "ext": "ts,json,cc,h",
+  "ext": "ts,json,cc,h,gyp",
   "exec": "npm run build",
   "events": {},
   "watch": [
-    "src/**"
+    "src/**",
+    "package.json",
+    "binding.gyp"
   ]
 }
