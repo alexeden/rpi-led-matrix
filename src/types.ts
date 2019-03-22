@@ -9,9 +9,19 @@ export enum MuxType {
   Checker = 2,
 }
 
-  // Default row address type is 0, corresponding to direct setting of the
-  // row, while row address type 1 is used for panels that only have A/B,
-  // typically some 64x64 panels
+/**
+ * If a runtime option is set to Disabled, it's command line flag
+ * will be unavailable.
+ */
+export enum RuntimeFlag {
+  Disabled = -1,
+  Off = 0,
+  On = 1,
+}
+
+// Default row address type is 0, corresponding to direct setting of the
+// row, while row address type 1 is used for panels that only have A/B,
+// typically some 64x64 panels
 export enum RowAddressType {
   Direct = 0,
   AB = 1,
@@ -90,4 +100,33 @@ export interface MatrixOptions {
   // In case the internal sequence of mapping is not "RGB", this contains the
   // real mapping. Some panels mix up these colors.
   led_rgb_sequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
+}
+
+/**
+ * Runtime options to simplify doing common things for many programs such as
+ * dropping privileges and becoming a daemon.
+ */
+export interface RuntimeOptions {
+  gpio_slowdown: number;    // 0 = no slowdown.
+  /**
+   * If daemon is Disabled, the user has to call StartRefresh() manually
+   * once the matrix is created, to leave the decision to become a daemon
+   * after the call (which requires that no threads have been started yet).
+   * In the other cases (Off or On), the choice is already made, so the thread
+   * is conveniently already started for you.
+   */
+  daemon: RuntimeFlag;
+
+  /**
+   * Drop privileges from 'root' to 'daemon' once the hardware is initialized.
+   * This is usually a good idea unless you need to stay on elevated privs.
+   */
+  drop_privileges: RuntimeFlag;
+
+  /**
+   * By default, the gpio is initialized for you, but if you want to manually
+   * do that yourself, set this flag to false.
+   * Then, you have to initialize the matrix yourself with SetGPIO().
+   */
+  do_gpio_init: boolean;
 }
