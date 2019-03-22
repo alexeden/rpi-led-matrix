@@ -26,7 +26,7 @@ using namespace rgb_matrix;
 RGBMatrix::Options createMatrixOptions(const Napi::CallbackInfo& info) {
 	auto env = info.Env();
 
-	if (!info[0].IsObject()) throw Napi::Error::New(env, "The second argument of the SPI transfer method must be a config object!");
+	if (!info[0].IsObject()) throw Napi::Error::New(env, "The argument provided to createMatrixOptions must be an object.");
 
 	auto jsOpts = info[0].As<Napi::Object>();
 
@@ -49,15 +49,37 @@ RGBMatrix::Options createMatrixOptions(const Napi::CallbackInfo& info) {
 	return options;
 }
 
-Napi::Boolean validateOptions(const Napi::CallbackInfo& info) {
+RuntimeOptions createRuntimeOptions(const Napi::CallbackInfo& info) {
+	auto env = info.Env();
+
+	if (!info[0].IsObject()) throw Napi::Error::New(env, "The argument provided to createRuntimeOptions must be an object.");
+
+	auto jsOpts = info[0].As<Napi::Object>();
+
+	RuntimeOptions options = RuntimeOptions();
+	options.gpio_slowdown = NapiUtils::getProp(env, jsOpts, "gpio_slowdown").As<Napi::Number>();
+	options.daemon = NapiUtils::getProp(env, jsOpts, "daemon").As<Napi::Number>();
+	options.drop_privileges = NapiUtils::getProp(env, jsOpts, "drop_privileges").As<Napi::Number>();
+	options.do_gpio_init = NapiUtils::getProp(env, jsOpts, "do_gpio_init").As<Napi::Boolean>();
+
+	return options;
+}
+
+Napi::Boolean validateMatrixOptions(const Napi::CallbackInfo& info) {
 	auto options = createMatrixOptions(info);
 	auto env = info.Env();
 	return Napi::Boolean::New(env, options.Validate(NULL));
 }
 
+Napi::Boolean validateRuntimeOptions(const Napi::CallbackInfo& info) {
+	auto options = createRuntimeOptions(info);
+	auto env = info.Env();
+	return Napi::Boolean::New(env, true);
+}
+
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
-    // Napi::Object modes = Napi::Object::New(env);
-	exports.Set("validateOptions", Napi::Function::New(env, validateOptions));
+	exports.Set("validateMatrixOptions", Napi::Function::New(env, validateMatrixOptions));
+	exports.Set("validateRuntimeOptions", Napi::Function::New(env, validateRuntimeOptions));
     return exports;
 }
 
