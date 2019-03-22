@@ -1,7 +1,7 @@
 {
   "targets": [
     {
-      "target_name": "rpi-rgb-led-matrix-node",
+      "target_name": "led-matrix",
       "sources": [
         "src/rpi-rgb-led-matrix.cc"
       ],

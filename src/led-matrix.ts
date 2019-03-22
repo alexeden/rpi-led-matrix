@@ -1,7 +1,7 @@
 import { LedMatrixAddon, MatrixOptions, ScanMode, RowAddressType, MuxType } from './types';
 
 // tslint:disable-next-line:variable-name
-const LedMatrixAddon: LedMatrixAddon = require('bindings')('spi');
+const LedMatrixAddon: LedMatrixAddon = require('bindings')('led-matrix');
 
 export class LedMatrix {
 
