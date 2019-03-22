@@ -3,7 +3,7 @@
     {
       "target_name": "led-matrix",
       "sources": [
-        "src/rpi-rgb-led-matrix.cc"
+        "src/addon.cc"
       ],
       'include_dirs': [
         "<!@(node -p \"require('node-addon-api').include\")",
