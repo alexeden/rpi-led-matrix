@@ -3,6 +3,8 @@ import { LedMatrixAddon, MatrixOptions, ScanMode, RowAddressType, MuxType } from
 // tslint:disable-next-line:variable-name
 const LedMatrixAddon: LedMatrixAddon = require('bindings')('led-matrix');
 
+console.log('LedMatrixAddon: ', LedMatrixAddon);
+
 export class LedMatrix {
 
   static validateOptions(partialOpts: Partial<MatrixOptions> = { }): MatrixOptions {
@@ -12,6 +14,7 @@ export class LedMatrix {
       cols: 64,
       disable_hardware_pulsing: true,
       hardware_mapping: 'adafruit-hat',
+      inverse_colors: false,
       led_rgb_sequence: 'RGB',
       multiplexing: MuxType.Direct,
       parallel: 1,
