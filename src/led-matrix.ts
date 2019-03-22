@@ -1,4 +1,4 @@
-import { LedMatrixAddon, MatrixOptions, ScanMode, RowAddressType, MuxType } from './types';
+import { LedMatrixAddon, MatrixOptions, ScanMode, RowAddressType, MuxType, RuntimeOptions, RuntimeFlag } from './types';
 
 // tslint:disable-next-line:variable-name
 const LedMatrixAddon: LedMatrixAddon = require('bindings')('led-matrix');
@@ -7,7 +7,7 @@ console.log('LedMatrixAddon: ', LedMatrixAddon);
 
 export class LedMatrix {
 
-  static validateOptions(partialOpts: Partial<MatrixOptions> = { }): MatrixOptions {
+  static validateMatrixOptions(partialOpts: Partial<MatrixOptions> = { }): MatrixOptions {
     const opts: MatrixOptions = {
       brightness: 100,
       chain_length: 1,
@@ -28,8 +28,24 @@ export class LedMatrix {
       ...partialOpts,
     };
 
-    if (!LedMatrixAddon.validateOptions(opts)) {
+    if (!LedMatrixAddon.validateMatrixOptions(opts)) {
       throw new Error(`Matrix options are not valid`);
+    }
+
+    return opts;
+  }
+
+  static validateRuntimeOptions(partialOpts: Partial<RuntimeOptions> = { }): RuntimeOptions {
+    const opts: RuntimeOptions = {
+      ...partialOpts,
+      gpio_slowdown: 1,
+      daemon: RuntimeFlag.Off,
+      drop_privileges: RuntimeFlag.On,
+      do_gpio_init: true,
+    };
+
+    if (!LedMatrixAddon.validateRuntimeOptions(opts)) {
+      throw new Error(`Runtime options are not valid`);
     }
 
     return opts;

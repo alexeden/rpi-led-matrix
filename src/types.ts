@@ -133,5 +133,6 @@ export interface RuntimeOptions {
 }
 
 export interface LedMatrixAddon {
-  validateOptions(options: MatrixOptions): boolean;
+  validateMatrixOptions(options: MatrixOptions): boolean;
+  validateRuntimeOptions(options: RuntimeOptions): boolean;
 }
