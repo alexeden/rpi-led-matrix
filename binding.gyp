@@ -28,6 +28,9 @@
     {
 			"target_name": "rpi-rgb-led-matrix",
 			"type": "static_library",
+      "defines": [
+        "REMOVE_DEPRECATED_TRANSFORMERS"
+      ],
 			"sources": [
         "./rpi-rgb-led-matrix/lib/thread.cc",
         "./rpi-rgb-led-matrix/lib/pixel-mapper.cc",
