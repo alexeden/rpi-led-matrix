@@ -130,3 +130,7 @@ export interface RuntimeOptions {
    */
   do_gpio_init: boolean;
 }
+
+export interface LedMatrixAddon {
+  validateOptions(options: MatrixOptions): boolean;
+}
