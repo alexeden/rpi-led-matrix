@@ -1,0 +1,18 @@
+{
+  "C_Cpp.default.cppStandard": "c++17",
+  "C_Cpp.default.cStandard": "c11",
+  "C_Cpp.default.includePath": [
+    "${workspaceFolder}/**",
+    "/usr/local/Cellar/gcc/8.2.0/include/c++/8.2.0",
+    "/usr/local/Cellar/gcc/8.2.0/include/c++/8.2.0/x86_64-apple-darwin17.7.0",
+    "${workspaceFolder}/node_modules/node-addon-api",
+    "${workspaceFolder}/node_modules/node-addon-api/external-napi"
+  ],
+  "C_Cpp.default.macFrameworkPath": [
+    "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.14.sdk/System/Library/Frameworks"
+  ],
+  "C_Cpp.default.compilerPath": "/usr/bin/clang",
+  "C_Cpp.default.defines": [
+    "REMOVE_DEPRECATED_TRANSFORMERS"
+  ]
+}

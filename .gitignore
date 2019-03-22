@@ -38,4 +38,5 @@ node_modules
 sync.config.json
 sshpi
 /build
-.vscode
+.vscode/*
+!.vscode/settings.json
