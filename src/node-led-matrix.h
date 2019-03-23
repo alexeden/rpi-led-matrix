@@ -20,6 +20,8 @@ private:
 	static Napi::FunctionReference constructor;
 	static RGBMatrix::Options createMatrixOptions(const Napi::Env& env, const Napi::Object& obj);
 	static RuntimeOptions createRuntimeOptions(const Napi::Env& env, const Napi::Object& obj);
+	static Napi::Object matrixOptionsToObj(const Napi::Env& env, const RGBMatrix::Options& options);
+	static Napi::Object runtimeOptionsToObj(const Napi::Env& env, const RuntimeOptions& options);
 
 	RGBMatrix *matrix;
 };
