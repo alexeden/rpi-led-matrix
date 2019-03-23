@@ -5,16 +5,15 @@
       "sources": [
         "src/addon.cc",
         "src/napi-utils.cc",
-        "src/node-led-matrix.h"
         "src/node-led-matrix.cc",
       ],
       'include_dirs': [
+        "./rpi-rgb-led-matrix/include",
         "<!@(node -p \"require('node-addon-api').include\")",
-        "./rpi-rgb-led-matrix/include"
       ],
       'dependencies': [
+        "./binding.gyp:rpi-rgb-led-matrix",
         "<!(node -p \"require('node-addon-api').gyp\")",
-        "./binding.gyp:rpi-rgb-led-matrix"
       ],
       'cflags': [ '-Wall', '-Wextra', '-Wno-missing-field-initializers', '-Wno-unused-variable' ],
       'cflags!': [ '-fno-exceptions' ],
@@ -32,7 +31,7 @@
 			"target_name": "rpi-rgb-led-matrix",
 			"type": "static_library",
       "defines": [
-        "REMOVE_DEPRECATED_TRANSFORMERS"
+        "DREMOVE_DEPRECATED_TRANSFORMERS"
       ],
 			"sources": [
         "./rpi-rgb-led-matrix/lib/thread.cc",
