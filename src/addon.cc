@@ -1,4 +1,8 @@
+#define FOREBLU  "\x1B[34m"
+#define FOREMAG  "\x1B[35m"
+#define RESETTEXT  "\x1B[0m"
 #include <napi.h>
+#include <iostream>
 #include <led-matrix.h>
 #include "napi-utils.cc"
 
@@ -72,14 +76,16 @@ Napi::Boolean validateMatrixOptions(const Napi::CallbackInfo& info) {
 }
 
 Napi::Boolean validateRuntimeOptions(const Napi::CallbackInfo& info) {
-	auto options = createRuntimeOptions(info);
+	createRuntimeOptions(info);
 	auto env = info.Env();
 	return Napi::Boolean::New(env, true);
 }
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
+	std::cout << FOREMAG;
 	exports.Set("validateMatrixOptions", Napi::Function::New(env, validateMatrixOptions));
 	exports.Set("validateRuntimeOptions", Napi::Function::New(env, validateRuntimeOptions));
+	std::cout << RESETTEXT << std::endl;
     return exports;
 }
 
