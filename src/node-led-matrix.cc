@@ -7,6 +7,7 @@ Napi::FunctionReference NodeLedMatrix::constructor;
 Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 
 	Napi::Function func = DefineClass(env, "NodeLedMatrix", {
+		StaticMethod("defaultMatrixOptions", &NodeLedMatrix::defaultMatrixOptions)
 	});
 
 	// Create a peristent reference to the class constructor. This will allow
@@ -32,7 +33,7 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<
 /**
  * Generate and return the default matrix options as a JS object.
  */
-Napi::Object NodeLedMatrix::defaultMatrixOptions(const Napi::CallbackInfo& info) {
+Napi::Value NodeLedMatrix::defaultMatrixOptions(const Napi::CallbackInfo& info) {
 	auto env = info.Env();
 
 	RGBMatrix::Options options = RGBMatrix::Options();

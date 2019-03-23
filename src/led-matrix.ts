@@ -4,7 +4,7 @@ import { NodeMatrixAddon, MatrixOptions, ScanMode, RowAddressType, MuxType, Runt
 const NodeMatrixAddon: NodeMatrixAddon = require('bindings')('led-matrix');
 
 console.log('NodeMatrixAddon: ', NodeMatrixAddon);
-console.log('NodeMatrixAddonInstance: ', new NodeMatrixAddon.NodeLedMatrix());
+export const NodeLedMatrix = NodeMatrixAddon.NodeLedMatrix;
 
 export class LedMatrix {
 

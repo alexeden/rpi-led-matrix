@@ -10,7 +10,7 @@ public:
 	static Napi::Object Init(Napi::Env env, Napi::Object exports);
     NodeLedMatrix(const Napi::CallbackInfo &info);
 
-	static Napi::Object defaultMatrixOptions(const Napi::CallbackInfo& info);
+	static Napi::Value defaultMatrixOptions(const Napi::CallbackInfo& info);
 	static Napi::Object defaultRuntimeOptions(const Napi::CallbackInfo& info);
 
 private:
