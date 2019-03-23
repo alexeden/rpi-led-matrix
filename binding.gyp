@@ -3,7 +3,10 @@
     {
       "target_name": "led-matrix",
       "sources": [
-        "src/addon.cc"
+        "src/addon.cc",
+        "src/napi-utils.cc",
+        "src/node-led-matrix.h"
+        "src/node-led-matrix.cc",
       ],
       'include_dirs': [
         "<!@(node -p \"require('node-addon-api').include\")",
