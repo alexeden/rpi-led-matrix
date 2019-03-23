@@ -27,7 +27,20 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 	return exports;
 }
 
+/**
+ * Process matrix & runtime options and initialize the internal RGBMatrix.
+ */
 NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<NodeLedMatrix>(info) {
+	auto env = info.Env();
+
+	if (!info[0].IsObject()) {
+		throw Napi::Error::New(env, "Constructor expects its first parameter to be an object of matrix options!");
+	}
+
+	if (!info[1].IsObject()) {
+		throw Napi::Error::New(env, "Constructor expects its first parameter to be an object of runtime options!");
+	}
+
 }
 
 

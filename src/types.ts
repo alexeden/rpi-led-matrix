@@ -138,7 +138,10 @@ export interface LedMatrixInstance {
 export interface LedMatrix {
   defaultMatrixOptions(): MatrixOptions;
   defaultRuntimeOptions(): RuntimeOptions;
-  new(): LedMatrixInstance;
+  new(
+    matrixOpts: MatrixOptions,
+    runtimeOpts: RuntimeOptions
+  ): LedMatrixInstance;
 }
 
 export interface LedMatrixAddon {

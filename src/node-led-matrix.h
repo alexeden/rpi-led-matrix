@@ -6,6 +6,8 @@
 #include <led-matrix.h>
 #include "napi-utils.cc"
 
+using namespace rgb_matrix;
+
 class NodeLedMatrix : public Napi::ObjectWrap<NodeLedMatrix> {
 public:
 	static Napi::Object Init(Napi::Env env, Napi::Object exports);
@@ -16,9 +18,10 @@ public:
 
 private:
 	static Napi::FunctionReference constructor;
-	static rgb_matrix::RGBMatrix::Options createMatrixOptions(const Napi::Env& env, const Napi::Object& obj);
-	static rgb_matrix::RuntimeOptions createRuntimeOptions(const Napi::Env& env, const Napi::Object& obj);
+	static RGBMatrix::Options createMatrixOptions(const Napi::Env& env, const Napi::Object& obj);
+	static RuntimeOptions createRuntimeOptions(const Napi::Env& env, const Napi::Object& obj);
 
+	RGBMatrix *matrix;
 };
 
 #endif

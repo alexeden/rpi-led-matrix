@@ -3,11 +3,8 @@
 #define RESETTEXT  "\x1B[0m"
 #include <napi.h>
 #include <iostream>
-#include <led-matrix.h>
-#include "napi-utils.cc"
 #include "node-led-matrix.h"
 
-using namespace rgb_matrix;
 /**
  *  RGBMatrix::Options led_options;
  *	rgb_matrix::RuntimeOptions runtime;
