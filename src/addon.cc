@@ -5,6 +5,7 @@
 #include <iostream>
 #include <led-matrix.h>
 #include "napi-utils.cc"
+#include "node-led-matrix.h"
 
 using namespace rgb_matrix;
 /**
@@ -85,6 +86,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 	std::cout << FOREMAG;
 	exports.Set("validateMatrixOptions", Napi::Function::New(env, validateMatrixOptions));
 	exports.Set("validateRuntimeOptions", Napi::Function::New(env, validateRuntimeOptions));
+	NodeLedMatrix::Init(env, exports);
 	std::cout << RESETTEXT << std::endl;
     return exports;
 }
