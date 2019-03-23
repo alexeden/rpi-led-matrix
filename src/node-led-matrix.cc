@@ -34,28 +34,22 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<
 /**
  * Create an instance of Options from a JS object.
  */
-RGBMatrix::Options NodeLedMatrix::createMatrixOptions(const Napi::CallbackInfo& info) {
-	auto env = info.Env();
-
-	if (!info[0].IsObject()) throw Napi::Error::New(env, "The argument provided to createMatrixOptions must be an object.");
-
-	auto jsOpts = info[0].As<Napi::Object>();
-
+RGBMatrix::Options NodeLedMatrix::createMatrixOptions(const Napi::Env& env, const Napi::Object& obj) {
 	RGBMatrix::Options options = RGBMatrix::Options();
-	options.brightness = NapiUtils::getProp(env, jsOpts, "brightness").As<Napi::Number>();
-	options.chain_length = NapiUtils::getProp(env, jsOpts, "chain_length").As<Napi::Number>();
-	options.cols = NapiUtils::getProp(env, jsOpts, "cols").As<Napi::Number>();
-	options.multiplexing = NapiUtils::getProp(env, jsOpts, "multiplexing").As<Napi::Number>();
-	options.parallel = NapiUtils::getProp(env, jsOpts, "parallel").As<Napi::Number>();
-	options.pwm_bits = NapiUtils::getProp(env, jsOpts, "pwm_bits").As<Napi::Number>();
-	options.pwm_dither_bits = NapiUtils::getProp(env, jsOpts, "pwm_dither_bits").As<Napi::Number>();
-	options.pwm_lsb_nanoseconds = NapiUtils::getProp(env, jsOpts, "pwm_lsb_nanoseconds").As<Napi::Number>();
-	options.row_address_type = NapiUtils::getProp(env, jsOpts, "row_address_type").As<Napi::Number>();
-	options.rows = NapiUtils::getProp(env, jsOpts, "rows").As<Napi::Number>();
-	options.scan_mode = NapiUtils::getProp(env, jsOpts, "scan_mode").As<Napi::Number>();
-	options.disable_hardware_pulsing = NapiUtils::getProp(env, jsOpts, "disable_hardware_pulsing").As<Napi::Boolean>();
-	options.inverse_colors = NapiUtils::getProp(env, jsOpts, "inverse_colors").As<Napi::Boolean>();
-	options.show_refresh_rate = NapiUtils::getProp(env, jsOpts, "show_refresh_rate").As<Napi::Boolean>();
+	options.brightness = NapiUtils::getProp(env, obj, "brightness").As<Napi::Number>();
+	options.chain_length = NapiUtils::getProp(env, obj, "chain_length").As<Napi::Number>();
+	options.cols = NapiUtils::getProp(env, obj, "cols").As<Napi::Number>();
+	options.multiplexing = NapiUtils::getProp(env, obj, "multiplexing").As<Napi::Number>();
+	options.parallel = NapiUtils::getProp(env, obj, "parallel").As<Napi::Number>();
+	options.pwm_bits = NapiUtils::getProp(env, obj, "pwm_bits").As<Napi::Number>();
+	options.pwm_dither_bits = NapiUtils::getProp(env, obj, "pwm_dither_bits").As<Napi::Number>();
+	options.pwm_lsb_nanoseconds = NapiUtils::getProp(env, obj, "pwm_lsb_nanoseconds").As<Napi::Number>();
+	options.row_address_type = NapiUtils::getProp(env, obj, "row_address_type").As<Napi::Number>();
+	options.rows = NapiUtils::getProp(env, obj, "rows").As<Napi::Number>();
+	options.scan_mode = NapiUtils::getProp(env, obj, "scan_mode").As<Napi::Number>();
+	options.disable_hardware_pulsing = NapiUtils::getProp(env, obj, "disable_hardware_pulsing").As<Napi::Boolean>();
+	options.inverse_colors = NapiUtils::getProp(env, obj, "inverse_colors").As<Napi::Boolean>();
+	options.show_refresh_rate = NapiUtils::getProp(env, obj, "show_refresh_rate").As<Napi::Boolean>();
 
 	return options;
 }
@@ -63,18 +57,12 @@ RGBMatrix::Options NodeLedMatrix::createMatrixOptions(const Napi::CallbackInfo& 
 /**
  * Create an instance of RuntimeOptions from a JS object.
  */
-RuntimeOptions NodeLedMatrix::createRuntimeOptions(const Napi::CallbackInfo& info) {
-	auto env = info.Env();
-
-	if (!info[0].IsObject()) throw Napi::Error::New(env, "The argument provided to createRuntimeOptions must be an object.");
-
-	auto jsOpts = info[0].As<Napi::Object>();
-
+RuntimeOptions NodeLedMatrix::createRuntimeOptions(const Napi::Env& env, const Napi::Object& obj) {
 	RuntimeOptions options = RuntimeOptions();
-	options.gpio_slowdown = NapiUtils::getProp(env, jsOpts, "gpio_slowdown").As<Napi::Number>();
-	options.daemon = NapiUtils::getProp(env, jsOpts, "daemon").As<Napi::Number>();
-	options.drop_privileges = NapiUtils::getProp(env, jsOpts, "drop_privileges").As<Napi::Number>();
-	options.do_gpio_init = NapiUtils::getProp(env, jsOpts, "do_gpio_init").As<Napi::Boolean>();
+	options.gpio_slowdown = NapiUtils::getProp(env, obj, "gpio_slowdown").As<Napi::Number>();
+	options.daemon = NapiUtils::getProp(env, obj, "daemon").As<Napi::Number>();
+	options.drop_privileges = NapiUtils::getProp(env, obj, "drop_privileges").As<Napi::Number>();
+	options.do_gpio_init = NapiUtils::getProp(env, obj, "do_gpio_init").As<Napi::Boolean>();
 
 	return options;
 }

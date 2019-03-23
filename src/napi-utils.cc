@@ -5,7 +5,7 @@
 #include <sstream>
 
 namespace NapiUtils {
-	static Napi::Value getProp(Napi::Env& env, Napi::Object& obj, const char *key) {
+	static Napi::Value getProp(const Napi::Env& env, const Napi::Object& obj, const char *key) {
 		if (!obj.Has(key)) {
 			std::stringstream ss;
 			ss << "Object is missing the \"" << key << "\" property." << std::endl;

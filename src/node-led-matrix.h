@@ -16,8 +16,8 @@ public:
 
 private:
 	static Napi::FunctionReference constructor;
-	static rgb_matrix::RGBMatrix::Options createMatrixOptions(const Napi::CallbackInfo& info);
-	static rgb_matrix::RuntimeOptions createRuntimeOptions(const Napi::CallbackInfo& info);
+	static rgb_matrix::RGBMatrix::Options createMatrixOptions(const Napi::Env& env, const Napi::Object& obj);
+	static rgb_matrix::RuntimeOptions createRuntimeOptions(const Napi::Env& env, const Napi::Object& obj);
 
 };
 
