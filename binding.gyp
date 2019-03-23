@@ -13,7 +13,7 @@
         "<!(node -p \"require('node-addon-api').gyp\")",
         "./binding.gyp:rpi-rgb-led-matrix"
       ],
-      'cflags': [ '-Wall', '-Wextra', '-Wno-missing-field-initializers', '-Wno-unused-private-field', '-Wno-unused-variable' ],
+      'cflags': [ '-Wall', '-Wextra', '-Wno-missing-field-initializers', '-Wno-unused-variable' ],
       'cflags!': [ '-fno-exceptions' ],
       'cflags_cc!': [ '-fno-exceptions' ],
       'xcode_settings': {
