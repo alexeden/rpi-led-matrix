@@ -3,8 +3,6 @@ import { LedMatrixAddon, MatrixOptions, ScanMode, RowAddressType, MuxType, Runti
 // tslint:disable-next-line:variable-name
 const LedMatrixAddon: LedMatrixAddon = require('bindings')('led-matrix');
 
-console.log('LedMatrixAddon: ', LedMatrixAddon);
-
 export class LedMatrix {
 
   static validateMatrixOptions(partialOpts: Partial<MatrixOptions> = { }): MatrixOptions {
