@@ -1,7 +1,10 @@
-import { LedMatrixAddon, MatrixOptions, ScanMode, RowAddressType, MuxType, RuntimeOptions, RuntimeFlag } from './types';
+import { NodeMatrixAddon, MatrixOptions, ScanMode, RowAddressType, MuxType, RuntimeOptions, RuntimeFlag } from './types';
 
 // tslint:disable-next-line:variable-name
-const LedMatrixAddon: LedMatrixAddon = require('bindings')('led-matrix');
+const NodeMatrixAddon: NodeMatrixAddon = require('bindings')('led-matrix');
+
+console.log('NodeMatrixAddon: ', NodeMatrixAddon);
+console.log('NodeMatrixAddonInstance: ', new NodeMatrixAddon.NodeLedMatrix());
 
 export class LedMatrix {
 
@@ -26,7 +29,7 @@ export class LedMatrix {
       ...partialOpts,
     };
 
-    if (!LedMatrixAddon.validateMatrixOptions(opts)) {
+    if (!NodeMatrixAddon.validateMatrixOptions(opts)) {
       throw new Error(`Matrix options are not valid`);
     }
 
@@ -42,7 +45,7 @@ export class LedMatrix {
       do_gpio_init: true,
     };
 
-    if (!LedMatrixAddon.validateRuntimeOptions(opts)) {
+    if (!NodeMatrixAddon.validateRuntimeOptions(opts)) {
       throw new Error(`Runtime options are not valid`);
     }
 

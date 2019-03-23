@@ -3,6 +3,7 @@
 Napi::FunctionReference NodeLedMatrix::constructor;
 
 Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
+
 	Napi::Function func = DefineClass(env, "NodeLedMatrix", {
 	});
 
@@ -11,10 +12,16 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
     // called on instance of a class to be distinguished from each other.
     constructor = Napi::Persistent(func);
 
+
     // Call the SuppressDestruct() method on the static data prevent the calling
     // to this destructor to reset the reference when the environment is no longer
     // available.
     constructor.SuppressDestruct();
 
 	exports.Set("NodeLedMatrix", func);
+
+	return exports;
+}
+
+NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<NodeLedMatrix>(info) {
 }

@@ -2,6 +2,7 @@
 #define NODELEDMATRIX_H
 
 #include <napi.h>
+#include <iostream>
 #include <led-matrix.h>
 
 class NodeLedMatrix : public Napi::ObjectWrap<NodeLedMatrix> {
