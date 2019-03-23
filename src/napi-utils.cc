@@ -1,3 +1,6 @@
+#ifndef NAPIUTILS_NS
+#define NAPIUTILS_NS
+
 #include <napi.h>
 #include <sstream>
 
@@ -37,3 +40,5 @@ namespace NapiUtils {
 		return _value.As<Napi::Number>();
 	}
 }
+
+#endif
