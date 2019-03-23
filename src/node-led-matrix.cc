@@ -22,7 +22,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
     // available.
     constructor.SuppressDestruct();
 
-	exports.Set("NodeLedMatrix", func);
+	exports.Set("LedMatrix", func);
 
 	return exports;
 }
@@ -50,6 +50,10 @@ RGBMatrix::Options NodeLedMatrix::createMatrixOptions(const Napi::Env& env, cons
 	options.disable_hardware_pulsing = NapiUtils::getProp(env, obj, "disable_hardware_pulsing").As<Napi::Boolean>();
 	options.inverse_colors = NapiUtils::getProp(env, obj, "inverse_colors").As<Napi::Boolean>();
 	options.show_refresh_rate = NapiUtils::getProp(env, obj, "show_refresh_rate").As<Napi::Boolean>();
+
+	// Validate the options using native method
+	std::string error;
+	if (!options.Validate(&error)) throw Napi::Error::New(env, error);
 
 	return options;
 }
