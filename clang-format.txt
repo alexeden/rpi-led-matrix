@@ -1,0 +1,27 @@
+﻿---
+BasedOnStyle: Mozilla
+AlignEscapedNewlinesLeft: 'false'
+AlignTrailingComments: 'true'
+AllowAllParametersOfDeclarationOnNextLine: 'true'
+AllowShortBlocksOnASingleLine: 'true'
+BinPackParameters: 'false'
+BreakBeforeBinaryOperators: 'true'
+BreakBeforeBraces: Attach
+BreakBeforeTernaryOperators: 'true'
+BreakConstructorInitializersBeforeComma: 'true'
+ColumnLimit: '180'
+ConstructorInitializerAllOnOneLineOrOnePerLine: 'false'
+IndentCaseLabels: 'true'
+IndentWidth: '4'
+MaxEmptyLinesToKeep: '2'
+PointerAlignment: Right
+SpaceBeforeParens: ControlStatements
+SpaceInEmptyParentheses: 'false'
+SpacesInAngles: 'false'
+SpacesInCStyleCastParentheses: 'false'
+SpacesInParentheses: 'false'
+Standard: Auto
+TabWidth: '4'
+UseTab: Always
+
+...
