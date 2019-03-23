@@ -51,7 +51,7 @@
     "member-ordering": false,
     "newline-before-return": true,
     "no-angle-bracket-type-assertion": true,
-    "no-any": true,
+    "no-any": false,
     "no-arg": true,
     "no-bitwise": false,
     "no-conditional-assignment": true,
