@@ -132,13 +132,15 @@ export interface RuntimeOptions {
   do_gpio_init: boolean;
 }
 
-export interface NodeMatrixAddonInstance {
-  // tslint:disable-next-line:callable-types
-  new(): object;
+// tslint:disable-next-line:no-empty-interface
+export interface LedMatrixInstance {
+}
+export interface LedMatrix {
+  defaultMatrixOptions(): MatrixOptions;
+  defaultRuntimeOptions(): RuntimeOptions;
+  new(): LedMatrixInstance;
 }
 
-export interface NodeMatrixAddon {
-  validateMatrixOptions(options: MatrixOptions): boolean;
-  validateRuntimeOptions(options: RuntimeOptions): boolean;
-  NodeLedMatrix: NodeMatrixAddonInstance;
+export interface LedMatrixAddon {
+  LedMatrix: LedMatrix;
 }
