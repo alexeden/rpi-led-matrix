@@ -41,6 +41,12 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<
 		throw Napi::Error::New(env, "Constructor expects its first parameter to be an object of runtime options!");
 	}
 
+	auto matrixOpts = createMatrixOptions(env, info[0].As<Napi::Object>());
+	auto runtimeOpts = createRuntimeOptions(env, info[1].As<Napi::Object>());
+
+	this->matrix = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
+
+	matrix->Fill(255, 0, 0);
 }
 
 
@@ -85,13 +91,12 @@ RuntimeOptions NodeLedMatrix::createRuntimeOptions(const Napi::Env& env, const N
 }
 
 /**
- * Create a JS object from the default matrix options.
+ * Create a JS object from an instance of RGBMatrix::Options.
  */
-Napi::Value NodeLedMatrix::defaultMatrixOptions(const Napi::CallbackInfo& info) {
-	auto env = info.Env();
-
-	RGBMatrix::Options options = RGBMatrix::Options();
-
+Napi::Object NodeLedMatrix::matrixOptionsToObj(
+	const Napi::Env& env,
+	const RGBMatrix::Options& options
+) {
 	auto obj = Napi::Object::New(env);
 	obj.Set("brightness", Napi::Number::New(env, options.brightness));
 	obj.Set("chain_length", Napi::Number::New(env, options.chain_length));
@@ -112,13 +117,17 @@ Napi::Value NodeLedMatrix::defaultMatrixOptions(const Napi::CallbackInfo& info) 
 }
 
 /**
- * Create a JS object from the default runtime options.
+ * Create a JS object from the default matrix options.
  */
-Napi::Value NodeLedMatrix::defaultRuntimeOptions(const Napi::CallbackInfo& info) {
+Napi::Value NodeLedMatrix::defaultMatrixOptions(const Napi::CallbackInfo& info) {
 	auto env = info.Env();
+	return NodeLedMatrix::matrixOptionsToObj(env, RGBMatrix::Options());
+}
 
-	RuntimeOptions options = RuntimeOptions();
-
+/**
+ * Create a JS object from an instance of RuntimeOptions.
+ */
+Napi::Object NodeLedMatrix::runtimeOptionsToObj(const Napi::Env& env, const RuntimeOptions& options) {
 	auto obj = Napi::Object::New(env);
 
 	obj.Set("gpio_slowdown", Napi::Number::New(env, options.gpio_slowdown));
@@ -127,4 +136,12 @@ Napi::Value NodeLedMatrix::defaultRuntimeOptions(const Napi::CallbackInfo& info)
 	obj.Set("do_gpio_init", Napi::Boolean::New(env, options.do_gpio_init));
 
 	return obj;
+}
+
+/**
+ * Create a JS object from the default runtime options.
+ */
+Napi::Value NodeLedMatrix::defaultRuntimeOptions(const Napi::CallbackInfo& info) {
+	auto env = info.Env();
+	return NodeLedMatrix::runtimeOptionsToObj(env, RuntimeOptions());
 }
