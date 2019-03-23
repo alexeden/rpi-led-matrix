@@ -4,6 +4,7 @@
 #include <napi.h>
 #include <iostream>
 #include <led-matrix.h>
+#include "napi-utils.cc"
 
 class NodeLedMatrix : public Napi::ObjectWrap<NodeLedMatrix> {
 public:
@@ -11,7 +12,7 @@ public:
     NodeLedMatrix(const Napi::CallbackInfo &info);
 
 	static Napi::Value defaultMatrixOptions(const Napi::CallbackInfo& info);
-	static Napi::Object defaultRuntimeOptions(const Napi::CallbackInfo& info);
+	static Napi::Value defaultRuntimeOptions(const Napi::CallbackInfo& info);
 
 private:
 	static Napi::FunctionReference constructor;
