@@ -28,17 +28,17 @@ namespace NapiUtils {
 		return _value.As<Napi::Buffer<T>>();
 	}
 
-	static Napi::Number getNumberProp(Napi::Env& env, Napi::Object& obj, const char *key) {
-		Napi::Value _value = getProp(env, obj, key);
+	// static Napi::Number getNumberProp(Napi::Env& env, Napi::Object& obj, const char *key) {
+	// 	Napi::Value _value = getProp(env, obj, key);
 
-		if (!_value.IsNumber()) {
-			std::stringstream ss;
-			ss << "Object property \"" << key << "\" must be a number." << std::endl;
-			throw Napi::Error::New(env, Napi::String::New(env, ss.str()));
-		}
+	// 	if (!_value.IsNumber()) {
+	// 		std::stringstream ss;
+	// 		ss << "Object property \"" << key << "\" must be a number." << std::endl;
+	// 		throw Napi::Error::New(env, Napi::String::New(env, ss.str()));
+	// 	}
 
-		return _value.As<Napi::Number>();
-	}
+	// 	return _value.As<Napi::Number>();
+	// }
 }
 
 #endif
