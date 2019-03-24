@@ -13,6 +13,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("clear", &NodeLedMatrix::clear),
 		InstanceMethod("fill", &NodeLedMatrix::fill),
 		InstanceMethod("height", &NodeLedMatrix::height),
+		InstanceMethod("luminanceCorrect", &NodeLedMatrix::luminanceCorrect),
 		InstanceMethod("pwmBits", &NodeLedMatrix::pwmBits),
 		InstanceMethod("setPixel", &NodeLedMatrix::setPixel),
 		InstanceMethod("width", &NodeLedMatrix::width)
@@ -74,6 +75,15 @@ void NodeLedMatrix::fill(const Napi::CallbackInfo& info) {
 Napi::Value NodeLedMatrix::height(const Napi::CallbackInfo& info) {
 	return Napi::Number::New(info.Env(), this->matrix_->height());
 }
+
+Napi::Value NodeLedMatrix::luminanceCorrect(const Napi::CallbackInfo& info) {
+	if (info.Length() > 0 && info[0].IsBoolean()) {
+		auto correct = info[0].As<Napi::Boolean>().ToBoolean();
+		this->matrix_->set_luminance_correct(correct);
+	}
+	return Napi::Boolean::New(info.Env(), this->matrix_->luminance_correct());
+}
+
 
 Napi::Value NodeLedMatrix::pwmBits(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsNumber()) {

@@ -23,6 +23,7 @@ public:
 	void clear(const Napi::CallbackInfo& info);
 	void fill(const Napi::CallbackInfo& info);
 	Napi::Value height(const Napi::CallbackInfo& info);
+	Napi::Value luminanceCorrect(const Napi::CallbackInfo& info);
 	Napi::Value pwmBits(const Napi::CallbackInfo& info);
 	void setPixel(const Napi::CallbackInfo& info);
 	Napi::Value width(const Napi::CallbackInfo& info);
