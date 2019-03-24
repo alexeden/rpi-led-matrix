@@ -10,8 +10,10 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		StaticMethod("defaultMatrixOptions", &NodeLedMatrix::defaultMatrixOptions),
 		StaticMethod("defaultRuntimeOptions", &NodeLedMatrix::defaultRuntimeOptions),
 		InstanceMethod("brightness", &NodeLedMatrix::brightness),
-		InstanceMethod("pwmBits", &NodeLedMatrix::pwmBits),
+		InstanceMethod("clear", &NodeLedMatrix::clear),
+		InstanceMethod("fill", &NodeLedMatrix::fill),
 		InstanceMethod("height", &NodeLedMatrix::height),
+		InstanceMethod("pwmBits", &NodeLedMatrix::pwmBits),
 		InstanceMethod("width", &NodeLedMatrix::width)
 	});
 
@@ -44,8 +46,6 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<
 	if (this->matrix_ == NULL) {
 		throw Napi::Error::New(env, "Failed to create matrix.");
 	}
-
-	this->matrix_->Fill(255, 0, 0);
 }
 
 NodeLedMatrix::~NodeLedMatrix(void) {
@@ -61,16 +61,25 @@ Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
 	return Napi::Number::New(info.Env(), this->matrix_->brightness());
 }
 
+void NodeLedMatrix::clear(const Napi::CallbackInfo& info) {
+	this->matrix_->Clear();
+}
+
+void NodeLedMatrix::fill(const Napi::CallbackInfo& info) {
+	const auto color = NodeLedMatrix::colorFromCallbackInfo(info, 0);
+	this->matrix_->Fill(color.r, color.g, color.b);
+}
+
+Napi::Value NodeLedMatrix::height(const Napi::CallbackInfo& info) {
+	return Napi::Number::New(info.Env(), this->matrix_->height());
+}
+
 Napi::Value NodeLedMatrix::pwmBits(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsNumber()) {
 		auto bits = info[0].As<Napi::Number>().Uint32Value();
 		this->matrix_->SetPWMBits(bits);
 	}
 	return Napi::Number::New(info.Env(), this->matrix_->pwmbits());
-}
-
-Napi::Value NodeLedMatrix::height(const Napi::CallbackInfo& info) {
-	return Napi::Number::New(info.Env(), this->matrix_->height());
 }
 
 Napi::Value NodeLedMatrix::width(const Napi::CallbackInfo& info) {

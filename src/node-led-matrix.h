@@ -20,6 +20,8 @@ public:
 	~NodeLedMatrix();
 
 	Napi::Value brightness(const Napi::CallbackInfo& info);
+	void clear(const Napi::CallbackInfo& info);
+	void fill(const Napi::CallbackInfo& info);
 	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value pwmBits(const Napi::CallbackInfo& info);
 	Napi::Value width(const Napi::CallbackInfo& info);

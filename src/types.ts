@@ -174,6 +174,8 @@ export interface RuntimeOptions {
 
 export interface LedMatrixInstance {
   brightness(brightness?: number): number;
+  clear(): void;
+  fill(r: number, g: number, b: number): void;
   height(): number;
   pwmBits(pwmBits?: number): number;
   width(): number;
