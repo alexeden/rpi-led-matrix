@@ -9,6 +9,15 @@ export enum MuxType {
   Checker = 2,
 }
 
+export enum PixelMapperType {
+  U = 'U-mapper',
+  Rotate = 'Rotate',
+}
+
+export type PixelMapper
+  = { type: PixelMapperType.Rotate; angle: number }
+  | { type: PixelMapperType.U };
+
 /**
  * If a runtime option is set to Disabled, it's command line flag will be unavailable.
  */
@@ -107,12 +116,26 @@ export interface MatrixOptions {
   // This won't do anything if output enable is not connected to GPIO 18 in
   // non-standard wirings.
   disable_hardware_pulsing: boolean;
+
+  /**
+   * Print the current refresh rate in real-time to the stderr.
+   * @default false
+   */
   show_refresh_rate: boolean;
 
   // In case the internal sequence of mapping is not "RGB", this contains the
   // real mapping. Some panels mix up these colors.
   led_rgb_sequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
   inverse_colors: boolean;
+
+  /**
+   * A special string representing selected pixel mappers used to match the
+   * current display panel arrangement.
+   *
+   * Use LedMatrixUtils.encodeMappers() to conventiently get the formatted string from a
+   * list of mappers.
+   */
+  pixel_mapper_config: string;
 }
 
 /**
