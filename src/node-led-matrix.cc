@@ -74,20 +74,22 @@ Napi::Value NodeLedMatrix::width(const Napi::CallbackInfo& info) {
 RGBMatrix::Options NodeLedMatrix::createMatrixOptions(const Napi::Env& env, const Napi::Object& obj) {
 	RGBMatrix::Options options = RGBMatrix::Options();
 
-	options.hardware_mapping = string_to_c_str(NapiUtils::getProp(env, obj, "hardware_mapping").As<Napi::String>());
 	options.brightness = NapiUtils::getProp(env, obj, "brightness").As<Napi::Number>();
 	options.chain_length = NapiUtils::getProp(env, obj, "chain_length").As<Napi::Number>();
 	options.cols = NapiUtils::getProp(env, obj, "cols").As<Napi::Number>();
+	options.disable_hardware_pulsing = NapiUtils::getProp(env, obj, "disable_hardware_pulsing").As<Napi::Boolean>();
+	options.hardware_mapping = string_to_c_str(NapiUtils::getProp(env, obj, "hardware_mapping").As<Napi::String>());
+	options.inverse_colors = NapiUtils::getProp(env, obj, "inverse_colors").As<Napi::Boolean>();
+	options.led_rgb_sequence = string_to_c_str(NapiUtils::getProp(env, obj, "led_rgb_sequence").As<Napi::String>());
 	options.multiplexing = NapiUtils::getProp(env, obj, "multiplexing").As<Napi::Number>();
 	options.parallel = NapiUtils::getProp(env, obj, "parallel").As<Napi::Number>();
+	options.pixel_mapper_config = string_to_c_str(NapiUtils::getProp(env, obj, "pixel_mapper_config").As<Napi::String>());
 	options.pwm_bits = NapiUtils::getProp(env, obj, "pwm_bits").As<Napi::Number>();
 	options.pwm_dither_bits = NapiUtils::getProp(env, obj, "pwm_dither_bits").As<Napi::Number>();
 	options.pwm_lsb_nanoseconds = NapiUtils::getProp(env, obj, "pwm_lsb_nanoseconds").As<Napi::Number>();
 	options.row_address_type = NapiUtils::getProp(env, obj, "row_address_type").As<Napi::Number>();
 	options.rows = NapiUtils::getProp(env, obj, "rows").As<Napi::Number>();
 	options.scan_mode = NapiUtils::getProp(env, obj, "scan_mode").As<Napi::Number>();
-	options.disable_hardware_pulsing = NapiUtils::getProp(env, obj, "disable_hardware_pulsing").As<Napi::Boolean>();
-	options.inverse_colors = NapiUtils::getProp(env, obj, "inverse_colors").As<Napi::Boolean>();
 	options.show_refresh_rate = NapiUtils::getProp(env, obj, "show_refresh_rate").As<Napi::Boolean>();
 
 	// Validate the options using native method
@@ -120,19 +122,34 @@ Napi::Object NodeLedMatrix::matrixOptionsToObj(
 ) {
 	auto obj = Napi::Object::New(env);
 
+	std::string hardware_mapping = options.hardware_mapping == NULL
+		? ""
+		: std::string(options.hardware_mapping);
+
+	std::string led_rgb_sequence = options.led_rgb_sequence == NULL
+		? ""
+		: std::string(options.led_rgb_sequence);
+
+	std::string pixel_mapper_config = options.pixel_mapper_config == NULL
+		? ""
+		: std::string(options.pixel_mapper_config);
+
 	obj.Set("brightness", Napi::Number::New(env, options.brightness));
 	obj.Set("chain_length", Napi::Number::New(env, options.chain_length));
 	obj.Set("cols", Napi::Number::New(env, options.cols));
+	obj.Set("disable_hardware_pulsing", Napi::Boolean::New(env, options.disable_hardware_pulsing));
+	obj.Set("hardware_mapping", Napi::String::New(env, hardware_mapping));
+	obj.Set("inverse_colors", Napi::Boolean::New(env, options.inverse_colors));
+	obj.Set("led_rgb_sequence", Napi::String::New(env, led_rgb_sequence));
 	obj.Set("multiplexing", Napi::Number::New(env, options.multiplexing));
 	obj.Set("parallel", Napi::Number::New(env, options.parallel));
+	obj.Set("pixel_mapper_config", Napi::String::New(env, pixel_mapper_config));
 	obj.Set("pwm_bits", Napi::Number::New(env, options.pwm_bits));
 	obj.Set("pwm_dither_bits", Napi::Number::New(env, options.pwm_dither_bits));
 	obj.Set("pwm_lsb_nanoseconds", Napi::Number::New(env, options.pwm_lsb_nanoseconds));
 	obj.Set("row_address_type", Napi::Number::New(env, options.row_address_type));
 	obj.Set("rows", Napi::Number::New(env, options.rows));
 	obj.Set("scan_mode", Napi::Number::New(env, options.scan_mode));
-	obj.Set("disable_hardware_pulsing", Napi::Boolean::New(env, options.disable_hardware_pulsing));
-	obj.Set("inverse_colors", Napi::Boolean::New(env, options.inverse_colors));
 	obj.Set("show_refresh_rate", Napi::Boolean::New(env, options.show_refresh_rate));
 
 	return obj;
@@ -157,7 +174,8 @@ Napi::Object NodeLedMatrix::runtimeOptionsToObj(const Napi::Env& env, const Runt
  */
 Napi::Value NodeLedMatrix::defaultMatrixOptions(const Napi::CallbackInfo& info) {
 	auto env = info.Env();
-	return NodeLedMatrix::matrixOptionsToObj(env, RGBMatrix::Options());
+	const auto options = RGBMatrix::Options();
+	return NodeLedMatrix::matrixOptionsToObj(env, options);
 }
 
 /**

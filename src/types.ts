@@ -126,6 +126,8 @@ export interface MatrixOptions {
   // In case the internal sequence of mapping is not "RGB", this contains the
   // real mapping. Some panels mix up these colors.
   led_rgb_sequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
+
+
   inverse_colors: boolean;
 
   /**
