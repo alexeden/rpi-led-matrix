@@ -22,9 +22,9 @@ try {
   console.log('new addon.LedMatrix: ', instance);
   // tslint:disable-next-line:no-any
   console.log('instance.currentMatrixOptions(): ', (instance as any).currentMatrixOptions());
-  console.log('instance.getBrightness(): ', instance.getBrightness());
-  console.log('instance.setBrightness(0): ', instance.setBrightness(0));
-  console.log('instance.setBrightness(100): ', instance.setBrightness(100));
+  console.log('instance.brightness(): ', instance.brightness());
+  console.log('instance.brightness(0): ', instance.brightness(0));
+  console.log('instance.brightness(100): ', instance.brightness(100));
 
 
   setTimeout(() => (instance as any).currentMatrixOptions(), 5000);

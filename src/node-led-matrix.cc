@@ -8,9 +8,9 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 
 	Napi::Function func = DefineClass(env, "NodeLedMatrix", {
 		StaticMethod("defaultMatrixOptions", &NodeLedMatrix::defaultMatrixOptions),
-		StaticMethod("defaultRuntimeOptions", &NodeLedMatrix::defaultRuntimeOptions)
-		InstanceMethod("setBrightness", &NodeLedMatrix::setBrightness),
-		InstanceMethod("getBrightness", &NodeLedMatrix::getBrightness)
+		StaticMethod("defaultRuntimeOptions", &NodeLedMatrix::defaultRuntimeOptions),
+		InstanceMethod("currentMatrixOptions", &NodeLedMatrix::currentMatrixOptions),
+		InstanceMethod("brightness", &NodeLedMatrix::brightness)
 	});
 
 	// Create a peristent reference to the class constructor. This will allow
@@ -51,16 +51,23 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<
 	matrix->Fill(255, 0, 0);
 }
 
-Napi::Value NodeLedMatrix::getBrightness(const Napi::CallbackInfo& info) {
-	auto brightness = Napi::Number::New(info.Env(), this->matrix->brightness());
-	return brightness;
+NodeLedMatrix::~NodeLedMatrix(void) {
+	delete matrix;
 }
 
-Napi::Value NodeLedMatrix::setBrightness(const Napi::CallbackInfo& info) {
-	auto brightness = info[0].As<Napi::Number>().Uint32Value();
-	this->matrix->SetBrightness(brightness);
-	return getBrightness(info);
+Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
+	if (info.Length() > 0 && info[0].IsNumber()) {
+		auto brightness = info[0].As<Napi::Number>().Uint32Value();
+		this->matrix->SetBrightness(brightness);
+	}
+	return Napi::Number::New(info.Env(), this->matrix->brightness());
 }
+
+Napi::Value NodeLedMatrix::currentMatrixOptions(const Napi::CallbackInfo& info) {
+	fprintf(stderr, "pixel_mapper_config: %s\n", this->matrix->params_.pixel_mapper_config);
+	return NodeLedMatrix::matrixOptionsToObj(info.Env(), this->matrix->params_);
+}
+
 
 /**
  * Create an instance of Options from a JS object.

@@ -12,8 +12,9 @@ class NodeLedMatrix : public Napi::ObjectWrap<NodeLedMatrix> {
 public:
 	static Napi::Object Init(Napi::Env env, Napi::Object exports);
     NodeLedMatrix(const Napi::CallbackInfo &info);
-	Napi::Value getBrightness(const Napi::CallbackInfo& info);
-	Napi::Value setBrightness(const Napi::CallbackInfo& info);
+	~NodeLedMatrix();
+
+	Napi::Value brightness(const Napi::CallbackInfo& info);
 
 	static Napi::Value defaultMatrixOptions(const Napi::CallbackInfo& info);
 	static Napi::Value defaultRuntimeOptions(const Napi::CallbackInfo& info);
