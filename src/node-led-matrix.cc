@@ -8,7 +8,6 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 	Napi::Function func = DefineClass(env, "NodeLedMatrix", {
 		StaticMethod("defaultMatrixOptions", &NodeLedMatrix::defaultMatrixOptions),
 		StaticMethod("defaultRuntimeOptions", &NodeLedMatrix::defaultRuntimeOptions),
-		InstanceMethod("currentMatrixOptions", &NodeLedMatrix::currentMatrixOptions),
 		InstanceMethod("brightness", &NodeLedMatrix::brightness),
 		InstanceMethod("height", &NodeLedMatrix::height),
 		InstanceMethod("width", &NodeLedMatrix::width)
@@ -38,47 +37,44 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<
 	auto matrixOpts = createMatrixOptions(env, info[0].As<Napi::Object>());
 	auto runtimeOpts = createRuntimeOptions(env, info[1].As<Napi::Object>());
 
-	this->matrix = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
+	this->matrix_ = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
 
-	if (this->matrix == NULL) {
+	if (this->matrix_ == NULL) {
 		throw Napi::Error::New(env, "Failed to create matrix.");
 	}
 
-	matrix->Fill(255, 0, 0);
+	this->matrix_->Fill(255, 0, 0);
 }
 
 NodeLedMatrix::~NodeLedMatrix(void) {
-	delete matrix;
+	fprintf(stderr, "%sMatrix deleted\n", FOREMAG);
+	delete this->matrix_;
 }
 
 Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsNumber()) {
 		auto brightness = info[0].As<Napi::Number>().Uint32Value();
-		this->matrix->SetBrightness(brightness);
+		this->matrix_->SetBrightness(brightness);
 	}
-	return Napi::Number::New(info.Env(), this->matrix->brightness());
+	return Napi::Number::New(info.Env(), this->matrix_->brightness());
 }
 
 Napi::Value NodeLedMatrix::height(const Napi::CallbackInfo& info) {
-	return Napi::Number::New(info.Env(), this->matrix->height());
+	return Napi::Number::New(info.Env(), this->matrix_->height());
 }
 
 Napi::Value NodeLedMatrix::width(const Napi::CallbackInfo& info) {
-	return Napi::Number::New(info.Env(), this->matrix->width());
+	return Napi::Number::New(info.Env(), this->matrix_->width());
 }
-
-
-Napi::Value NodeLedMatrix::currentMatrixOptions(const Napi::CallbackInfo& info) {
-	fprintf(stderr, "pixel_mapper_config: %s\n", this->matrix->params_.pixel_mapper_config);
-	return NodeLedMatrix::matrixOptionsToObj(info.Env(), this->matrix->params_);
-}
-
 
 /**
  * Create an instance of Options from a JS object.
  */
 RGBMatrix::Options NodeLedMatrix::createMatrixOptions(const Napi::Env& env, const Napi::Object& obj) {
 	RGBMatrix::Options options = RGBMatrix::Options();
+	// const char *hardware_mapping =
+	// options.hardware_mapping = NapiUtils::getProp(env, obj, "hardware_mapping").As<Napi::String>();
+
 	options.brightness = NapiUtils::getProp(env, obj, "brightness").As<Napi::Number>();
 	options.chain_length = NapiUtils::getProp(env, obj, "chain_length").As<Napi::Number>();
 	options.cols = NapiUtils::getProp(env, obj, "cols").As<Napi::Number>();
@@ -136,16 +132,11 @@ Napi::Object NodeLedMatrix::matrixOptionsToObj(
 	obj.Set("disable_hardware_pulsing", Napi::Boolean::New(env, options.disable_hardware_pulsing));
 	obj.Set("inverse_colors", Napi::Boolean::New(env, options.inverse_colors));
 	obj.Set("show_refresh_rate", Napi::Boolean::New(env, options.show_refresh_rate));
+	// obj.Set("pixel_mapper_config", Napi::String::New(env, std::string(options.pixel_mapper_config)));
+
+	std::cout << "pixel_mapper_config\t" << options.pixel_mapper_config << std::endl << std::endl;
 
 	return obj;
-}
-
-/**
- * Create a JS object from the default matrix options.
- */
-Napi::Value NodeLedMatrix::defaultMatrixOptions(const Napi::CallbackInfo& info) {
-	auto env = info.Env();
-	return NodeLedMatrix::matrixOptionsToObj(env, RGBMatrix::Options());
 }
 
 /**
@@ -160,6 +151,14 @@ Napi::Object NodeLedMatrix::runtimeOptionsToObj(const Napi::Env& env, const Runt
 	obj.Set("do_gpio_init", Napi::Boolean::New(env, options.do_gpio_init));
 
 	return obj;
+}
+
+/**
+ * Create a JS object from the default matrix options.
+ */
+Napi::Value NodeLedMatrix::defaultMatrixOptions(const Napi::CallbackInfo& info) {
+	auto env = info.Env();
+	return NodeLedMatrix::matrixOptionsToObj(env, RGBMatrix::Options());
 }
 
 /**

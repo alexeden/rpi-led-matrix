@@ -1,5 +1,9 @@
+
 #ifndef NODELEDMATRIX_H
 #define NODELEDMATRIX_H
+#define FOREBLU  "\x1B[34m"
+#define FOREMAG  "\x1B[35m"
+#define RESETTEXT  "\x1B[0m"
 
 #include <napi.h>
 #include <iostream>
@@ -28,7 +32,7 @@ private:
 	static Napi::Object matrixOptionsToObj(const Napi::Env& env, const RGBMatrix::Options& options);
 	static Napi::Object runtimeOptionsToObj(const Napi::Env& env, const RuntimeOptions& options);
 
-	RGBMatrix *matrix;
+	RGBMatrix *matrix_;
 };
 
 #endif
