@@ -134,7 +134,10 @@ export interface RuntimeOptions {
 
 // tslint:disable-next-line:no-empty-interface
 export interface LedMatrixInstance {
+  getBrightness(): number;
+  setBrightness(brightness: number): number;
 }
+
 export interface LedMatrix {
   defaultMatrixOptions(): MatrixOptions;
   defaultRuntimeOptions(): RuntimeOptions;
