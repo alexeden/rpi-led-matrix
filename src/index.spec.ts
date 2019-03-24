@@ -1,5 +1,6 @@
 import { addon } from './addon';
-import { MatrixOptions, RuntimeOptions, GpioMapping } from './types';
+import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType } from './types';
+import { LedMatrixUtils } from './utils';
 
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
@@ -15,6 +16,10 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       cols: 64,
       chain_length: 2,
       hardware_mapping: GpioMapping.AdafruitHatPwm,
+      pixel_mapper_config: LedMatrixUtils.encodeMappers(
+        { type: PixelMapperType.U }
+        // { type: PixelMapperType.Rotate, angle: 90 }
+      ),
     };
     const runtimeOpts: RuntimeOptions = {
       ...addon.LedMatrix.defaultRuntimeOptions(),
@@ -48,7 +53,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
     Array.from(Array(instance.width())).map((_, x) => {
       instance.setPixel(x, y, 255, 0, 0);
     });
-    await wait(interval);
+    await wait(5000);
 
     console.log('instance.luminanceCorrect(true): ', instance.luminanceCorrect(true));
     // console.log('instance.brightness(50): ', instance.brightness(50));
