@@ -5,7 +5,6 @@ using namespace rgb_matrix;
 Napi::FunctionReference NodeLedMatrix::constructor;
 
 Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
-
 	Napi::Function func = DefineClass(env, "NodeLedMatrix", {
 		StaticMethod("defaultMatrixOptions", &NodeLedMatrix::defaultMatrixOptions),
 		StaticMethod("defaultRuntimeOptions", &NodeLedMatrix::defaultRuntimeOptions),
@@ -13,17 +12,8 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("brightness", &NodeLedMatrix::brightness)
 	});
 
-	// Create a peristent reference to the class constructor. This will allow
-    // a function called on a class prototype and a function
-    // called on instance of a class to be distinguished from each other.
     constructor = Napi::Persistent(func);
-
-
-    // Call the SuppressDestruct() method on the static data prevent the calling
-    // to this destructor to reset the reference when the environment is no longer
-    // available.
     constructor.SuppressDestruct();
-
 	exports.Set("LedMatrix", func);
 
 	return exports;
@@ -47,6 +37,10 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<
 	auto runtimeOpts = createRuntimeOptions(env, info[1].As<Napi::Object>());
 
 	this->matrix = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
+
+	if (this->matrix == NULL) {
+		throw Napi::Error::New(env, "Failed to create matrix.");
+	}
 
 	matrix->Fill(255, 0, 0);
 }
