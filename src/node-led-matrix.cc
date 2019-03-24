@@ -1,6 +1,7 @@
 #include "node-led-matrix.h"
 
 using namespace rgb_matrix;
+char* string_to_c_str(const std::string &str);
 
 Napi::FunctionReference NodeLedMatrix::constructor;
 
@@ -72,9 +73,8 @@ Napi::Value NodeLedMatrix::width(const Napi::CallbackInfo& info) {
  */
 RGBMatrix::Options NodeLedMatrix::createMatrixOptions(const Napi::Env& env, const Napi::Object& obj) {
 	RGBMatrix::Options options = RGBMatrix::Options();
-	// const char *hardware_mapping =
-	// options.hardware_mapping = NapiUtils::getProp(env, obj, "hardware_mapping").As<Napi::String>();
 
+	options.hardware_mapping = string_to_c_str(NapiUtils::getProp(env, obj, "hardware_mapping").As<Napi::String>());
 	options.brightness = NapiUtils::getProp(env, obj, "brightness").As<Napi::Number>();
 	options.chain_length = NapiUtils::getProp(env, obj, "chain_length").As<Napi::Number>();
 	options.cols = NapiUtils::getProp(env, obj, "cols").As<Napi::Number>();
@@ -167,4 +167,10 @@ Napi::Value NodeLedMatrix::defaultMatrixOptions(const Napi::CallbackInfo& info) 
 Napi::Value NodeLedMatrix::defaultRuntimeOptions(const Napi::CallbackInfo& info) {
 	auto env = info.Env();
 	return NodeLedMatrix::runtimeOptionsToObj(env, RuntimeOptions());
+}
+
+char* string_to_c_str(const std::string &str) {
+	char *cptr = new char[str.size()];
+	std::strcpy(cptr, str.c_str());
+	return cptr;
 }
