@@ -8,6 +8,7 @@
 #include <napi.h>
 #include <iostream>
 #include <led-matrix.h>
+#include <graphics.h>
 #include "napi-utils.cc"
 
 using namespace rgb_matrix;
@@ -27,11 +28,12 @@ public:
 	static Napi::Value defaultRuntimeOptions(const Napi::CallbackInfo& info);
 
 private:
+	static Color colorFromCallbackInfo(const Napi::CallbackInfo& info, uint8_t argOffset);
 	static Napi::FunctionReference constructor;
-	static RGBMatrix::Options createMatrixOptions(const Napi::Env& env, const Napi::Object& obj);
-	static RuntimeOptions createRuntimeOptions(const Napi::Env& env, const Napi::Object& obj);
 	static Napi::Object matrixOptionsToObj(const Napi::Env& env, const RGBMatrix::Options& options);
 	static Napi::Object runtimeOptionsToObj(const Napi::Env& env, const RuntimeOptions& options);
+	static RGBMatrix::Options createMatrixOptions(const Napi::Env& env, const Napi::Object& obj);
+	static RuntimeOptions createRuntimeOptions(const Napi::Env& env, const Napi::Object& obj);
 
 	RGBMatrix *matrix_;
 };

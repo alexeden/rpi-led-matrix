@@ -195,6 +195,17 @@ Napi::Value NodeLedMatrix::defaultRuntimeOptions(const Napi::CallbackInfo& info)
 	return NodeLedMatrix::runtimeOptionsToObj(env, RuntimeOptions());
 }
 
+/**
+ * Create a Color instance from CallbackInfo.
+ */
+Color NodeLedMatrix::colorFromCallbackInfo(const Napi::CallbackInfo& info, uint8_t argOffset = 0) {
+	uint8_t r = info[argOffset + 0].As<Napi::Number>().Uint32Value();
+	uint8_t g = info[argOffset + 1].As<Napi::Number>().Uint32Value();
+	uint8_t b = info[argOffset + 2].As<Napi::Number>().Uint32Value();
+
+	return Color(r, g, b);
+}
+
 char* string_to_c_str(const std::string &str) {
 	char *cptr = new char[str.size()];
 	std::strcpy(cptr, str.c_str());
