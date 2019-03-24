@@ -33,11 +33,23 @@ try {
   console.log('instance.width(): ', instance.width());
 
 
+  const interval = 333;
   setTimeout(() => instance.fill(0, 0, 255), 0);
-  setTimeout(() => instance.fill(0, 255, 0), 1000);
-  setTimeout(() => instance.fill(255, 0, 0), 2000);
-  setTimeout(() => instance.clear(), 3000);
-  setTimeout(() => console.log('bye!'), 4000);
+  setTimeout(() => instance.fill(0, 255, 0), 1 * interval);
+  setTimeout(() => instance.fill(255, 0, 0), 2 * interval);
+  setTimeout(() => instance.clear(), 3 * interval);
+
+  setTimeout(
+    () => {
+      const y = Math.floor(instance.height() / 2);
+      Array.from(Array(instance.width())).map((_, x) => {
+        instance.setPixel(x, y, 255, 0, 0);
+      });
+    },
+    4 * interval
+  );
+
+  setTimeout(() => console.log('bye!'), 5000);
 
 }
 catch (error) {

@@ -24,6 +24,7 @@ public:
 	void fill(const Napi::CallbackInfo& info);
 	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value pwmBits(const Napi::CallbackInfo& info);
+	void setPixel(const Napi::CallbackInfo& info);
 	Napi::Value width(const Napi::CallbackInfo& info);
 
 	static Napi::Value defaultMatrixOptions(const Napi::CallbackInfo& info);

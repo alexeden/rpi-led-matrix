@@ -14,6 +14,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("fill", &NodeLedMatrix::fill),
 		InstanceMethod("height", &NodeLedMatrix::height),
 		InstanceMethod("pwmBits", &NodeLedMatrix::pwmBits),
+		InstanceMethod("setPixel", &NodeLedMatrix::setPixel),
 		InstanceMethod("width", &NodeLedMatrix::width)
 	});
 
@@ -80,6 +81,13 @@ Napi::Value NodeLedMatrix::pwmBits(const Napi::CallbackInfo& info) {
 		this->matrix_->SetPWMBits(bits);
 	}
 	return Napi::Number::New(info.Env(), this->matrix_->pwmbits());
+}
+
+void NodeLedMatrix::setPixel(const Napi::CallbackInfo& info) {
+	const auto x = info[0].As<Napi::Number>().Uint32Value();
+	const auto y = info[1].As<Napi::Number>().Uint32Value();
+	const auto color = NodeLedMatrix::colorFromCallbackInfo(info, 2);
+	this->matrix_->SetPixel(x, y, color.r, color.g, color.b);
 }
 
 Napi::Value NodeLedMatrix::width(const Napi::CallbackInfo& info) {

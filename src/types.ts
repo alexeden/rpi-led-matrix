@@ -178,6 +178,7 @@ export interface LedMatrixInstance {
   fill(r: number, g: number, b: number): void;
   height(): number;
   pwmBits(pwmBits?: number): number;
+  setPixel(x: number, y: number, r: number, g: number, b: number): void;
   width(): number;
 }
 
