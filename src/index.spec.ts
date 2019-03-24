@@ -20,10 +20,11 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
         { type: PixelMapperType.U }
         // { type: PixelMapperType.Rotate, angle: 90 }
       ),
+
     };
     const runtimeOpts: RuntimeOptions = {
       ...addon.LedMatrix.defaultRuntimeOptions(),
-      gpio_slowdown: 0,
+      gpio_slowdown: 1,
     };
 
     const instance = new addon.LedMatrix(matrixOpts, runtimeOpts);
@@ -53,7 +54,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
     Array.from(Array(instance.width())).map((_, x) => {
       instance.setPixel(x, y, 255, 0, 0);
     });
-    await wait(5000);
+    await wait(20000);
 
     console.log('instance.luminanceCorrect(true): ', instance.luminanceCorrect(true));
     // console.log('instance.brightness(50): ', instance.brightness(50));
