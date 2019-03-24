@@ -9,7 +9,9 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		StaticMethod("defaultMatrixOptions", &NodeLedMatrix::defaultMatrixOptions),
 		StaticMethod("defaultRuntimeOptions", &NodeLedMatrix::defaultRuntimeOptions),
 		InstanceMethod("currentMatrixOptions", &NodeLedMatrix::currentMatrixOptions),
-		InstanceMethod("brightness", &NodeLedMatrix::brightness)
+		InstanceMethod("brightness", &NodeLedMatrix::brightness),
+		InstanceMethod("height", &NodeLedMatrix::height),
+		InstanceMethod("width", &NodeLedMatrix::width)
 	});
 
     constructor = Napi::Persistent(func);
@@ -56,6 +58,15 @@ Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
 	}
 	return Napi::Number::New(info.Env(), this->matrix->brightness());
 }
+
+Napi::Value NodeLedMatrix::height(const Napi::CallbackInfo& info) {
+	return Napi::Number::New(info.Env(), this->matrix->height());
+}
+
+Napi::Value NodeLedMatrix::width(const Napi::CallbackInfo& info) {
+	return Napi::Number::New(info.Env(), this->matrix->width());
+}
+
 
 Napi::Value NodeLedMatrix::currentMatrixOptions(const Napi::CallbackInfo& info) {
 	fprintf(stderr, "pixel_mapper_config: %s\n", this->matrix->params_.pixel_mapper_config);

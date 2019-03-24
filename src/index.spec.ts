@@ -25,6 +25,8 @@ try {
   console.log('instance.brightness(): ', instance.brightness());
   console.log('instance.brightness(0): ', instance.brightness(0));
   console.log('instance.brightness(100): ', instance.brightness(100));
+  console.log('instance.height(): ', instance.height());
+  console.log('instance.width(): ', instance.width());
 
 
   setTimeout(() => (instance as any).currentMatrixOptions(), 5000);

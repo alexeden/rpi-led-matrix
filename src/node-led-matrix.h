@@ -15,6 +15,8 @@ public:
 	~NodeLedMatrix();
 
 	Napi::Value brightness(const Napi::CallbackInfo& info);
+	Napi::Value height(const Napi::CallbackInfo& info);
+	Napi::Value width(const Napi::CallbackInfo& info);
 
 	static Napi::Value defaultMatrixOptions(const Napi::CallbackInfo& info);
 	static Napi::Value defaultRuntimeOptions(const Napi::CallbackInfo& info);
