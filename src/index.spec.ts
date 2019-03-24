@@ -22,6 +22,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       ),
 
     };
+
     const runtimeOpts: RuntimeOptions = {
       ...addon.LedMatrix.defaultRuntimeOptions(),
       gpio_slowdown: 1,
@@ -50,20 +51,29 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
     instance.clear();
     await wait(interval);
 
-    const y = Math.floor(instance.height() / 2);
-    Array.from(Array(instance.width())).map((_, x) => {
-      instance.setPixel(x, y, 255, 0, 0);
-    });
-    await wait(20000);
+    for (let i = 0; i < instance.height(); i++) {
+      instance.clear();
+      const y = i;
+      Array.from(Array(instance.width())).map((_, x) => {
+        instance.setPixel(x, y, 255, 0, 0);
+      });
+      await wait(100);
+    }
+    for (let i = 0; i < instance.width(); i++) {
+      instance.clear();
+      const x = i;
+      Array.from(Array(instance.height())).map((_, y) => {
+        instance.setPixel(x, y, 0, 0, 255);
+      });
+      await wait(100);
+    }
 
     console.log('instance.luminanceCorrect(true): ', instance.luminanceCorrect(true));
-    // console.log('instance.brightness(50): ', instance.brightness(50));
     instance.fill(0, 255, 0);
     await wait(2000);
     console.log('instance.luminanceCorrect(false): ', instance.luminanceCorrect(false));
     instance.fill(0, 255, 0);
     await wait(2000);
-    // console.log('instance.pwmBits(1): ', instance.pwmBits(1));
 
   }
   catch (error) {
