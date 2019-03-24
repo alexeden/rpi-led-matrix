@@ -1,4 +1,4 @@
-import { addon } from './led-matrix';
+import { addon } from './addon';
 import { MatrixOptions, RuntimeOptions, GpioMapping } from './types';
 
 try {

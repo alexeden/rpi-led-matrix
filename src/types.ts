@@ -10,8 +10,7 @@ export enum MuxType {
 }
 
 /**
- * If a runtime option is set to Disabled, it's command line flag
- * will be unavailable.
+ * If a runtime option is set to Disabled, it's command line flag will be unavailable.
  */
 export enum RuntimeFlag {
   Disabled = -1,
@@ -39,33 +38,36 @@ export enum GpioMapping {
 // Options to initialize the RGBMatrix. Also see the main README.md for
 // detailed descriptions of the command line flags.
 export interface MatrixOptions {
-  // // Validate the options and possibly output a message to string. If
-  // // "err" is NULL, outputs validation problems to stderr.
-  // // Returns 'true' if all options look good.
-  // bool Validate(std::string *err) const;
-
-  // Name of the hardware mapping. Something like "regular" or "adafruit-hat"
+  /**
+   * The type of GPIO mapping of the device.
+   * @default GpioMapping.Regular
+   */
   hardware_mapping: GpioMapping;
 
-  // The "rows" are the number
-  // of rows supported by the display, so 32 or 16. Default: 32.
+  /**
+   * The number of rows supported by a single display panel.
+   * @default 32
+   */
   rows: 16 | 32 | 64;
 
-  // The "cols" are the number of columns per panel. Typically something
-  // like 32, but also 64 is possible. Sometimes even 40.
-  // cols * chain_length is the total length of the display, so you can
-  // represent a 64 wide display as cols=32, chain=2 or cols=64, chain=1;
-  // same thing, but more convenient to think of.
+  /**
+   * The number of columns supported by a single display panel.
+   * @default 32
+   */
   cols: 16 | 32 | 40 | 64;
 
-  // The chain_length is the number of displays daisy-chained together
-  // (output of one connected to input of next). Default: 1
+  /**
+   * The numbr of display panels daisy-chained together.
+   * Acts as a multiplier of the total number of columns.
+   * @default 1
+   */
   chain_length: 1 | 2 | 3 | 4;
 
-  // The number of parallel chains connected to the Pi; in old Pis with 26
-  // GPIO pins, that is 1, in newer Pis with 40 interfaces pins, that can
-  // also be 2 or 3. The effective number of pixels in vertical direction is
-  // then thus rows * parallel. Default: 1
+  /**
+   * The number of parallel chains connected to the Pi.
+   * Acts as a multiplier of the total number of rows.
+   * @default 1
+   */
   parallel: 1 | 2 | 3 | 4;
 
   // Set PWM bits used for output. Default is 11, but if you only deal with
@@ -82,11 +84,12 @@ export interface MatrixOptions {
   // The lower bits can be time-dithered for higher refresh rate.
   pwm_dither_bits: number;
 
-  // The initial brightness of the panel in percent. Valid range is 1..100
-  // Default: 100
+  /**
+   * The initial brightness of the panel in percent.
+   * @default 100
+   */
   brightness: number;
 
-  // Scan mode: 0=progressive, 1=interlaced
   scan_mode: ScanMode;
 
   // Default row address type is 0, corresponding to direct setting of the
@@ -117,7 +120,11 @@ export interface MatrixOptions {
  * dropping privileges and becoming a daemon.
  */
 export interface RuntimeOptions {
-  gpio_slowdown: number;    // 0 = no slowdown.
+  /**
+   * @default 0
+   */
+  gpio_slowdown: number;
+
   /**
    * If daemon is Disabled, the user has to call StartRefresh() manually
    * once the matrix is created, to leave the decision to become a daemon
@@ -141,7 +148,6 @@ export interface RuntimeOptions {
   do_gpio_init: boolean;
 }
 
-// tslint:disable-next-line:no-empty-interface
 export interface LedMatrixInstance {
   brightness(brightness?: number): number;
   height(): number;

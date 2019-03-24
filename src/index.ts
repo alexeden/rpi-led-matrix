@@ -1,2 +1,2 @@
 export * from './types';
-export * from './led-matrix';
+export * from './addon';
