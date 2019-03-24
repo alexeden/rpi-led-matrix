@@ -1,5 +1,5 @@
 import { addon } from './led-matrix';
-import { MatrixOptions, RuntimeOptions } from './types';
+import { MatrixOptions, RuntimeOptions, GpioMapping } from './types';
 
 try {
   console.log('addon: ', addon);
@@ -11,7 +11,8 @@ try {
     rows: 32,
     cols: 64,
     chain_length: 2,
-    hardware_mapping: 'adafruit-hat',
+    disable_hardware_pulsing: true,
+    hardware_mapping: GpioMapping.AdafruitHatPwm,
   };
   const runtimeOpts: RuntimeOptions = {
     ...addon.LedMatrix.defaultRuntimeOptions(),
@@ -21,7 +22,6 @@ try {
   const instance = new addon.LedMatrix(matrixOpts, runtimeOpts);
   console.log('new addon.LedMatrix: ', instance);
   // tslint:disable-next-line:no-any
-  console.log('instance.currentMatrixOptions(): ', (instance as any).currentMatrixOptions());
   console.log('instance.brightness(): ', instance.brightness());
   console.log('instance.brightness(0): ', instance.brightness(0));
   console.log('instance.brightness(100): ', instance.brightness(100));
@@ -29,7 +29,7 @@ try {
   console.log('instance.width(): ', instance.width());
 
 
-  setTimeout(() => (instance as any).currentMatrixOptions(), 5000);
+  setTimeout(() => console.log('bye!'), 5000);
 
 }
 catch (error) {
