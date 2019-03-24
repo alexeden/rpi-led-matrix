@@ -22,6 +22,10 @@ try {
   const instance = new addon.LedMatrix(matrixOpts, runtimeOpts);
   console.log('new addon.LedMatrix: ', instance);
   // tslint:disable-next-line:no-any
+  console.log('instance.pwmBits(): ', instance.pwmBits());
+  console.log('instance.pwmBits(1): ', instance.pwmBits(1));
+  console.log('instance.pwmBits(12): ', instance.pwmBits(12));
+  console.log('instance.pwmBits(11): ', instance.pwmBits(11));
   console.log('instance.brightness(): ', instance.brightness());
   console.log('instance.brightness(0): ', instance.brightness(0));
   console.log('instance.brightness(100): ', instance.brightness(100));
