@@ -27,6 +27,15 @@ export enum RowAddressType {
   AB = 1,
 }
 
+export enum GpioMapping {
+  Regular = 'regular',
+  AdafruitHat = 'adafruit-hat',
+  AdafruitHatPwm = 'adafruit-hat-pwm',
+  RegularPi1 = 'regular-pi1',
+  Classic = 'classic',
+  ClassicPi1 = 'classic-pi1',
+}
+
 // Options to initialize the RGBMatrix. Also see the main README.md for
 // detailed descriptions of the command line flags.
 export interface MatrixOptions {
@@ -36,7 +45,7 @@ export interface MatrixOptions {
   // bool Validate(std::string *err) const;
 
   // Name of the hardware mapping. Something like "regular" or "adafruit-hat"
-  hardware_mapping: 'regular' | 'adafruit-hat';
+  hardware_mapping: GpioMapping;
 
   // The "rows" are the number
   // of rows supported by the display, so 32 or 16. Default: 32.
