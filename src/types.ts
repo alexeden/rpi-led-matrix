@@ -127,7 +127,6 @@ export interface MatrixOptions {
   // real mapping. Some panels mix up these colors.
   led_rgb_sequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
 
-
   inverse_colors: boolean;
 
   /**
@@ -176,6 +175,7 @@ export interface RuntimeOptions {
 export interface LedMatrixInstance {
   brightness(brightness?: number): number;
   height(): number;
+  pwmBits(pwmBits?: number): number;
   width(): number;
 }
 

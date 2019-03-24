@@ -10,6 +10,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		StaticMethod("defaultMatrixOptions", &NodeLedMatrix::defaultMatrixOptions),
 		StaticMethod("defaultRuntimeOptions", &NodeLedMatrix::defaultRuntimeOptions),
 		InstanceMethod("brightness", &NodeLedMatrix::brightness),
+		InstanceMethod("pwmBits", &NodeLedMatrix::pwmBits),
 		InstanceMethod("height", &NodeLedMatrix::height),
 		InstanceMethod("width", &NodeLedMatrix::width)
 	});
@@ -58,6 +59,14 @@ Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
 		this->matrix_->SetBrightness(brightness);
 	}
 	return Napi::Number::New(info.Env(), this->matrix_->brightness());
+}
+
+Napi::Value NodeLedMatrix::pwmBits(const Napi::CallbackInfo& info) {
+	if (info.Length() > 0 && info[0].IsNumber()) {
+		auto bits = info[0].As<Napi::Number>().Uint32Value();
+		this->matrix_->SetPWMBits(bits);
+	}
+	return Napi::Number::New(info.Env(), this->matrix_->pwmbits());
 }
 
 Napi::Value NodeLedMatrix::height(const Napi::CallbackInfo& info) {
