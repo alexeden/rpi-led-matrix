@@ -102,6 +102,7 @@ RGBMatrix::Options NodeLedMatrix::createMatrixOptions(const Napi::Env& env, cons
  */
 RuntimeOptions NodeLedMatrix::createRuntimeOptions(const Napi::Env& env, const Napi::Object& obj) {
 	RuntimeOptions options = RuntimeOptions();
+
 	options.gpio_slowdown = NapiUtils::getProp(env, obj, "gpio_slowdown").As<Napi::Number>();
 	options.daemon = NapiUtils::getProp(env, obj, "daemon").As<Napi::Number>();
 	options.drop_privileges = NapiUtils::getProp(env, obj, "drop_privileges").As<Napi::Number>();
@@ -118,6 +119,7 @@ Napi::Object NodeLedMatrix::matrixOptionsToObj(
 	const RGBMatrix::Options& options
 ) {
 	auto obj = Napi::Object::New(env);
+
 	obj.Set("brightness", Napi::Number::New(env, options.brightness));
 	obj.Set("chain_length", Napi::Number::New(env, options.chain_length));
 	obj.Set("cols", Napi::Number::New(env, options.cols));
@@ -132,9 +134,6 @@ Napi::Object NodeLedMatrix::matrixOptionsToObj(
 	obj.Set("disable_hardware_pulsing", Napi::Boolean::New(env, options.disable_hardware_pulsing));
 	obj.Set("inverse_colors", Napi::Boolean::New(env, options.inverse_colors));
 	obj.Set("show_refresh_rate", Napi::Boolean::New(env, options.show_refresh_rate));
-	// obj.Set("pixel_mapper_config", Napi::String::New(env, std::string(options.pixel_mapper_config)));
-
-	std::cout << "pixel_mapper_config\t" << options.pixel_mapper_config << std::endl << std::endl;
 
 	return obj;
 }

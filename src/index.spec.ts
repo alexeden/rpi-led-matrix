@@ -11,7 +11,7 @@ try {
     rows: 32,
     cols: 64,
     chain_length: 2,
-    disable_hardware_pulsing: true,
+    // disable_hardware_pulsing: true,
     hardware_mapping: GpioMapping.AdafruitHatPwm,
   };
   const runtimeOpts: RuntimeOptions = {
