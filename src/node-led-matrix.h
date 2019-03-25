@@ -11,6 +11,7 @@
 #include <graphics.h>
 #include "helpers.cc"
 #include "napi-utils.cc"
+#include "font.addon.h"
 
 using namespace rgb_matrix;
 
@@ -24,6 +25,7 @@ public:
 	void clear(const Napi::CallbackInfo& info);
 	void draw_circle(const Napi::CallbackInfo& info);
 	void draw_line(const Napi::CallbackInfo& info);
+	Napi::Value draw_text(const Napi::CallbackInfo& info);
 	void fill(const Napi::CallbackInfo& info);
 	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value luminance_correct(const Napi::CallbackInfo& info);

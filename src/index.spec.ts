@@ -44,6 +44,9 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
     console.log('matrix.width(): ', matrix.width());
 
 
+    // matrix.clear();
+    // console.log('matrix.drawText(font): ', matrix.drawText(font));
+
     const interval = 200;
     matrix.fill(0, 0, 255);
     await wait(interval);
@@ -60,7 +63,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       Array.from(Array(matrix.width())).map((_, x) => {
         matrix.setPixel(x, y, 255, 0, 0);
       });
-      await wait(66);
+      await wait(33);
     }
     for (let i = 0; i < matrix.width(); i++) {
       matrix.clear();
@@ -68,12 +71,12 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       Array.from(Array(matrix.height())).map((_, y) => {
         matrix.setPixel(x, y, 0, 0, 255);
       });
-      await wait(66);
+      await wait(33);
     }
 
     const centerX = Math.floor(matrix.width() / 2);
     const centerY = Math.floor(matrix.height() / 2);
-    for (let r = 0; r <= Math.floor(matrix.width() / 2); r++) {
+    for (let r = 0; r <= matrix.width(); r++) {
       matrix.clear();
       matrix.drawCircle(centerX, centerY, r, 0, 255, 0);
       await wait(66);
@@ -82,6 +85,12 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
     for (let i = 0; i < matrix.height(); i++) {
       matrix.clear();
       matrix.drawLine(0, i, matrix.width(), matrix.height() - i, 255, 0, 255);
+      await wait(66);
+    }
+
+    for (let i = matrix.width(); i >= 0; i--) {
+      matrix.clear();
+      matrix.drawLine(i, 0, matrix.width() - i, matrix.height(), 255, 0, 255);
       await wait(66);
     }
 
