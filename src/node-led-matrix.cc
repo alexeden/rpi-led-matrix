@@ -11,6 +11,8 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		StaticMethod("defaultRuntimeOptions", &NodeLedMatrix::default_runtime_options),
 		InstanceMethod("brightness", &NodeLedMatrix::brightness),
 		InstanceMethod("clear", &NodeLedMatrix::clear),
+		InstanceMethod("drawCircle", &NodeLedMatrix::draw_circle),
+		InstanceMethod("drawLine", &NodeLedMatrix::draw_line),
 		InstanceMethod("fill", &NodeLedMatrix::fill),
 		InstanceMethod("height", &NodeLedMatrix::height),
 		InstanceMethod("luminanceCorrect", &NodeLedMatrix::luminance_correct),
@@ -65,6 +67,23 @@ Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
 
 void NodeLedMatrix::clear(const Napi::CallbackInfo& info) {
 	this->matrix_->Clear();
+}
+
+void NodeLedMatrix::draw_circle(const Napi::CallbackInfo& info) {
+	const auto x = info[0].As<Napi::Number>().Uint32Value();
+	const auto y = info[1].As<Napi::Number>().Uint32Value();
+	const auto r = info[2].As<Napi::Number>().Uint32Value();
+	const auto color = NodeLedMatrix::color_from_callback_info(info, 3);
+	DrawCircle(this->matrix_, x, y, r, color);
+}
+
+void NodeLedMatrix::draw_line(const Napi::CallbackInfo& info) {
+	const auto x0 = info[0].As<Napi::Number>().Uint32Value();
+	const auto y0 = info[1].As<Napi::Number>().Uint32Value();
+	const auto x1 = info[2].As<Napi::Number>().Uint32Value();
+	const auto y1 = info[3].As<Napi::Number>().Uint32Value();
+	const auto color = NodeLedMatrix::color_from_callback_info(info, 4);
+	DrawLine(this->matrix_, x0, y0, x1, y1, color);
 }
 
 void NodeLedMatrix::fill(const Napi::CallbackInfo& info) {

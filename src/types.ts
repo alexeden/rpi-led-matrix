@@ -172,14 +172,18 @@ export interface RuntimeOptions {
   doGpioInit: boolean;
 }
 
+type Color = [number, number, number];
+
 export interface LedMatrixInstance {
   brightness(brightness?: number): number;
   clear(): void;
-  fill(r: number, g: number, b: number): void;
+  drawCircle(x: number, y: number, r: number, ...color: Color): void;
+  drawLine(x0: number, y0: number, x1: number, y1: number, ...color: Color): void;
+  fill(...color: Color): void;
   height(): number;
   luminanceCorrect(correct?: boolean): boolean;
   pwmBits(pwmBits?: number): number;
-  setPixel(x: number, y: number, r: number, g: number, b: number): void;
+  setPixel(x: number, y: number, ...color: Color): void;
   width(): number;
 }
 

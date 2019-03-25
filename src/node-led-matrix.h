@@ -22,6 +22,8 @@ public:
 
 	Napi::Value brightness(const Napi::CallbackInfo& info);
 	void clear(const Napi::CallbackInfo& info);
+	void draw_circle(const Napi::CallbackInfo& info);
+	void draw_line(const Napi::CallbackInfo& info);
 	void fill(const Napi::CallbackInfo& info);
 	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value luminance_correct(const Napi::CallbackInfo& info);
