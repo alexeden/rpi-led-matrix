@@ -179,6 +179,7 @@ export interface LedMatrixInstance {
   clear(): void;
   drawCircle(x: number, y: number, r: number, ...color: Color): void;
   drawLine(x0: number, y0: number, x1: number, y1: number, ...color: Color): void;
+  drawText(...args: any[]): number;
   fill(...color: Color): void;
   height(): number;
   luminanceCorrect(correct?: boolean): boolean;
@@ -196,7 +197,6 @@ export interface LedMatrix {
   ): LedMatrixInstance;
 }
 
-// tslint:disable-next-line:no-empty-interface
 export interface FontInstance {
   /**
    * Return the number of pixels from the font's top to its baseline.
