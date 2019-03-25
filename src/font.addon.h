@@ -16,6 +16,8 @@ public:
 
 	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value baseline(const Napi::CallbackInfo& info);
+	Napi::Value string_width(const Napi::CallbackInfo& info);
+
 private:
 	static Napi::FunctionReference constructor;
 

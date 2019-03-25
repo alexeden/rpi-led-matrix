@@ -202,6 +202,10 @@ export interface FontInstance {
    * Return the number of pixels from the font's top to its bottom.
    */
   height(): number;
+  /**
+   * Return the number of pixels spanned by a given string.
+   */
+  stringWidth(str: string): number;
 }
 
 export interface Font {

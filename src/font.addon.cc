@@ -6,6 +6,7 @@ Napi::Object FontAddon::Init(Napi::Env env, Napi::Object exports) {
 	Napi::Function func = DefineClass(env, "Font", {
 		InstanceMethod("baseline", &FontAddon::baseline),
 		InstanceMethod("height", &FontAddon::height),
+		InstanceMethod("stringWidth", &FontAddon::string_width)
 	});
 
     constructor = Napi::Persistent(func);
@@ -44,4 +45,18 @@ Napi::Value FontAddon::baseline(const Napi::CallbackInfo& info) {
 
 Napi::Value FontAddon::height(const Napi::CallbackInfo& info) {
 	return Napi::Number::New(info.Env(), this->font_->height());
+}
+
+Napi::Value FontAddon::string_width(const Napi::CallbackInfo& info) {
+	const std::string str = info[0].As<Napi::String>().ToString();
+	int sum = 0;
+
+	for(auto c : str) {
+		uint32_t codepoint = uint_least32_t(c);
+		int width = this->font_->CharacterWidth(codepoint);
+		if (width < 0) throw Napi::Error::New(info.Env(), "Character not found for this font.");
+		sum += width;
+	}
+
+	return Napi::Number::New(info.Env(), sum);
 }

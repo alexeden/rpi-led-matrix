@@ -29,6 +29,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
     console.log('new addon.Font: ', font);
     console.log('font.baseline(): ', font.baseline());
     console.log('font.height(): ', font.height());
+    console.log('font.stringWidth("abc"): ', font.stringWidth('Mi'));
 
     const matrix = new addon.LedMatrix(matrixOpts, runtimeOpts);
     console.log('new addon.LedMatrix: ', matrix);
