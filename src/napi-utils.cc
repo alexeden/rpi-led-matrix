@@ -4,7 +4,7 @@
 #include <napi.h>
 #include <sstream>
 
-namespace NapiUtils {
+namespace napi_utils {
 	static Napi::Value getProp(const Napi::Env& env, const Napi::Object& obj, const char *key) {
 		if (!obj.Has(key)) {
 			std::stringstream ss;

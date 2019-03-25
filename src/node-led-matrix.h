@@ -9,6 +9,7 @@
 #include <iostream>
 #include <led-matrix.h>
 #include <graphics.h>
+#include "helpers.cc"
 #include "napi-utils.cc"
 
 using namespace rgb_matrix;

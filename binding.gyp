@@ -4,6 +4,7 @@
       "target_name": "led-matrix",
       "sources": [
         "src/addon.cc",
+        "src/helpers.cc",
         "src/napi-utils.cc",
         "src/node-led-matrix.cc",
         "src/font.addon.cc",

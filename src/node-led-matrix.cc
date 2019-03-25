@@ -1,7 +1,7 @@
 #include "node-led-matrix.h"
 
 using namespace rgb_matrix;
-char* string_to_c_str(const std::string &str);
+using namespace napi_utils;
 
 Napi::FunctionReference NodeLedMatrix::constructor;
 
@@ -110,23 +110,23 @@ Napi::Value NodeLedMatrix::width(const Napi::CallbackInfo& info) {
 RGBMatrix::Options NodeLedMatrix::create_matrix_options(const Napi::Env& env, const Napi::Object& obj) {
 	RGBMatrix::Options options = RGBMatrix::Options();
 
-	options.brightness = NapiUtils::getProp(env, obj, "brightness").As<Napi::Number>();
-	options.chain_length = NapiUtils::getProp(env, obj, "chainLength").As<Napi::Number>();
-	options.cols = NapiUtils::getProp(env, obj, "cols").As<Napi::Number>();
-	options.disable_hardware_pulsing = NapiUtils::getProp(env, obj, "disableHardwarePulsing").As<Napi::Boolean>();
-	options.hardware_mapping = string_to_c_str(NapiUtils::getProp(env, obj, "hardwareMapping").As<Napi::String>());
-	options.inverse_colors = NapiUtils::getProp(env, obj, "inverseColors").As<Napi::Boolean>();
-	options.led_rgb_sequence = string_to_c_str(NapiUtils::getProp(env, obj, "ledRgbSequence").As<Napi::String>());
-	options.multiplexing = NapiUtils::getProp(env, obj, "multiplexing").As<Napi::Number>();
-	options.parallel = NapiUtils::getProp(env, obj, "parallel").As<Napi::Number>();
-	options.pixel_mapper_config = string_to_c_str(NapiUtils::getProp(env, obj, "pixelMapperConfig").As<Napi::String>());
-	options.pwm_bits = NapiUtils::getProp(env, obj, "pwmBits").As<Napi::Number>();
-	options.pwm_dither_bits = NapiUtils::getProp(env, obj, "pwmDitherBits").As<Napi::Number>();
-	options.pwm_lsb_nanoseconds = NapiUtils::getProp(env, obj, "pwmLsbNanoseconds").As<Napi::Number>();
-	options.row_address_type = NapiUtils::getProp(env, obj, "rowAddressType").As<Napi::Number>();
-	options.rows = NapiUtils::getProp(env, obj, "rows").As<Napi::Number>();
-	options.scan_mode = NapiUtils::getProp(env, obj, "scanMode").As<Napi::Number>();
-	options.show_refresh_rate = NapiUtils::getProp(env, obj, "showRefreshRate").As<Napi::Boolean>();
+	options.brightness = getProp(env, obj, "brightness").As<Napi::Number>();
+	options.chain_length = getProp(env, obj, "chainLength").As<Napi::Number>();
+	options.cols = getProp(env, obj, "cols").As<Napi::Number>();
+	options.disable_hardware_pulsing = getProp(env, obj, "disableHardwarePulsing").As<Napi::Boolean>();
+	options.hardware_mapping = helpers::string_to_c_str(getProp(env, obj, "hardwareMapping").As<Napi::String>());
+	options.inverse_colors = getProp(env, obj, "inverseColors").As<Napi::Boolean>();
+	options.led_rgb_sequence = helpers::string_to_c_str(getProp(env, obj, "ledRgbSequence").As<Napi::String>());
+	options.multiplexing = getProp(env, obj, "multiplexing").As<Napi::Number>();
+	options.parallel = getProp(env, obj, "parallel").As<Napi::Number>();
+	options.pixel_mapper_config = helpers::string_to_c_str(getProp(env, obj, "pixelMapperConfig").As<Napi::String>());
+	options.pwm_bits = getProp(env, obj, "pwmBits").As<Napi::Number>();
+	options.pwm_dither_bits = getProp(env, obj, "pwmDitherBits").As<Napi::Number>();
+	options.pwm_lsb_nanoseconds = getProp(env, obj, "pwmLsbNanoseconds").As<Napi::Number>();
+	options.row_address_type = getProp(env, obj, "rowAddressType").As<Napi::Number>();
+	options.rows = getProp(env, obj, "rows").As<Napi::Number>();
+	options.scan_mode = getProp(env, obj, "scanMode").As<Napi::Number>();
+	options.show_refresh_rate = getProp(env, obj, "showRefreshRate").As<Napi::Boolean>();
 
 	// Validate the options using native method
 	std::string error;
@@ -141,10 +141,10 @@ RGBMatrix::Options NodeLedMatrix::create_matrix_options(const Napi::Env& env, co
 RuntimeOptions NodeLedMatrix::create_runtime_options(const Napi::Env& env, const Napi::Object& obj) {
 	RuntimeOptions options = RuntimeOptions();
 
-	options.gpio_slowdown = NapiUtils::getProp(env, obj, "gpioSlowdown").As<Napi::Number>();
-	options.daemon = NapiUtils::getProp(env, obj, "daemon").As<Napi::Number>();
-	options.drop_privileges = NapiUtils::getProp(env, obj, "dropPrivileges").As<Napi::Number>();
-	options.do_gpio_init = NapiUtils::getProp(env, obj, "doGpioInit").As<Napi::Boolean>();
+	options.gpio_slowdown = getProp(env, obj, "gpioSlowdown").As<Napi::Number>();
+	options.daemon = getProp(env, obj, "daemon").As<Napi::Number>();
+	options.drop_privileges = getProp(env, obj, "dropPrivileges").As<Napi::Number>();
+	options.do_gpio_init = getProp(env, obj, "doGpioInit").As<Napi::Boolean>();
 
 	return options;
 }
@@ -231,10 +231,4 @@ Color NodeLedMatrix::color_from_callback_info(const Napi::CallbackInfo& info, ui
 	uint8_t b = info[argOffset + 2].As<Napi::Number>().Uint32Value();
 
 	return Color(r, g, b);
-}
-
-char* string_to_c_str(const std::string &str) {
-	char *cptr = new char[str.size()];
-	std::strcpy(cptr, str.c_str());
-	return cptr;
 }
