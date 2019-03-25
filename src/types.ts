@@ -51,7 +51,7 @@ export interface MatrixOptions {
    * The type of GPIO mapping of the device.
    * @default GpioMapping.Regular
    */
-  hardware_mapping: GpioMapping;
+  hardwareMapping: GpioMapping;
 
   /**
    * The number of rows supported by a single display panel.
@@ -70,7 +70,7 @@ export interface MatrixOptions {
    * Acts as a multiplier of the total number of columns.
    * @default 1
    */
-  chain_length: 1 | 2 | 3 | 4;
+  chainLength: 1 | 2 | 3 | 4;
 
   /**
    * The number of parallel chains connected to the Pi.
@@ -82,16 +82,16 @@ export interface MatrixOptions {
   // Set PWM bits used for output. Default is 11, but if you only deal with
   // limited comic-colors, 1 might be sufficient. Lower require less CPU and
   // increases refresh-rate.
-  pwm_bits: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+  pwmBits: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
   // Change the base time-unit for the on-time in the lowest
   // significant bit in nanoseconds.
   // Higher numbers provide better quality (more accurate color, less
   // ghosting), but have a negative impact on the frame rate.
-  pwm_lsb_nanoseconds: number;
+  pwmLsbNanoseconds: number;
 
   // The lower bits can be time-dithered for higher refresh rate.
-  pwm_dither_bits: number;
+  pwmDitherBits: number;
 
   /**
    * The initial brightness of the panel in percent.
@@ -99,12 +99,12 @@ export interface MatrixOptions {
    */
   brightness: number;
 
-  scan_mode: ScanMode;
+  scanMode: ScanMode;
 
   // Default row address type is 0, corresponding to direct setting of the
   // row, while row address type 1 is used for panels that only have A/B,
   // typically some 64x64 panels
-  row_address_type: RowAddressType;
+  rowAddressType: RowAddressType;
 
   // Type of multiplexing. 0 = direct, 1 = stripe, 2 = checker (typical 1:8)
   multiplexing: MuxType;
@@ -115,19 +115,19 @@ export interface MatrixOptions {
   // sound system.
   // This won't do anything if output enable is not connected to GPIO 18 in
   // non-standard wirings.
-  disable_hardware_pulsing: boolean;
+  disableHardwarePulsing: boolean;
 
   /**
    * Print the current refresh rate in real-time to the stderr.
    * @default false
    */
-  show_refresh_rate: boolean;
+  showRefreshRate: boolean;
 
   // In case the internal sequence of mapping is not "RGB", this contains the
   // real mapping. Some panels mix up these colors.
-  led_rgb_sequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
+  ledRgbSequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
 
-  inverse_colors: boolean;
+  inverseColors: boolean;
 
   /**
    * A special string representing selected pixel mappers used to match the
@@ -136,7 +136,7 @@ export interface MatrixOptions {
    * Use LedMatrixUtils.encodeMappers() to conventiently get the formatted string from a
    * list of mappers.
    */
-  pixel_mapper_config: string;
+  pixelMapperConfig: string;
 }
 
 /**
@@ -147,7 +147,7 @@ export interface RuntimeOptions {
   /**
    * @default 0
    */
-  gpio_slowdown: number;
+  gpioSlowdown: number;
 
   /**
    * If daemon is Disabled, the user has to call StartRefresh() manually
@@ -162,14 +162,14 @@ export interface RuntimeOptions {
    * Drop privileges from 'root' to 'daemon' once the hardware is initialized.
    * This is usually a good idea unless you need to stay on elevated privs.
    */
-  drop_privileges: RuntimeFlag;
+  dropPrivileges: RuntimeFlag;
 
   /**
    * By default, the gpio is initialized for you, but if you want to manually
    * do that yourself, set this flag to false.
    * Then, you have to initialize the matrix yourself with SetGPIO().
    */
-  do_gpio_init: boolean;
+  doGpioInit: boolean;
 }
 
 export interface LedMatrixInstance {

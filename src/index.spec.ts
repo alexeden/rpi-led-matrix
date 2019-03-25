@@ -14,9 +14,9 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       ...addon.LedMatrix.defaultMatrixOptions(),
       rows: 32,
       cols: 64,
-      chain_length: 2,
-      hardware_mapping: GpioMapping.AdafruitHatPwm,
-      pixel_mapper_config: LedMatrixUtils.encodeMappers(
+      chainLength: 2,
+      hardwareMapping: GpioMapping.AdafruitHatPwm,
+      pixelMapperConfig: LedMatrixUtils.encodeMappers(
         { type: PixelMapperType.U }
         // { type: PixelMapperType.Rotate, angle: 90 }
       ),
@@ -25,7 +25,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
     const runtimeOpts: RuntimeOptions = {
       ...addon.LedMatrix.defaultRuntimeOptions(),
-      gpio_slowdown: 1,
+      gpioSlowdown: 1,
     };
 
     const instance = new addon.LedMatrix(matrixOpts, runtimeOpts);
