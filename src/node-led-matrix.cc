@@ -51,7 +51,7 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<
 }
 
 NodeLedMatrix::~NodeLedMatrix(void) {
-	fprintf(stderr, "%sMatrix deleted\n", FOREMAG);
+	std::cerr << "Destroying matrix" << std::endl;
 	delete this->matrix_;
 }
 

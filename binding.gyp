@@ -6,6 +6,7 @@
         "src/addon.cc",
         "src/napi-utils.cc",
         "src/node-led-matrix.cc",
+        "src/font.addon.cc",
       ],
       'include_dirs': [
         "./rpi-rgb-led-matrix/include",
