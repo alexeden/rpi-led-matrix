@@ -7,6 +7,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 (async () => {
   try {
     console.log('addon: ', addon);
+    console.log('addon.Font: ', addon.Font);
     console.log('addon.LedMatrix: ', addon.LedMatrix);
     console.log('addon.LedMatrix.defaultMatrixOptions(): ', addon.LedMatrix.defaultMatrixOptions());
     console.log('addon.LedMatrix.defaultRuntimeOptions(): ', addon.LedMatrix.defaultRuntimeOptions());
@@ -16,11 +17,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       cols: 64,
       chainLength: 2,
       hardwareMapping: GpioMapping.AdafruitHatPwm,
-      pixelMapperConfig: LedMatrixUtils.encodeMappers(
-        { type: PixelMapperType.U }
-        // { type: PixelMapperType.Rotate, angle: 90 }
-      ),
-
+      pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
     };
 
     const runtimeOpts: RuntimeOptions = {
@@ -28,51 +25,54 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       gpioSlowdown: 1,
     };
 
-    const instance = new addon.LedMatrix(matrixOpts, runtimeOpts);
-    console.log('new addon.LedMatrix: ', instance);
-    console.log('instance.pwmBits(): ', instance.pwmBits());
-    console.log('instance.pwmBits(1): ', instance.pwmBits(1));
-    console.log('instance.pwmBits(12): ', instance.pwmBits(12));
-    console.log('instance.pwmBits(11): ', instance.pwmBits(11));
-    console.log('instance.brightness(): ', instance.brightness());
-    console.log('instance.brightness(0): ', instance.brightness(0));
-    console.log('instance.brightness(100): ', instance.brightness(100));
-    console.log('instance.height(): ', instance.height());
-    console.log('instance.width(): ', instance.width());
+    const font = new addon.Font('');
+    console.log('new addon.Font: ', font);
+
+    const matrix = new addon.LedMatrix(matrixOpts, runtimeOpts);
+    console.log('new addon.LedMatrix: ', matrix);
+    console.log('matrix.pwmBits(): ', matrix.pwmBits());
+    console.log('matrix.pwmBits(1): ', matrix.pwmBits(1));
+    console.log('matrix.pwmBits(12): ', matrix.pwmBits(12));
+    console.log('matrix.pwmBits(11): ', matrix.pwmBits(11));
+    console.log('matrix.brightness(): ', matrix.brightness());
+    console.log('matrix.brightness(0): ', matrix.brightness(0));
+    console.log('matrix.brightness(100): ', matrix.brightness(100));
+    console.log('matrix.height(): ', matrix.height());
+    console.log('matrix.width(): ', matrix.width());
 
 
     const interval = 333;
-    instance.fill(0, 0, 255);
+    matrix.fill(0, 0, 255);
     await wait(interval);
-    instance.fill(0, 255, 0);
+    matrix.fill(0, 255, 0);
     await wait(interval);
-    instance.fill(255, 0, 0);
+    matrix.fill(255, 0, 0);
     await wait(interval);
-    instance.clear();
+    matrix.clear();
     await wait(interval);
 
-    for (let i = 0; i < instance.height(); i++) {
-      instance.clear();
+    for (let i = 0; i < matrix.height(); i++) {
+      matrix.clear();
       const y = i;
-      Array.from(Array(instance.width())).map((_, x) => {
-        instance.setPixel(x, y, 255, 0, 0);
+      Array.from(Array(matrix.width())).map((_, x) => {
+        matrix.setPixel(x, y, 255, 0, 0);
       });
       await wait(100);
     }
-    for (let i = 0; i < instance.width(); i++) {
-      instance.clear();
+    for (let i = 0; i < matrix.width(); i++) {
+      matrix.clear();
       const x = i;
-      Array.from(Array(instance.height())).map((_, y) => {
-        instance.setPixel(x, y, 0, 0, 255);
+      Array.from(Array(matrix.height())).map((_, y) => {
+        matrix.setPixel(x, y, 0, 0, 255);
       });
       await wait(100);
     }
 
-    console.log('instance.luminanceCorrect(true): ', instance.luminanceCorrect(true));
-    instance.fill(0, 255, 0);
+    console.log('matrix.luminanceCorrect(true): ', matrix.luminanceCorrect(true));
+    matrix.fill(0, 255, 0);
     await wait(2000);
-    console.log('instance.luminanceCorrect(false): ', instance.luminanceCorrect(false));
-    instance.fill(0, 255, 0);
+    console.log('matrix.luminanceCorrect(false): ', matrix.luminanceCorrect(false));
+    matrix.fill(0, 255, 0);
     await wait(2000);
 
   }

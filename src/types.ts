@@ -192,6 +192,18 @@ export interface LedMatrix {
   ): LedMatrixInstance;
 }
 
+// tslint:disable-next-line:no-empty-interface
+export interface FontInstance {
+}
+
+export interface Font {
+  // tslint:disable-next-line:callable-types
+  new (
+    path: string
+  ): FontInstance;
+}
+
 export interface LedMatrixAddon {
+  Font: Font;
   LedMatrix: LedMatrix;
 }
