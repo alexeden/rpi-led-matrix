@@ -4,6 +4,7 @@
 #include <iostream>
 #include <napi.h>
 #include <graphics.h>
+#include "helpers.cc"
 
 using namespace rgb_matrix;
 

@@ -25,7 +25,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       gpioSlowdown: 1,
     };
 
-    const font = new addon.Font('');
+    const font = new addon.Font('../rpi-rgb-led-matrix/fonts/helvR12.bdf');
     console.log('new addon.Font: ', font);
 
     const matrix = new addon.LedMatrix(matrixOpts, runtimeOpts);

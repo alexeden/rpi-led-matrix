@@ -20,7 +20,15 @@ FontAddon::FontAddon(const Napi::CallbackInfo &info) : Napi::ObjectWrap<FontAddo
 		throw Napi::Error::New(env, "Font constructor expects its first parameter to be a path to the font asset.");
 	}
 
+	const auto path = helpers::string_to_c_str(info[0].As<Napi::String>().ToString());
+
 	this->font_ = new Font();
+	if (!this->font_->LoadFont(path)) {
+		throw Napi::Error::New(env, "Failed to load font");
+	}
+
+	std::cerr << "Path to font: " << path << " height: " << this->font_->height() << std::endl;
+
 }
 
 FontAddon::~FontAddon(void) {
