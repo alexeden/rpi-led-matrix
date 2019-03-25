@@ -14,6 +14,8 @@ public:
     FontAddon(const Napi::CallbackInfo &info);
 	~FontAddon();
 
+	Napi::Value height(const Napi::CallbackInfo& info);
+	Napi::Value baseline(const Napi::CallbackInfo& info);
 private:
 	static Napi::FunctionReference constructor;
 

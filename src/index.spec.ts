@@ -27,6 +27,8 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
     const font = new addon.Font('../rpi-rgb-led-matrix/fonts/helvR12.bdf');
     console.log('new addon.Font: ', font);
+    console.log('font.baseline(): ', font.baseline());
+    console.log('font.height(): ', font.height());
 
     const matrix = new addon.LedMatrix(matrixOpts, runtimeOpts);
     console.log('new addon.LedMatrix: ', matrix);

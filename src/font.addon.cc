@@ -4,6 +4,8 @@ Napi::FunctionReference FontAddon::constructor;
 
 Napi::Object FontAddon::Init(Napi::Env env, Napi::Object exports) {
 	Napi::Function func = DefineClass(env, "Font", {
+		InstanceMethod("baseline", &FontAddon::baseline),
+		InstanceMethod("height", &FontAddon::height),
 	});
 
     constructor = Napi::Persistent(func);
@@ -34,4 +36,12 @@ FontAddon::FontAddon(const Napi::CallbackInfo &info) : Napi::ObjectWrap<FontAddo
 FontAddon::~FontAddon(void) {
 	std::cerr << "Destroying font" << std::endl;
 	this->font_->~Font();
+}
+
+Napi::Value FontAddon::baseline(const Napi::CallbackInfo& info) {
+	return Napi::Number::New(info.Env(), this->font_->baseline());
+}
+
+Napi::Value FontAddon::height(const Napi::CallbackInfo& info) {
+	return Napi::Number::New(info.Env(), this->font_->height());
 }

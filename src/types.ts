@@ -194,6 +194,14 @@ export interface LedMatrix {
 
 // tslint:disable-next-line:no-empty-interface
 export interface FontInstance {
+  /**
+   * Return the number of pixels from the font's top to its baseline.
+   */
+  baseline(): number;
+  /**
+   * Return the number of pixels from the font's top to its bottom.
+   */
+  height(): number;
 }
 
 export interface Font {
