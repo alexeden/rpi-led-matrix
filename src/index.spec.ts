@@ -56,7 +56,6 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
     console.log('matrix.brightness(100): ', matrix.brightness(100));
     console.log('matrix.height(): ', matrix.height());
     console.log('matrix.width(): ', matrix.width());
-    console.log('matrix.registerFont(): ', matrix.registerFont('helv', '../rpi-rgb-led-matrix/fonts/helvR12.bdf'));
 
     matrix.clear();
     console.log('', matrix.drawText('YAAAS!!!', font, 0, 255, 255));
