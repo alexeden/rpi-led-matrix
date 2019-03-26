@@ -41,9 +41,9 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
 
     const font = new addon.Font('../rpi-rgb-led-matrix/fonts/helvR12.bdf');
     console.log('new addon.Font: ', font);
-    // console.log('font.baseline(): ', font.baseline());
-    // console.log('font.height(): ', font.height());
-    // console.log('font.stringWidth("abc"): ', font.stringWidth('Mi'));
+    console.log('font.baseline(): ', font.baseline());
+    console.log('font.height(): ', font.height());
+    console.log('font.stringWidth("abc"): ', font.stringWidth('Mi'));
 
     const matrix = new addon.LedMatrix(matrixOpts, runtimeOpts);
     console.log('new addon.LedMatrix: ', matrix);
