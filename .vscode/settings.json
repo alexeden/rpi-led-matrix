@@ -101,6 +101,9 @@
     "unordered_set": "cpp",
     "valarray": "cpp",
     "charconv": "cpp",
-    "cuchar": "cpp"
+    "cuchar": "cpp",
+    "__errc": "cpp",
+    "__node_handle": "cpp",
+    "optional": "cpp"
   }
 }
