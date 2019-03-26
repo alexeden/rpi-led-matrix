@@ -1,8 +1,22 @@
 import { addon } from './addon';
-import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType } from './types';
+import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType, LedMatrixInstance } from './types';
 import { LedMatrixUtils } from './utils';
 
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
+
+const spin = async (matrix: LedMatrixInstance, speed = 50) => {
+  for (let i = 0; i < matrix.height(); i++) {
+    matrix.clear();
+    matrix.drawLine(0, i, matrix.width(), matrix.height() - i, 255, 0, 255);
+    await wait(speed);
+  }
+
+  for (let i = matrix.width(); i >= 0; i--) {
+    matrix.clear();
+    matrix.drawLine(i, 0, matrix.width() - i, matrix.height(), 255, 0, 255);
+    await wait(speed);
+  }
+};
 
 (async () => {
   try {
@@ -27,9 +41,9 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
     const font = new addon.Font('../rpi-rgb-led-matrix/fonts/helvR12.bdf');
     console.log('new addon.Font: ', font);
-    console.log('font.baseline(): ', font.baseline());
-    console.log('font.height(): ', font.height());
-    console.log('font.stringWidth("abc"): ', font.stringWidth('Mi'));
+    // console.log('font.baseline(): ', font.baseline());
+    // console.log('font.height(): ', font.height());
+    // console.log('font.stringWidth("abc"): ', font.stringWidth('Mi'));
 
     const matrix = new addon.LedMatrix(matrixOpts, runtimeOpts);
     console.log('new addon.LedMatrix: ', matrix);
@@ -44,9 +58,9 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
     console.log('matrix.width(): ', matrix.width());
     console.log('matrix.registerFont(): ', matrix.registerFont('helv', '../rpi-rgb-led-matrix/fonts/helvR12.bdf'));
 
-
-    // matrix.clear();
-    // console.log('matrix.drawText(font): ', matrix.drawText(font));
+    matrix.clear();
+    console.log('', matrix.drawText('YAAAS!!!', font, 0, 255, 255));
+    await wait(2000);
 
     const interval = 200;
     matrix.fill(0, 0, 255);
@@ -83,17 +97,30 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       await wait(66);
     }
 
-    for (let i = 0; i < matrix.height(); i++) {
-      matrix.clear();
-      matrix.drawLine(0, i, matrix.width(), matrix.height() - i, 255, 0, 255);
-      await wait(66);
-    }
-
-    for (let i = matrix.width(); i >= 0; i--) {
-      matrix.clear();
-      matrix.drawLine(i, 0, matrix.width() - i, matrix.height(), 255, 0, 255);
-      await wait(66);
-    }
+    await spin(matrix);
+    await spin(matrix, 40);
+    await spin(matrix, 30);
+    await spin(matrix, 20);
+    await spin(matrix, 10);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
+    await spin(matrix, 5);
 
   }
   catch (error) {

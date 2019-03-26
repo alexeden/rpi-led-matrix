@@ -14,6 +14,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("clear", &NodeLedMatrix::clear),
 		InstanceMethod("drawCircle", &NodeLedMatrix::draw_circle),
 		InstanceMethod("drawLine", &NodeLedMatrix::draw_line),
+		InstanceMethod("drawText", &NodeLedMatrix::draw_text),
 		InstanceMethod("fill", &NodeLedMatrix::fill),
 		InstanceMethod("height", &NodeLedMatrix::height),
 		InstanceMethod("luminanceCorrect", &NodeLedMatrix::luminance_correct),
@@ -86,6 +87,14 @@ void NodeLedMatrix::draw_line(const Napi::CallbackInfo& info) {
 	const auto y1 = info[3].As<Napi::Number>().Uint32Value();
 	const auto color = NodeLedMatrix::color_from_callback_info(info, 4);
 	DrawLine(this->matrix_, x0, y0, x1, y1, color);
+}
+
+Napi::Value NodeLedMatrix::draw_text(const Napi::CallbackInfo& info) {
+	const auto text = helpers::string_to_c_str(info[0].As<Napi::String>());
+	const auto font = Napi::ObjectWrap<FontAddon>::Unwrap(info[1].As<Napi::Object>());
+	const auto color = NodeLedMatrix::color_from_callback_info(info, 2);
+	auto advanced = DrawText(this->matrix_, font->font_, 0, 20, color, text);
+	return Napi::Number::New(info.Env(), advanced);
 }
 
 void NodeLedMatrix::fill(const Napi::CallbackInfo& info) {

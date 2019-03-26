@@ -179,7 +179,7 @@ export interface LedMatrixInstance {
   clear(): void;
   drawCircle(x: number, y: number, r: number, ...color: Color): void;
   drawLine(x0: number, y0: number, x1: number, y1: number, ...color: Color): void;
-  drawText(...args: any[]): number;
+  drawText(text: string, font: FontInstance, ...color: Color): number;
   fill(...color: Color): void;
   height(): number;
   luminanceCorrect(correct?: boolean): boolean;
