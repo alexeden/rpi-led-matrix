@@ -184,6 +184,9 @@ export interface LedMatrixInstance {
   height(): number;
   luminanceCorrect(correct?: boolean): boolean;
   pwmBits(pwmBits?: number): number;
+  setBgColor(...color: Color): this;
+  setFgColor(...color: Color): this;
+  setFont(font: FontInstance): this;
   setPixel(x: number, y: number, ...color: Color): void;
   width(): number;
 }

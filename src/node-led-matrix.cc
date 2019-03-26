@@ -18,6 +18,9 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("height", &NodeLedMatrix::height),
 		InstanceMethod("luminanceCorrect", &NodeLedMatrix::luminance_correct),
 		InstanceMethod("pwmBits", &NodeLedMatrix::pwm_bits),
+		InstanceMethod("setBgColor", &NodeLedMatrix::set_bg_color),
+		InstanceMethod("setFgColor", &NodeLedMatrix::set_fg_color),
+		InstanceMethod("setFont", &NodeLedMatrix::set_font),
 		InstanceMethod("setPixel", &NodeLedMatrix::set_pixel),
 		InstanceMethod("width", &NodeLedMatrix::width)
 	});
@@ -126,6 +129,24 @@ void NodeLedMatrix::set_pixel(const Napi::CallbackInfo& info) {
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
 	const auto color = NodeLedMatrix::color_from_callback_info(info, 2);
 	this->matrix_->SetPixel(x, y, color.r, color.g, color.b);
+}
+
+Napi::Value NodeLedMatrix::set_fg_color(const Napi::CallbackInfo& info) {
+	auto color = NodeLedMatrix::color_from_callback_info(info, 0);
+    this->fgColor_ = &color;
+	return info.This();
+}
+
+Napi::Value NodeLedMatrix::set_bg_color(const Napi::CallbackInfo& info) {
+	auto color = NodeLedMatrix::color_from_callback_info(info, 0);
+    this->bgColor_ = &color;
+	return info.This();
+}
+
+Napi::Value NodeLedMatrix::set_font(const Napi::CallbackInfo& info) {
+	auto font = Napi::ObjectWrap<FontAddon>::Unwrap(info[0].As<Napi::Object>());
+    this->font_ = &(font->font);
+	return info.This();
 }
 
 Napi::Value NodeLedMatrix::width(const Napi::CallbackInfo& info) {

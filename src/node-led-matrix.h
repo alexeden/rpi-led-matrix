@@ -33,6 +33,14 @@ public:
 	void set_pixel(const Napi::CallbackInfo& info);
 	Napi::Value width(const Napi::CallbackInfo& info);
 
+	/**
+	 * Chainable Setters
+	 */
+	Napi::Value set_fg_color(const Napi::CallbackInfo& info);
+	Napi::Value set_bg_color(const Napi::CallbackInfo& info);
+	Napi::Value set_font(const Napi::CallbackInfo& info);
+
+
 	static Napi::Value default_matrix_options(const Napi::CallbackInfo& info);
 	static Napi::Value default_runtime_options(const Napi::CallbackInfo& info);
 
@@ -44,6 +52,9 @@ private:
 	static RGBMatrix::Options create_matrix_options(const Napi::Env& env, const Napi::Object& obj);
 	static RuntimeOptions create_runtime_options(const Napi::Env& env, const Napi::Object& obj);
 
+	Color *fgColor_;
+	Color *bgColor_;
+	Font *font_;
 	RGBMatrix *matrix_;
 };
 
