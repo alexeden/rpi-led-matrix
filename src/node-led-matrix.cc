@@ -18,9 +18,9 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("height", &NodeLedMatrix::height),
 		InstanceMethod("luminanceCorrect", &NodeLedMatrix::luminance_correct),
 		InstanceMethod("pwmBits", &NodeLedMatrix::pwm_bits),
-		InstanceMethod("setBgColor", &NodeLedMatrix::set_bg_color),
-		InstanceMethod("setFgColor", &NodeLedMatrix::set_fg_color),
-		InstanceMethod("setFont", &NodeLedMatrix::set_font),
+		InstanceMethod("bgColor", &NodeLedMatrix::bg_color),
+		InstanceMethod("fgColor", &NodeLedMatrix::fg_color),
+		InstanceMethod("setFont", &NodeLedMatrix::font),
 		InstanceMethod("setPixel", &NodeLedMatrix::set_pixel),
 		InstanceMethod("width", &NodeLedMatrix::width)
 	});
@@ -35,7 +35,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 /**
  * Process matrix & runtime options and initialize the internal RGBMatrix.
  */
-NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<NodeLedMatrix>(info) {
+NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<NodeLedMatrix>(info), fgColor_(Color(0, 0, 0)), bgColor_(Color(0, 0, 0)) {
 	auto env = info.Env();
 
 	if (!info[0].IsObject()) {
@@ -98,9 +98,9 @@ Napi::Value NodeLedMatrix::draw_text(const Napi::CallbackInfo& info) {
 	return Napi::Number::New(info.Env(), advanced);
 }
 
-void NodeLedMatrix::fill(const Napi::CallbackInfo& info) {
-	const auto color = NodeLedMatrix::color_from_callback_info(info, 0);
-	this->matrix_->Fill(color.r, color.g, color.b);
+Napi::Value NodeLedMatrix::fill(const Napi::CallbackInfo& info) {
+	this->matrix_->Fill(fgColor_.r, fgColor_.g, fgColor_.b);
+	return info.This();
 }
 
 Napi::Value NodeLedMatrix::height(const Napi::CallbackInfo& info) {
@@ -131,19 +131,29 @@ void NodeLedMatrix::set_pixel(const Napi::CallbackInfo& info) {
 	this->matrix_->SetPixel(x, y, color.r, color.g, color.b);
 }
 
-Napi::Value NodeLedMatrix::set_fg_color(const Napi::CallbackInfo& info) {
-	auto color = NodeLedMatrix::color_from_callback_info(info, 0);
-    this->fgColor_ = &color;
-	return info.This();
+Napi::Value NodeLedMatrix::fg_color(const Napi::CallbackInfo& info) {
+	if (info.Length() == 1 && info[0].IsObject()) {
+		auto color = NodeLedMatrix::color_from_obj(info[0].As<Napi::Object>());
+		fgColor_ = color;
+		return info.This();
+	}
+	else {
+		return NodeLedMatrix::obj_from_color(info.Env(), fgColor_);
+	}
 }
 
-Napi::Value NodeLedMatrix::set_bg_color(const Napi::CallbackInfo& info) {
-	auto color = NodeLedMatrix::color_from_callback_info(info, 0);
-    this->bgColor_ = &color;
-	return info.This();
+Napi::Value NodeLedMatrix::bg_color(const Napi::CallbackInfo& info) {
+	if (info.Length() == 1 && info[0].IsObject()) {
+		Color color = NodeLedMatrix::color_from_obj(info[0].As<Napi::Object>());
+		bgColor_ = color;
+		return info.This();
+	}
+	else {
+		return NodeLedMatrix::obj_from_color(info.Env(), bgColor_);
+	}
 }
 
-Napi::Value NodeLedMatrix::set_font(const Napi::CallbackInfo& info) {
+Napi::Value NodeLedMatrix::font(const Napi::CallbackInfo& info) {
 	auto font = Napi::ObjectWrap<FontAddon>::Unwrap(info[0].As<Napi::Object>());
     this->font_ = &(font->font);
 	return info.This();
@@ -280,4 +290,25 @@ Color NodeLedMatrix::color_from_callback_info(const Napi::CallbackInfo& info, ui
 	uint8_t b = info[argOffset + 2].As<Napi::Number>().Uint32Value();
 
 	return Color(r, g, b);
+}
+
+/**
+ * Create a Color instance from Object.
+ */
+Color NodeLedMatrix::color_from_obj(const Napi::Object& obj) {
+	uint8_t r = obj.Get("r").As<Napi::Number>().Uint32Value();
+	uint8_t g = obj.Get("g").As<Napi::Number>().Uint32Value();
+	uint8_t b = obj.Get("b").As<Napi::Number>().Uint32Value();
+	return Color(r, g, b);
+}
+
+/**
+ * Create an Object from a Color.
+ */
+Napi::Object NodeLedMatrix::obj_from_color(const Napi::Env& env, const Color& color) {
+	Napi::Object obj = Napi::Object::New(env);
+	obj.Set("r", color.r);
+	obj.Set("g", color.g);
+	obj.Set("b", color.b);
+	return obj;
 }

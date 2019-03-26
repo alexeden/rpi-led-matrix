@@ -174,6 +174,12 @@ export interface RuntimeOptions {
 
 type Color = [number, number, number];
 
+export interface ColorObj {
+  r: number;
+  g: number;
+  b: number;
+}
+
 export interface LedMatrixInstance {
   brightness(brightness?: number): number;
   clear(): void;
@@ -184,8 +190,10 @@ export interface LedMatrixInstance {
   height(): number;
   luminanceCorrect(correct?: boolean): boolean;
   pwmBits(pwmBits?: number): number;
-  setBgColor(...color: Color): this;
-  setFgColor(...color: Color): this;
+  bgColor(color: ColorObj): this;
+  bgColor(): ColorObj;
+  fgColor(color: ColorObj): this;
+  fgColor(): ColorObj;
   setFont(font: FontInstance): this;
   setPixel(x: number, y: number, ...color: Color): void;
   width(): number;

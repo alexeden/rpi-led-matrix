@@ -26,7 +26,7 @@ public:
 	void draw_circle(const Napi::CallbackInfo& info);
 	void draw_line(const Napi::CallbackInfo& info);
 	Napi::Value draw_text(const Napi::CallbackInfo& info);
-	void fill(const Napi::CallbackInfo& info);
+	Napi::Value fill(const Napi::CallbackInfo& info);
 	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value luminance_correct(const Napi::CallbackInfo& info);
 	Napi::Value pwm_bits(const Napi::CallbackInfo& info);
@@ -36,9 +36,9 @@ public:
 	/**
 	 * Chainable Setters
 	 */
-	Napi::Value set_fg_color(const Napi::CallbackInfo& info);
-	Napi::Value set_bg_color(const Napi::CallbackInfo& info);
-	Napi::Value set_font(const Napi::CallbackInfo& info);
+	Napi::Value fg_color(const Napi::CallbackInfo& info);
+	Napi::Value bg_color(const Napi::CallbackInfo& info);
+	Napi::Value font(const Napi::CallbackInfo& info);
 
 
 	static Napi::Value default_matrix_options(const Napi::CallbackInfo& info);
@@ -46,14 +46,16 @@ public:
 
 private:
 	static Color color_from_callback_info(const Napi::CallbackInfo& info, uint8_t argOffset);
+	static Color color_from_obj(const Napi::Object& obj);
+	static Napi::Object obj_from_color(const Napi::Env& env, const Color&);
 	static Napi::FunctionReference constructor;
 	static Napi::Object matrix_options_to_obj(const Napi::Env& env, const RGBMatrix::Options& options);
 	static Napi::Object runtime_options_to_obj(const Napi::Env& env, const RuntimeOptions& options);
 	static RGBMatrix::Options create_matrix_options(const Napi::Env& env, const Napi::Object& obj);
 	static RuntimeOptions create_runtime_options(const Napi::Env& env, const Napi::Object& obj);
 
-	Color *fgColor_;
-	Color *bgColor_;
+	Color fgColor_;
+	Color bgColor_;
 	Font *font_;
 	RGBMatrix *matrix_;
 };
