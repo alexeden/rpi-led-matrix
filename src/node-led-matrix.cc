@@ -57,7 +57,7 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<
 
 NodeLedMatrix::~NodeLedMatrix(void) {
 	std::cerr << "Destroying matrix" << std::endl;
-	delete this->matrix_;
+	delete matrix_;
 }
 
 Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
