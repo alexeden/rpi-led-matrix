@@ -4,6 +4,7 @@ using namespace rgb_matrix;
 using namespace napi_utils;
 
 Napi::FunctionReference NodeLedMatrix::constructor;
+std::map<std::string, Font> NodeLedMatrix::fontMap;
 
 Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 	Napi::Function func = DefineClass(env, "NodeLedMatrix", {
@@ -17,6 +18,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("height", &NodeLedMatrix::height),
 		InstanceMethod("luminanceCorrect", &NodeLedMatrix::luminance_correct),
 		InstanceMethod("pwmBits", &NodeLedMatrix::pwm_bits),
+		InstanceMethod("registerFont", &NodeLedMatrix::register_font),
 		InstanceMethod("setPixel", &NodeLedMatrix::set_pixel),
 		InstanceMethod("width", &NodeLedMatrix::width)
 	});
@@ -110,6 +112,43 @@ Napi::Value NodeLedMatrix::pwm_bits(const Napi::CallbackInfo& info) {
 		this->matrix_->SetPWMBits(bits);
 	}
 	return Napi::Number::New(info.Env(), this->matrix_->pwmbits());
+}
+
+Napi::Value NodeLedMatrix::register_font(const Napi::CallbackInfo& info) {
+	const std::string name = info[0].As<Napi::String>().ToString();
+	const std::string path = info[1].As<Napi::String>().ToString();
+	auto it = fontMap.find(name);
+
+	if (it == fontMap.end())
+	{
+		fontMap.emplace(std::piecewise_construct, std::make_tuple(name), std::make_tuple());
+		it = fontMap.find(name);
+		if (!it->second.LoadFont(path.c_str())) {
+			throw Napi::Error::New(info.Env(), "Failed to load font at path: " + path);
+		}
+	}
+
+	// const auto name = helpers::string_to_c_str(info[0].As<Napi::String>().ToString());
+	// const auto path = helpers::string_to_c_str(info[1].As<Napi::String>().ToString());
+	// auto font = new Font();
+
+	// if (!font->LoadFont(path)) {
+	// }
+
+	// auto it = fontMap.find(name);
+
+	// if (it == fontMap.end())
+	// {
+	// 	fontMap.emplace(std::make_pair(std::string(name), *font));
+	// 	fontMap.insert(std::pair(std::string(name), *font));
+	// 	// fontMap.emplace(std::piecewise_construct, std::make_tuple(name), std::make_tuple());
+	// 	it = fontMap.find(name);
+	// 	// it->second.LoadFont(path);
+	// }
+
+	return FontAddon::NewInstance(info[0], it->second);
+	// info.This();
+	// Napi::String::New(info.Env(), name);
 }
 
 void NodeLedMatrix::set_pixel(const Napi::CallbackInfo& info) {

@@ -42,6 +42,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
     console.log('matrix.brightness(100): ', matrix.brightness(100));
     console.log('matrix.height(): ', matrix.height());
     console.log('matrix.width(): ', matrix.width());
+    console.log('matrix.registerFont(): ', matrix.registerFont('helv', '../rpi-rgb-led-matrix/fonts/helvR12.bdf'));
 
 
     // matrix.clear();

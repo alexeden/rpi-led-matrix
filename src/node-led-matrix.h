@@ -32,6 +32,7 @@ public:
 	Napi::Value pwm_bits(const Napi::CallbackInfo& info);
 	void set_pixel(const Napi::CallbackInfo& info);
 	Napi::Value width(const Napi::CallbackInfo& info);
+	Napi::Value register_font(const Napi::CallbackInfo& info);
 
 	static Napi::Value default_matrix_options(const Napi::CallbackInfo& info);
 	static Napi::Value default_runtime_options(const Napi::CallbackInfo& info);
@@ -45,6 +46,8 @@ private:
 	static RuntimeOptions create_runtime_options(const Napi::Env& env, const Napi::Object& obj);
 
 	RGBMatrix *matrix_;
+	static std::map<std::string, rgb_matrix::Font> fontMap;
+
 };
 
 #endif

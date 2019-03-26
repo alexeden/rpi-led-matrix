@@ -184,6 +184,7 @@ export interface LedMatrixInstance {
   height(): number;
   luminanceCorrect(correct?: boolean): boolean;
   pwmBits(pwmBits?: number): number;
+  registerFont(name: string, path: string): any;
   setPixel(x: number, y: number, ...color: Color): void;
   width(): number;
 }
