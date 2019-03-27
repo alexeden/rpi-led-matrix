@@ -49,22 +49,10 @@ export enum GpioMapping {
 
 export interface MatrixOptions {
   /**
-   * The type of GPIO mapping of the device.
-   * @default GpioMapping.Regular
+   * The initial brightness of the panel in percent.
+   * @default 100
    */
-  hardwareMapping: GpioMapping;
-
-  /**
-   * The number of rows supported by a single display panel.
-   * @default 32
-   */
-  rows: 16 | 32 | 64;
-
-  /**
-   * The number of columns supported by a single display panel.
-   * @default 32
-   */
-  cols: 16 | 32 | 40 | 64;
+  brightness: number;
 
   /**
    * The numbr of display panels daisy-chained together.
@@ -74,53 +62,11 @@ export interface MatrixOptions {
   chainLength: 1 | 2 | 3 | 4;
 
   /**
-   * The number of parallel chains connected to the Pi.
-   * Acts as a multiplier of the total number of rows.
-   * @default 1
+   * The number of columns supported by a single display panel.
+   * @default 32
    */
-  parallel: 1 | 2 | 3 | 4;
+  cols: 16 | 32 | 40 | 64;
 
-  /**
-   * Set PWM bits used for output. The maximum value is 11. Lower values
-   * will increase performance at the expense of color precision.
-   * @default 11
-   */
-  pwmBits: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
-
-  /**
-   * Change the base time-unit for the on-time in the lowest
-   * significant bit in nanoseconds. Higher values will provide better image quality
-   * (more accurate color, less ghosting) at the expense of frame rate.
-   * @default 130
-   */
-  pwmLsbNanoseconds: number;
-
-  /**
-   * The lower bits can be time-dithered for higher refresh rate.
-   * @default 0
-   */
-  pwmDitherBits: number;
-
-  /**
-   * The initial brightness of the panel in percent.
-   * @default 100
-   */
-  brightness: number;
-
-  /**
-   * @default ScanMode.Progressive
-   */
-  scanMode: ScanMode;
-
-  /**
-   * @default RowAddressType.Direct
-   */
-  rowAddressType: RowAddressType;
-
-  /**
-   * @default MuxType.Direct
-   */
-  multiplexing: MuxType;
   /**
    * Disable the PWM hardware subsystem to create pulses.
    * Typically, you don't want to disable hardware pulsing, this is mostly
@@ -134,10 +80,15 @@ export interface MatrixOptions {
   disableHardwarePulsing: boolean;
 
   /**
-   * Print the current refresh rate in real-time to the stderr.
+   * The type of GPIO mapping of the device.
+   * @default GpioMapping.Regular
+   */
+  hardwareMapping: GpioMapping;
+
+  /**
    * @default false
    */
-  showRefreshRate: boolean;
+  inverseColors: boolean;
 
   /**
    * In case the internal sequence of mapping is not "RGB", this contains the
@@ -147,16 +98,71 @@ export interface MatrixOptions {
    */
   ledRgbSequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
 
-  inverseColors: boolean;
+  /**
+   * @default MuxType.Direct
+   */
+  multiplexing: MuxType;
+
+  /**
+   * The number of parallel chains connected to the Pi.
+   * Acts as a multiplier of the total number of rows.
+   * @default 1
+   */
+  parallel: 1 | 2 | 3 | 4;
 
   /**
    * A special string representing selected pixel mappers used to match the
    * current display panel arrangement.
    *
-   * Use LedMatrixUtils.encodeMappers() to conventiently get the formatted string from a
+   * Use LedMatrixUtils.encodeMappers() to conveniently get the formatted string from a
    * list of mappers.
+   *
+   * @default ''
    */
   pixelMapperConfig: string;
+
+  /**
+   * Set PWM bits used for output. The maximum value is 11. Lower values
+   * will increase performance at the expense of color precision.
+   * @default 11
+   */
+  pwmBits: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+
+  /**
+   * The lower bits can be time-dithered for higher refresh rate.
+   * @default 0
+   */
+  pwmDitherBits: number;
+
+  /**
+   * Change the base time-unit for the on-time in the lowest
+   * significant bit in nanoseconds. Higher values will provide better image quality
+   * (more accurate color, less ghosting) at the expense of frame rate.
+   * @default 130
+   */
+  pwmLsbNanoseconds: number;
+
+  /**
+   * @default RowAddressType.Direct
+   */
+  rowAddressType: RowAddressType;
+
+  /**
+   * The number of rows supported by a single display panel.
+   * @default 32
+   */
+  rows: 16 | 32 | 64;
+
+  /**
+   * @default ScanMode.Progressive
+   */
+  scanMode: ScanMode;
+
+  /**
+   * Print the current refresh rate in real-time to the stderr.
+   * @default false
+   */
+  showRefreshRate: boolean;
 }
 
 /**
@@ -164,10 +170,6 @@ export interface MatrixOptions {
  * dropping privileges and becoming a daemon.
  */
 export interface RuntimeOptions {
-  /**
-   * @default 0
-   */
-  gpioSlowdown: number;
 
   /**
    * If daemon is Disabled, the user has to call StartRefresh() manually
@@ -181,6 +183,15 @@ export interface RuntimeOptions {
   daemon: RuntimeFlag;
 
   /**
+   * By default, the gpio is initialized for you, but if you want to manually
+   * do that yourself, set this flag to false.
+   * Then, you have to initialize the matrix yourself with SetGPIO().
+   *
+   * @default true
+   */
+  doGpioInit: boolean;
+
+  /**
    * Drop privileges from 'root' to 'daemon' once the hardware is initialized.
    * This is usually a good idea unless you need to stay on elevated privs.
    *
@@ -189,13 +200,9 @@ export interface RuntimeOptions {
   dropPrivileges: RuntimeFlag;
 
   /**
-   * By default, the gpio is initialized for you, but if you want to manually
-   * do that yourself, set this flag to false.
-   * Then, you have to initialize the matrix yourself with SetGPIO().
-   *
-   * @default true
+   * @default 0
    */
-  doGpioInit: boolean;
+  gpioSlowdown: number;
 }
 
 
@@ -206,6 +213,9 @@ export interface Color {
 }
 
 export interface LedMatrixInstance {
+  bgColor(color: Color): this;
+  bgColor(): Color;
+
   brightness(brightness: number): this;
   brightness(): number;
 
@@ -217,8 +227,13 @@ export interface LedMatrixInstance {
   drawRect(x0: number, y0: number, x1: number, y1: number): this;
   drawText(text: string, x: number, y: number, kerning?: number): number;
 
+  fgColor(color: Color): this;
+  fgColor(): Color;
+
   fill(): this;
   fill(x0: number, y0: number, x1: number, y1: number): this;
+
+  height(): number;
 
   luminanceCorrect(correct: boolean): this;
   luminanceCorrect(): boolean;
@@ -226,17 +241,9 @@ export interface LedMatrixInstance {
   pwmBits(pwmBits: number): this;
   pwmBits(): number;
 
-  bgColor(color: Color): this;
-  bgColor(): Color;
-
-  fgColor(color: Color): this;
-  fgColor(): Color;
-
   setFont(font: FontInstance): this;
-
   setPixel(x: number, y: number): this;
 
-  height(): number;
   width(): number;
 }
 
