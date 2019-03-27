@@ -47,7 +47,7 @@ const Colors = {
       gpioSlowdown: 1,
     };
 
-    const font = new addon.Font('../rpi-rgb-led-matrix/fonts/helvR12.bdf');
+    const font = new addon.Font('../rpi-rgb-led-matrix/fonts/9x15B.bdf');
     console.log('new addon.Font: ', font);
     console.log('font.baseline(): ', font.baseline());
     console.log('font.height(): ', font.height());
@@ -69,8 +69,10 @@ const Colors = {
     console.log('matrix.width(): ', matrix.width());
 
     matrix.clear();
-    console.log('', matrix.clear().drawText('YAAAS!!!', 0, font.baseline(), 5));
-    await wait(2000);
+    for (let i = 0; i < matrix.height() + font.baseline(); i++) {
+      matrix.clear().fgColor(Colors.black).bgColor(Colors.magenta).drawText('YAAAS!!!', 0, i);
+      await wait(33);
+    }
 
     const interval = 200;
     matrix.fgColor(Colors.red).fill();
