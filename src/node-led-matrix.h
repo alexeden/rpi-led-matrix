@@ -55,6 +55,7 @@ private:
 	Color bg_color_;
 	Font *font_;
 	RGBMatrix *matrix_;
+	FrameCanvas *canvas_;
 };
 
 #endif

@@ -36,7 +36,11 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 /**
  * Process matrix & runtime options and initialize the internal RGBMatrix.
  */
-NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<NodeLedMatrix>(info), fg_color_(Color(0, 0, 0)), bg_color_(Color(0, 0, 0)) {
+NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<NodeLedMatrix>(info)
+    , fg_color_(Color(0, 0, 0))
+    , bg_color_(Color(0, 0, 0))
+{
 	auto env = info.Env();
 
 	if (!info[0].IsObject()) {
@@ -51,6 +55,7 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<
 	auto runtimeOpts = create_runtime_options(env, info[1].As<Napi::Object>());
 
 	this->matrix_ = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
+	this->canvas_ = this->matrix_->CreateFrameCanvas();
 
 	if (this->matrix_ == NULL) {
 		throw Napi::Error::New(env, "Failed to create matrix.");
