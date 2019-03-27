@@ -199,10 +199,16 @@ export interface RuntimeOptions {
    */
   dropPrivileges: RuntimeFlag;
 
+
   /**
+   * The signal can be too fast for some LED panels, in particular with newer
+   * (faster) Raspberry Pi 2s - in that case, the LED matrix only shows garbage.
+   * Setting this value to > 0 slows down the GPIO for these cases.
+   * Set to 1 or more for RPi2 or RPi3, because they are typically faster than the panels can digest.
+   *
    * @default 0
    */
-  gpioSlowdown: number;
+  gpioSlowdown: 0 | 1 | 2 | 3 | 4;
 }
 
 
