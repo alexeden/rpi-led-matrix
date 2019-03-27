@@ -172,30 +172,42 @@ export interface RuntimeOptions {
   doGpioInit: boolean;
 }
 
-type Color = [number, number, number];
 
-export interface ColorObj {
+export interface Color {
   r: number;
   g: number;
   b: number;
 }
 
 export interface LedMatrixInstance {
-  brightness(brightness?: number): number;
-  clear(): void;
-  drawCircle(x: number, y: number, r: number, ...color: Color): void;
-  drawLine(x0: number, y0: number, x1: number, y1: number, ...color: Color): void;
-  drawText(text: string, font: FontInstance, ...color: Color): number;
-  fill(...color: Color): void;
-  height(): number;
-  luminanceCorrect(correct?: boolean): boolean;
-  pwmBits(pwmBits?: number): number;
-  bgColor(color: ColorObj): this;
-  bgColor(): ColorObj;
-  fgColor(color: ColorObj): this;
-  fgColor(): ColorObj;
+  brightness(brightness: number): this;
+  brightness(): number;
+
+  clear(): this;
+
+  drawCircle(x: number, y: number, r: number): this;
+  drawLine(x0: number, y0: number, x1: number, y1: number): this;
+  drawText(x: number, y: number, text: string): number;
+
+  fill(): this;
+
+  luminanceCorrect(correct: boolean): this;
+  luminanceCorrect(): boolean;
+
+  pwmBits(pwmBits: number): this;
+  pwmBits(): number;
+
+  bgColor(color: Color): this;
+  bgColor(): Color;
+
+  fgColor(color: Color): this;
+  fgColor(): Color;
+
   setFont(font: FontInstance): this;
-  setPixel(x: number, y: number, ...color: Color): void;
+
+  setPixel(x: number, y: number): this;
+
+  height(): number;
   width(): number;
 }
 

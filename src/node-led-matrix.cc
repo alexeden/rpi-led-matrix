@@ -35,7 +35,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 /**
  * Process matrix & runtime options and initialize the internal RGBMatrix.
  */
-NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<NodeLedMatrix>(info), fgColor_(Color(0, 0, 0)), bgColor_(Color(0, 0, 0)) {
+NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info) : Napi::ObjectWrap<NodeLedMatrix>(info), fg_color_(Color(0, 0, 0)), bg_color_(Color(0, 0, 0)) {
 	auto env = info.Env();
 
 	if (!info[0].IsObject()) {
@@ -65,29 +65,35 @@ Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsNumber()) {
 		auto brightness = info[0].As<Napi::Number>().Uint32Value();
 		this->matrix_->SetBrightness(brightness);
+		return info.This();
 	}
-	return Napi::Number::New(info.Env(), this->matrix_->brightness());
+	else {
+		return Napi::Number::New(info.Env(), this->matrix_->brightness());
+	}
 }
 
-void NodeLedMatrix::clear(const Napi::CallbackInfo& info) {
+Napi::Value NodeLedMatrix::clear(const Napi::CallbackInfo& info) {
 	this->matrix_->Clear();
+	return info.This();
 }
 
-void NodeLedMatrix::draw_circle(const Napi::CallbackInfo& info) {
+Napi::Value NodeLedMatrix::draw_circle(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
 	const auto r = info[2].As<Napi::Number>().Uint32Value();
-	const auto color = NodeLedMatrix::color_from_callback_info(info, 3);
-	DrawCircle(this->matrix_, x, y, r, color);
+	DrawCircle(this->matrix_, x, y, r, fg_color_);
+
+	return info.This();
 }
 
-void NodeLedMatrix::draw_line(const Napi::CallbackInfo& info) {
+Napi::Value NodeLedMatrix::draw_line(const Napi::CallbackInfo& info) {
 	const auto x0 = info[0].As<Napi::Number>().Uint32Value();
 	const auto y0 = info[1].As<Napi::Number>().Uint32Value();
 	const auto x1 = info[2].As<Napi::Number>().Uint32Value();
 	const auto y1 = info[3].As<Napi::Number>().Uint32Value();
-	const auto color = NodeLedMatrix::color_from_callback_info(info, 4);
-	DrawLine(this->matrix_, x0, y0, x1, y1, color);
+	DrawLine(this->matrix_, x0, y0, x1, y1, fg_color_);
+
+	return info.This();
 }
 
 Napi::Value NodeLedMatrix::draw_text(const Napi::CallbackInfo& info) {
@@ -99,7 +105,7 @@ Napi::Value NodeLedMatrix::draw_text(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value NodeLedMatrix::fill(const Napi::CallbackInfo& info) {
-	this->matrix_->Fill(fgColor_.r, fgColor_.g, fgColor_.b);
+	this->matrix_->Fill(fg_color_.r, fg_color_.g, fg_color_.b);
 	return info.This();
 }
 
@@ -111,8 +117,11 @@ Napi::Value NodeLedMatrix::luminance_correct(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsBoolean()) {
 		auto correct = info[0].As<Napi::Boolean>().ToBoolean();
 		this->matrix_->set_luminance_correct(correct);
+		return info.This();
 	}
-	return Napi::Boolean::New(info.Env(), this->matrix_->luminance_correct());
+	else {
+		return Napi::Boolean::New(info.Env(), this->matrix_->luminance_correct());
+	}
 }
 
 
@@ -120,36 +129,40 @@ Napi::Value NodeLedMatrix::pwm_bits(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsNumber()) {
 		auto bits = info[0].As<Napi::Number>().Uint32Value();
 		this->matrix_->SetPWMBits(bits);
+		return info.This();
 	}
-	return Napi::Number::New(info.Env(), this->matrix_->pwmbits());
+	else {
+		return Napi::Number::New(info.Env(), this->matrix_->pwmbits());
+	}
 }
 
-void NodeLedMatrix::set_pixel(const Napi::CallbackInfo& info) {
+Napi::Value NodeLedMatrix::set_pixel(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
-	const auto color = NodeLedMatrix::color_from_callback_info(info, 2);
-	this->matrix_->SetPixel(x, y, color.r, color.g, color.b);
+	this->matrix_->SetPixel(x, y, fg_color_.r, fg_color_.g, fg_color_.b);
+
+	return info.This();
 }
 
 Napi::Value NodeLedMatrix::fg_color(const Napi::CallbackInfo& info) {
 	if (info.Length() == 1 && info[0].IsObject()) {
 		auto color = NodeLedMatrix::color_from_obj(info[0].As<Napi::Object>());
-		fgColor_ = color;
+		fg_color_ = color;
 		return info.This();
 	}
 	else {
-		return NodeLedMatrix::obj_from_color(info.Env(), fgColor_);
+		return NodeLedMatrix::obj_from_color(info.Env(), fg_color_);
 	}
 }
 
 Napi::Value NodeLedMatrix::bg_color(const Napi::CallbackInfo& info) {
 	if (info.Length() == 1 && info[0].IsObject()) {
 		Color color = NodeLedMatrix::color_from_obj(info[0].As<Napi::Object>());
-		bgColor_ = color;
+		bg_color_ = color;
 		return info.This();
 	}
 	else {
-		return NodeLedMatrix::obj_from_color(info.Env(), bgColor_);
+		return NodeLedMatrix::obj_from_color(info.Env(), bg_color_);
 	}
 }
 

@@ -1,25 +1,23 @@
 import { addon } from './addon';
-import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType, LedMatrixInstance, ColorObj } from './types';
+import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType, LedMatrixInstance, Color } from './types';
 import { LedMatrixUtils } from './utils';
 
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
 const spin = async (matrix: LedMatrixInstance, speed = 50) => {
   for (let i = 0; i < matrix.height(); i++) {
-    matrix.clear();
-    matrix.drawLine(0, i, matrix.width(), matrix.height() - i, 255, 0, 255);
+    matrix.clear().drawLine(0, i, matrix.width(), matrix.height() - i);
     await wait(speed);
   }
 
   for (let i = matrix.width(); i >= 0; i--) {
-    matrix.clear();
-    matrix.drawLine(i, 0, matrix.width() - i, matrix.height(), 255, 0, 255);
+    matrix.clear().drawLine(i, 0, matrix.width() - i, matrix.height());
     await wait(speed);
   }
 };
 
 // tslint:disable-next-line:variable-name
-const Colors: { [name: string]: ColorObj } = {
+const Colors: { [name: string]: Color } = {
   black: { r: 0, g: 0, b: 0 },
   red: { r: 255, g: 0, b: 0 },
   green: { r: 0, g: 255, b: 0 },
@@ -71,15 +69,15 @@ const Colors: { [name: string]: ColorObj } = {
     console.log('matrix.width(): ', matrix.width());
 
     matrix.clear();
-    console.log('', matrix.drawText('YAAAS!!!', font, 0, 255, 255));
+    console.log('', matrix.clear().drawText('YAAAS!!!', font));
     await wait(2000);
 
     const interval = 200;
-    matrix.fgColor(Colors.red).fill(0, 0, 255);
+    matrix.fgColor(Colors.red).fill();
     await wait(interval);
-    matrix.fgColor(Colors.blue).fill(0, 255, 0);
+    matrix.fgColor(Colors.blue).fill();
     await wait(interval);
-    matrix.fgColor(Colors.green).fill(255, 0, 0);
+    matrix.fgColor(Colors.green).fill();
     await wait(interval);
     matrix.clear();
     await wait(interval);
@@ -88,7 +86,7 @@ const Colors: { [name: string]: ColorObj } = {
       matrix.clear();
       const y = i;
       Array.from(Array(matrix.width())).map((_, x) => {
-        matrix.setPixel(x, y, 255, 0, 0);
+        matrix.setPixel(x, y);
       });
       await wait(22);
     }
@@ -96,7 +94,7 @@ const Colors: { [name: string]: ColorObj } = {
       matrix.clear();
       const x = i;
       Array.from(Array(matrix.height())).map((_, y) => {
-        matrix.setPixel(x, y, 0, 0, 255);
+        matrix.setPixel(x, y);
       });
       await wait(22);
     }
@@ -105,14 +103,12 @@ const Colors: { [name: string]: ColorObj } = {
     const centerX = Math.floor(matrix.width() / 2);
     const centerY = Math.floor(matrix.height() / 2);
     for (let r = 0; r <= matrix.width(); r++) {
-      // matrix.clear();
-      matrix.drawCircle(centerX, centerY, r, 0, 255, 0);
+      matrix.clear().drawCircle(centerX, centerY, r);
       await wait(44);
     }
     matrix.clear();
     for (let r = matrix.width(); r >= 0; r--) {
-      // matrix.clear();
-      matrix.drawCircle(centerX, centerY, r, 0, 255, 0);
+      matrix.clear().drawCircle(centerX, centerY, r);
       await wait(44);
     }
 

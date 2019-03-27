@@ -22,15 +22,15 @@ public:
 	~NodeLedMatrix();
 
 	Napi::Value brightness(const Napi::CallbackInfo& info);
-	void clear(const Napi::CallbackInfo& info);
-	void draw_circle(const Napi::CallbackInfo& info);
-	void draw_line(const Napi::CallbackInfo& info);
+	Napi::Value clear(const Napi::CallbackInfo& info);
+	Napi::Value draw_circle(const Napi::CallbackInfo& info);
+	Napi::Value draw_line(const Napi::CallbackInfo& info);
 	Napi::Value draw_text(const Napi::CallbackInfo& info);
 	Napi::Value fill(const Napi::CallbackInfo& info);
 	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value luminance_correct(const Napi::CallbackInfo& info);
 	Napi::Value pwm_bits(const Napi::CallbackInfo& info);
-	void set_pixel(const Napi::CallbackInfo& info);
+	Napi::Value set_pixel(const Napi::CallbackInfo& info);
 	Napi::Value width(const Napi::CallbackInfo& info);
 
 	/**
@@ -54,8 +54,8 @@ private:
 	static RGBMatrix::Options create_matrix_options(const Napi::Env& env, const Napi::Object& obj);
 	static RuntimeOptions create_runtime_options(const Napi::Env& env, const Napi::Object& obj);
 
-	Color fgColor_;
-	Color bgColor_;
+	Color fg_color_;
+	Color bg_color_;
 	Font *font_;
 	RGBMatrix *matrix_;
 };
