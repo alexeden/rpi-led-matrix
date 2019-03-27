@@ -250,6 +250,8 @@ export interface LedMatrixInstance {
   setFont(font: FontInstance): this;
   setPixel(x: number, y: number): this;
 
+  sync(): void;
+
   width(): number;
 }
 

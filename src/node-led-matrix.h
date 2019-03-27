@@ -37,6 +37,7 @@ public:
 	Napi::Value set_pixel(const Napi::CallbackInfo& info);
 	Napi::Value width(const Napi::CallbackInfo& info);
 
+	Napi::Value sync(const Napi::CallbackInfo& info);
 
 	static Napi::Value default_matrix_options(const Napi::CallbackInfo& info);
 	static Napi::Value default_runtime_options(const Napi::CallbackInfo& info);

@@ -23,6 +23,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("fgColor", &NodeLedMatrix::fg_color),
 		InstanceMethod("setFont", &NodeLedMatrix::font),
 		InstanceMethod("setPixel", &NodeLedMatrix::set_pixel),
+		InstanceMethod("sync", &NodeLedMatrix::sync),
 		InstanceMethod("width", &NodeLedMatrix::width)
 	});
 
@@ -56,7 +57,6 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info)
 
 	this->matrix_ = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
 	this->canvas_ = this->matrix_->CreateFrameCanvas();
-
 	if (this->matrix_ == NULL) {
 		throw Napi::Error::New(env, "Failed to create matrix.");
 	}
@@ -65,6 +65,19 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo &info)
 NodeLedMatrix::~NodeLedMatrix(void) {
 	std::cerr << "Destroying matrix" << std::endl;
 	delete matrix_;
+}
+
+Napi::Value NodeLedMatrix::sync(const Napi::CallbackInfo& info) {
+	const char *data;
+	size_t len;
+
+	canvas_->Serialize(&data, &len);
+	canvas_ = matrix_->SwapOnVSync(canvas_);
+	if (!canvas_->Deserialize(data, len)) {
+		throw Napi::Error::New(info.Env(), "Failed to sync canvas buffer with matrix.");
+	}
+
+	return Napi::Number::New(info.Env(), 0);
 }
 
 Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
