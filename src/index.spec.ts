@@ -2,20 +2,6 @@ import { addon } from './addon';
 import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType, LedMatrixInstance } from './types';
 import { LedMatrixUtils } from './utils';
 
-const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
-
-const spin = async (matrix: LedMatrixInstance, speed = 50) => {
-  for (let i = 0; i < matrix.height(); i++) {
-    matrix.clear().drawLine(0, i, matrix.width(), matrix.height() - i);
-    await wait(speed);
-  }
-
-  for (let i = matrix.width(); i >= 0; i--) {
-    matrix.clear().drawLine(i, 0, matrix.width() - i, matrix.height());
-    await wait(speed);
-  }
-};
-
 // tslint:disable-next-line:variable-name
 const Colors = {
   black: { r: 0, g: 0, b: 0 },
@@ -24,6 +10,21 @@ const Colors = {
   blue: { r: 0, g: 0, b: 255 },
   magenta: { r: 255, g: 0, b: 255 },
   cyan: { r: 0, g: 255, b: 255 },
+  yellow: { r: 255, g: 255, b: 0 },
+};
+
+const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
+
+const spin = async (matrix: LedMatrixInstance, speed = 50) => {
+  for (let i = 0; i < matrix.height(); i++) {
+    matrix.clear().fgColor(Colors.green).drawLine(0, i, matrix.width(), matrix.height() - i);
+    await wait(speed);
+  }
+
+  for (let i = matrix.width(); i >= 0; i--) {
+    matrix.clear().fgColor(Colors.magenta).drawLine(i, 0, matrix.width() - i, matrix.height());
+    await wait(speed);
+  }
 };
 
 (async () => {
@@ -85,6 +86,26 @@ const Colors = {
     matrix.clear();
     await wait(interval);
 
+    // Clear section
+    {
+      matrix.clear().fgColor(Colors.magenta).fill();
+      await wait(333);
+      matrix
+        .clear(0, 0, matrix.width() / 2, matrix.height() / 2)
+        .clear(matrix.width() / 2, matrix.height() / 2, matrix.width(), matrix.height());
+      await wait(500);
+    }
+
+    // Fill section
+    {
+      matrix.clear()
+        .fgColor(Colors.green)
+        .fill(0, 0, matrix.width() / 2, matrix.height() / 2)
+        .fill(matrix.width() / 2, matrix.height() / 2, matrix.width(), matrix.height());
+      await wait(500);
+    }
+
+    // Draw rectangle
     {
       const rectHeight = Math.floor(matrix.height() / 10);
       const rgb = [Colors.red, Colors.green, Colors.blue];
@@ -95,16 +116,19 @@ const Colors = {
       }
     }
 
+    // Set pixel
     for (let i = 0; i < matrix.height(); i++) {
-      matrix.clear();
+      matrix.clear().fgColor(Colors.yellow);
       const y = i;
       Array.from(Array(matrix.width())).map((_, x) => {
         matrix.setPixel(x, y);
       });
       await wait(22);
     }
+
+    // Draw line
     for (let i = 0; i < matrix.width(); i++) {
-      matrix.clear();
+      matrix.clear().fgColor(Colors.cyan);
       const x = i;
       Array.from(Array(matrix.height())).map((_, y) => {
         matrix.setPixel(x, y);

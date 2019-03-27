@@ -184,6 +184,7 @@ export interface LedMatrixInstance {
   brightness(): number;
 
   clear(): this;
+  clear(x0: number, y0: number, x1: number, y1: number): this;
 
   drawCircle(x: number, y: number, r: number): this;
   drawLine(x0: number, y0: number, x1: number, y1: number): this;
@@ -191,6 +192,7 @@ export interface LedMatrixInstance {
   drawText(text: string, x: number, y: number, kerning?: number): number;
 
   fill(): this;
+  fill(x0: number, y0: number, x1: number, y1: number): this;
 
   luminanceCorrect(correct: boolean): this;
   luminanceCorrect(): boolean;

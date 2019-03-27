@@ -74,7 +74,19 @@ Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value NodeLedMatrix::clear(const Napi::CallbackInfo& info) {
-	this->matrix_->Clear();
+	if (info.Length() > 0) {
+		const auto x0 = info[0].As<Napi::Number>().Uint32Value();
+		const auto y0 = info[1].As<Napi::Number>().Uint32Value();
+		const auto x1 = info[2].As<Napi::Number>().Uint32Value();
+		const auto y1 = info[3].As<Napi::Number>().Uint32Value();
+		const auto black = Color(0, 0, 0);
+		for (auto y = y0; y <= y1; y++) {
+			DrawLine(this->matrix_, x0, y, x1, y, black);
+		}
+	}
+	else {
+		this->matrix_->Clear();
+	}
 	return info.This();
 }
 
@@ -121,7 +133,20 @@ Napi::Value NodeLedMatrix::draw_text(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value NodeLedMatrix::fill(const Napi::CallbackInfo& info) {
-	this->matrix_->Fill(fg_color_.r, fg_color_.g, fg_color_.b);
+	if (info.Length() > 0) {
+		const auto x0 = info[0].As<Napi::Number>().Uint32Value();
+		const auto y0 = info[1].As<Napi::Number>().Uint32Value();
+		const auto x1 = info[2].As<Napi::Number>().Uint32Value();
+		const auto y1 = info[3].As<Napi::Number>().Uint32Value();
+		const auto black = Color(0, 0, 0);
+		for (auto y = y0; y <= y1; y++) {
+			DrawLine(this->matrix_, x0, y, x1, y, fg_color_);
+		}
+	}
+	else {
+		this->matrix_->Fill(fg_color_.r, fg_color_.g, fg_color_.b);
+	}
+
 	return info.This();
 }
 
