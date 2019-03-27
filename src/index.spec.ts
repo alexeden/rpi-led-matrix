@@ -1,3 +1,4 @@
+import * as color from 'color';
 import { addon } from './addon';
 import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType, LedMatrixInstance } from './types';
 import { LedMatrixUtils } from './utils';
@@ -6,26 +7,28 @@ import { LedMatrixUtils } from './utils';
 const Colors = {
   black: { r: 0, g: 0, b: 0 },
   red: 0xFF0000,
-  // { r: 255, g: 0, b: 0 },
   green: { r: 0, g: 255, b: 0 },
   blue: { r: 0, g: 0, b: 255 },
   magenta: 0xFF00FF,
-  //  { r: 255, g: 0, b: 255 },
   cyan: { r: 0, g: 255, b: 255 },
   yellow: { r: 255, g: 255, b: 0 },
 };
 
+const rainbow64 = Array.from(Array(64))
+  .map((_, i, { length }) => Math.floor(360 * i / length))
+  .map(hue => color.hsl(hue, 100, 50).rgbNumber());
+console.log(rainbow64);
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
 const spin = async (matrix: LedMatrixInstance, speed = 50) => {
   for (let i = 0; i < matrix.height(); i++) {
-    matrix.clear().fgColor(Colors.green).drawLine(0, i, matrix.width(), matrix.height() - i).sync();
-    await wait(speed);
+    matrix.clear().fgColor(rainbow64[i]).drawLine(0, i, matrix.width(), matrix.height() - i).sync();
+    if (speed) await wait(speed);
   }
 
-  for (let i = matrix.width(); i >= 0; i--) {
-    matrix.clear().fgColor(Colors.magenta).drawLine(i, 0, matrix.width() - i, matrix.height()).sync();
-    await wait(speed);
+  for (let i = matrix.width() - 1; i >= 0; i--) {
+    matrix.clear().fgColor(rainbow64[i]).drawLine(i, 0, matrix.width() - i, matrix.height()).sync();
+    if (speed) await wait(speed);
   }
 };
 
@@ -42,7 +45,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
       cols: 64,
       chainLength: 2,
       hardwareMapping: GpioMapping.AdafruitHatPwm,
-      showRefreshRate: true,
+      // showRefreshRate: true,
       // disableHardwarePulsing: true,
       pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
     };
@@ -136,12 +139,20 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
 
     // Draw line
     for (let i = 0; i < matrix.width(); i++) {
-      matrix.clear().fgColor(Colors.cyan);
       const x = i;
-      Array.from(Array(matrix.height())).map((_, y) => {
-        matrix.setPixel(x, y);
-      });
-      matrix.sync();
+      matrix.clear()
+        .fgColor(rainbow64[i])
+        .drawLine(x, 0, x, matrix.height())
+        .sync();
+      await wait(22);
+    }
+
+    // Draw line no clear
+    for (let y = 0; y < matrix.height(); y++) {
+      matrix
+        .fgColor(rainbow64[y])
+        .drawLine(0, y, matrix.width(), y)
+        .sync();
       await wait(22);
     }
 
@@ -159,8 +170,8 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
       await wait(44);
     }
     matrix.clear();
-    for (let r = matrix.width(); r >= 0; r--) {
-      matrix.clear().drawCircle(centerX, centerY, r).sync();
+    for (let r = matrix.width() - 1; r >= 0; r--) {
+      matrix.fgColor(rainbow64[r]).drawCircle(centerX, centerY, r).sync();
       await wait(44);
     }
 
@@ -215,40 +226,40 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
     await spin(matrix, 1);
     await spin(matrix, 1);
     await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
+    await spin(matrix, 0);
 
   }
   catch (error) {
