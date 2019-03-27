@@ -20,14 +20,16 @@ const rainbow64 = Array.from(Array(64))
 console.log(rainbow64);
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
-const spin = async (matrix: LedMatrixInstance, speed = 50) => {
+const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
   for (let i = 0; i < matrix.height(); i++) {
-    matrix.clear().fgColor(rainbow64[i]).drawLine(0, i, matrix.width(), matrix.height() - i).sync();
+    if (clear) matrix.clear();
+    matrix.fgColor(rainbow64[i]).drawLine(0, i, matrix.width(), matrix.height() - i).sync();
     if (speed) await wait(speed);
   }
 
   for (let i = matrix.width() - 1; i >= 0; i--) {
-    matrix.clear().fgColor(rainbow64[i]).drawLine(i, 0, matrix.width() - i, matrix.height()).sync();
+    if (clear) matrix.clear();
+    matrix.fgColor(rainbow64[i]).drawLine(i, 0, matrix.width() - i, matrix.height()).sync();
     if (speed) await wait(speed);
   }
 };
@@ -148,6 +150,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
     }
 
     // Draw line no clear
+    matrix.clear();
     for (let y = 0; y < matrix.height(); y++) {
       matrix
         .fgColor(rainbow64[y])
@@ -179,36 +182,6 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
     await spin(matrix, 10);
     await spin(matrix, 5);
     await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 5);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
     await spin(matrix, 2);
     await spin(matrix, 2);
     await spin(matrix, 2);
@@ -221,46 +194,13 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
     await spin(matrix, 1);
     await spin(matrix, 1);
     await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
     await spin(matrix, 0);
     await spin(matrix, 0);
     await spin(matrix, 0);
     await spin(matrix, 0);
     await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-    await spin(matrix, 0);
-
+    await spin(matrix, 1, false);
+    await wait(15000);
   }
   catch (error) {
     console.error(error);
