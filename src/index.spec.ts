@@ -85,6 +85,16 @@ const Colors = {
     matrix.clear();
     await wait(interval);
 
+    {
+      const rectHeight = Math.floor(matrix.height() / 10);
+      const rgb = [Colors.red, Colors.green, Colors.blue];
+      matrix.clear();
+      for (let i = 0; i < 10; i++) {
+        matrix.fgColor(rgb[i % 3]).drawRect(0, i * rectHeight, matrix.width() - 1, (i + 1) * rectHeight);
+        await wait(333);
+      }
+    }
+
     for (let i = 0; i < matrix.height(); i++) {
       matrix.clear();
       const y = i;

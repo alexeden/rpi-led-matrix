@@ -13,6 +13,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("clear", &NodeLedMatrix::clear),
 		InstanceMethod("drawCircle", &NodeLedMatrix::draw_circle),
 		InstanceMethod("drawLine", &NodeLedMatrix::draw_line),
+		InstanceMethod("drawRect", &NodeLedMatrix::draw_rect),
 		InstanceMethod("drawText", &NodeLedMatrix::draw_text),
 		InstanceMethod("fill", &NodeLedMatrix::fill),
 		InstanceMethod("height", &NodeLedMatrix::height),
@@ -92,6 +93,20 @@ Napi::Value NodeLedMatrix::draw_line(const Napi::CallbackInfo& info) {
 	const auto x1 = info[2].As<Napi::Number>().Uint32Value();
 	const auto y1 = info[3].As<Napi::Number>().Uint32Value();
 	DrawLine(this->matrix_, x0, y0, x1, y1, fg_color_);
+
+	return info.This();
+}
+
+Napi::Value NodeLedMatrix::draw_rect(const Napi::CallbackInfo& info) {
+	const auto x0 = info[0].As<Napi::Number>().Uint32Value();
+	const auto y0 = info[1].As<Napi::Number>().Uint32Value();
+	const auto x1 = info[2].As<Napi::Number>().Uint32Value();
+	const auto y1 = info[3].As<Napi::Number>().Uint32Value();
+
+	DrawLine(this->matrix_, x0, y0, x1, y0, fg_color_);
+	DrawLine(this->matrix_, x1, y0, x1, y1, fg_color_);
+	DrawLine(this->matrix_, x1, y1, x0, y1, fg_color_);
+	DrawLine(this->matrix_, x0, y1, x0, y0, fg_color_);
 
 	return info.This();
 }
