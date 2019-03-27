@@ -5,10 +5,12 @@ import { LedMatrixUtils } from './utils';
 // tslint:disable-next-line:variable-name
 const Colors = {
   black: { r: 0, g: 0, b: 0 },
-  red: { r: 255, g: 0, b: 0 },
+  red: 0xFF0000,
+  // { r: 255, g: 0, b: 0 },
   green: { r: 0, g: 255, b: 0 },
   blue: { r: 0, g: 0, b: 255 },
-  magenta: { r: 255, g: 0, b: 255 },
+  magenta: 0xFF00FF,
+  //  { r: 255, g: 0, b: 255 },
   cyan: { r: 0, g: 255, b: 255 },
   yellow: { r: 255, g: 255, b: 0 },
 };

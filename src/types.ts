@@ -219,7 +219,7 @@ export interface Color {
 }
 
 export interface LedMatrixInstance {
-  bgColor(color: Color): this;
+  bgColor(color: Color | number): this;
   bgColor(): Color;
 
   brightness(brightness: number): this;
@@ -233,7 +233,7 @@ export interface LedMatrixInstance {
   drawRect(x0: number, y0: number, x1: number, y1: number): this;
   drawText(text: string, x: number, y: number, kerning?: number): number;
 
-  fgColor(color: Color): this;
+  fgColor(color: Color | number): this;
   fgColor(): Color;
 
   fill(): this;

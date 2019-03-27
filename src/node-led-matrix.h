@@ -43,8 +43,7 @@ public:
 	static Napi::Value default_runtime_options(const Napi::CallbackInfo& info);
 
 private:
-	static Color color_from_callback_info(const Napi::CallbackInfo& info, uint8_t argOffset);
-	static Color color_from_obj(const Napi::Object& obj);
+	static Color color_from_callback_info(const Napi::CallbackInfo& info);
 	static Napi::Object obj_from_color(const Napi::Env& env, const Color&);
 	static Napi::FunctionReference constructor;
 	static Napi::Object matrix_options_to_obj(const Napi::Env& env, const RGBMatrix::Options& options);
