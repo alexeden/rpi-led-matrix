@@ -187,7 +187,7 @@ export interface LedMatrixInstance {
 
   drawCircle(x: number, y: number, r: number): this;
   drawLine(x0: number, y0: number, x1: number, y1: number): this;
-  drawText(x: number, y: number, text: string): number;
+  drawText(text: string, x: number, y: number, kerning?: number): number;
 
   fill(): this;
 

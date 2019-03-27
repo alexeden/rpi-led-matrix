@@ -1,5 +1,5 @@
 import { addon } from './addon';
-import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType, LedMatrixInstance, Color } from './types';
+import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType, LedMatrixInstance } from './types';
 import { LedMatrixUtils } from './utils';
 
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
@@ -17,7 +17,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
 };
 
 // tslint:disable-next-line:variable-name
-const Colors: { [name: string]: Color } = {
+const Colors = {
   black: { r: 0, g: 0, b: 0 },
   red: { r: 255, g: 0, b: 0 },
   green: { r: 0, g: 255, b: 0 },
@@ -55,7 +55,7 @@ const Colors: { [name: string]: Color } = {
 
     const matrix = new addon.LedMatrix(matrixOpts, runtimeOpts);
     console.log('new addon.LedMatrix: ', matrix);
-    console.log('matrix chainable setters: ', matrix.bgColor(Colors.red).fgColor(Colors.red).setFont(font));
+    console.log('matrix chainable setters: ', matrix.bgColor(Colors.black).fgColor(Colors.red).setFont(font));
     console.log('matrix.fgColor()', matrix.fgColor());
     console.log('matrix.bgColor()', matrix.bgColor());
     console.log('matrix.pwmBits(): ', matrix.pwmBits());
@@ -69,7 +69,7 @@ const Colors: { [name: string]: Color } = {
     console.log('matrix.width(): ', matrix.width());
 
     matrix.clear();
-    console.log('', matrix.clear().drawText('YAAAS!!!', font));
+    console.log('', matrix.clear().drawText('YAAAS!!!', 0, font.baseline(), 5));
     await wait(2000);
 
     const interval = 200;
@@ -102,8 +102,14 @@ const Colors: { [name: string]: Color } = {
     matrix.clear();
     const centerX = Math.floor(matrix.width() / 2);
     const centerY = Math.floor(matrix.height() / 2);
-    for (let r = 0; r <= matrix.width(); r++) {
-      matrix.clear().drawCircle(centerX, centerY, r);
+    for (let r = 0; r <= matrix.width() * 1.5; r++) {
+      matrix.clear()
+        .fgColor(Colors.red)
+        .drawCircle(0, 0, r)
+        .fgColor(Colors.green)
+        .drawCircle(matrix.width(), matrix.height(), r)
+        .fgColor(Colors.blue)
+        .drawCircle(centerX, centerY, r);
       await wait(44);
     }
     matrix.clear();

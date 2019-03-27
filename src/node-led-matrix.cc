@@ -98,9 +98,10 @@ Napi::Value NodeLedMatrix::draw_line(const Napi::CallbackInfo& info) {
 
 Napi::Value NodeLedMatrix::draw_text(const Napi::CallbackInfo& info) {
 	const auto text = helpers::string_to_c_str(info[0].As<Napi::String>());
-	const auto font = Napi::ObjectWrap<FontAddon>::Unwrap(info[1].As<Napi::Object>());
-	const auto color = NodeLedMatrix::color_from_callback_info(info, 2);
-	auto advanced = DrawText(this->matrix_, font->font, 0, font->font.baseline(), color, text);
+	const auto x = info[1].As<Napi::Number>().Int32Value();
+	const auto y = info[2].As<Napi::Number>().Int32Value();
+	const auto k = info[3].IsNumber() ? info[3].As<Napi::Number>().Int32Value() : 0;
+	auto advanced = DrawText(this->matrix_, *font_, x, y, fg_color_, &bg_color_, text, k);
 	return Napi::Number::New(info.Env(), advanced);
 }
 
