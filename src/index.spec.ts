@@ -17,12 +17,12 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
 const spin = async (matrix: LedMatrixInstance, speed = 50) => {
   for (let i = 0; i < matrix.height(); i++) {
-    matrix.clear().fgColor(Colors.green).drawLine(0, i, matrix.width(), matrix.height() - i);
+    matrix.clear().fgColor(Colors.green).drawLine(0, i, matrix.width(), matrix.height() - i).sync();
     await wait(speed);
   }
 
   for (let i = matrix.width(); i >= 0; i--) {
-    matrix.clear().fgColor(Colors.magenta).drawLine(i, 0, matrix.width() - i, matrix.height());
+    matrix.clear().fgColor(Colors.magenta).drawLine(i, 0, matrix.width() - i, matrix.height()).sync();
     await wait(speed);
   }
 };
@@ -71,30 +71,32 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
     console.log('matrix.height(): ', matrix.height());
     console.log('matrix.width(): ', matrix.width());
 
-    matrix.clear();
+    matrix.clear().sync();
     for (let i = 0; i < matrix.height() + font.height(); i++) {
       const k = Math.floor(8 * i / matrix.height());
       matrix.clear().fgColor(Colors.black).bgColor(Colors.magenta).drawText('YAAAS!!!', 0, i, k);
+      matrix.sync();
       await wait(33);
     }
 
     const interval = 200;
-    matrix.fgColor(Colors.red).fill();
+    matrix.fgColor(Colors.red).fill().sync();
     await wait(interval);
-    matrix.fgColor(Colors.blue).fill();
+    matrix.fgColor(Colors.blue).fill().sync();
     await wait(interval);
-    matrix.fgColor(Colors.green).fill();
+    matrix.fgColor(Colors.green).fill().sync();
     await wait(interval);
     matrix.clear();
     await wait(interval);
 
     // Clear section
     {
-      matrix.clear().fgColor(Colors.magenta).fill();
+      matrix.clear().fgColor(Colors.magenta).fill().sync();
       await wait(333);
       matrix
         .clear(0, 0, matrix.width() / 2, matrix.height() / 2)
-        .clear(matrix.width() / 2, matrix.height() / 2, matrix.width(), matrix.height());
+        .clear(matrix.width() / 2, matrix.height() / 2, matrix.width(), matrix.height())
+        .sync();
       await wait(500);
     }
 
@@ -103,7 +105,8 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
       matrix.clear()
         .fgColor(Colors.green)
         .fill(0, 0, matrix.width() / 2, matrix.height() / 2)
-        .fill(matrix.width() / 2, matrix.height() / 2, matrix.width(), matrix.height());
+        .fill(matrix.width() / 2, matrix.height() / 2, matrix.width(), matrix.height())
+        .sync();
       await wait(500);
     }
 
@@ -111,9 +114,9 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
     {
       const rectHeight = Math.floor(matrix.height() / 10);
       const rgb = [Colors.red, Colors.green, Colors.blue];
-      matrix.clear();
+      matrix.clear().sync();
       for (let i = 0; i < 10; i++) {
-        matrix.fgColor(rgb[i % 3]).drawRect(0, i * rectHeight, matrix.width() - 1, (i + 1) * rectHeight);
+        matrix.fgColor(rgb[i % 3]).drawRect(0, i * rectHeight, matrix.width() - 1, (i + 1) * rectHeight).sync();
         await wait(333);
       }
     }
@@ -125,6 +128,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
       Array.from(Array(matrix.width())).map((_, x) => {
         matrix.setPixel(x, y);
       });
+      matrix.sync();
       await wait(22);
     }
 
@@ -135,10 +139,10 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
       Array.from(Array(matrix.height())).map((_, y) => {
         matrix.setPixel(x, y);
       });
+      matrix.sync();
       await wait(22);
     }
 
-    matrix.clear();
     const centerX = Math.floor(matrix.width() / 2);
     const centerY = Math.floor(matrix.height() / 2);
     for (let r = 0; r <= matrix.width() * 1.5; r++) {
@@ -148,12 +152,13 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
         .fgColor(Colors.green)
         .drawCircle(matrix.width(), matrix.height(), r)
         .fgColor(Colors.blue)
-        .drawCircle(centerX, centerY, r);
+        .drawCircle(centerX, centerY, r)
+        .sync();
       await wait(44);
     }
     matrix.clear();
     for (let r = matrix.width(); r >= 0; r--) {
-      matrix.clear().drawCircle(centerX, centerY, r);
+      matrix.clear().drawCircle(centerX, centerY, r).sync();
       await wait(44);
     }
 

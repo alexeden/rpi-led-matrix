@@ -99,11 +99,11 @@ Napi::Value NodeLedMatrix::clear(const Napi::CallbackInfo& info) {
 		const auto y1 = info[3].As<Napi::Number>().Uint32Value();
 		const auto black = Color(0, 0, 0);
 		for (auto y = y0; y <= y1; y++) {
-			DrawLine(this->matrix_, x0, y, x1, y, black);
+			DrawLine(this->canvas_, x0, y, x1, y, black);
 		}
 	}
 	else {
-		this->matrix_->Clear();
+		this->canvas_->Clear();
 	}
 	return info.This();
 }
@@ -112,7 +112,7 @@ Napi::Value NodeLedMatrix::draw_circle(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
 	const auto r = info[2].As<Napi::Number>().Uint32Value();
-	DrawCircle(this->matrix_, x, y, r, fg_color_);
+	DrawCircle(this->canvas_, x, y, r, fg_color_);
 
 	return info.This();
 }
@@ -122,7 +122,7 @@ Napi::Value NodeLedMatrix::draw_line(const Napi::CallbackInfo& info) {
 	const auto y0 = info[1].As<Napi::Number>().Uint32Value();
 	const auto x1 = info[2].As<Napi::Number>().Uint32Value();
 	const auto y1 = info[3].As<Napi::Number>().Uint32Value();
-	DrawLine(this->matrix_, x0, y0, x1, y1, fg_color_);
+	DrawLine(this->canvas_, x0, y0, x1, y1, fg_color_);
 
 	return info.This();
 }
@@ -133,10 +133,10 @@ Napi::Value NodeLedMatrix::draw_rect(const Napi::CallbackInfo& info) {
 	const auto x1 = info[2].As<Napi::Number>().Uint32Value();
 	const auto y1 = info[3].As<Napi::Number>().Uint32Value();
 
-	DrawLine(this->matrix_, x0, y0, x1, y0, fg_color_);
-	DrawLine(this->matrix_, x1, y0, x1, y1, fg_color_);
-	DrawLine(this->matrix_, x1, y1, x0, y1, fg_color_);
-	DrawLine(this->matrix_, x0, y1, x0, y0, fg_color_);
+	DrawLine(this->canvas_, x0, y0, x1, y0, fg_color_);
+	DrawLine(this->canvas_, x1, y0, x1, y1, fg_color_);
+	DrawLine(this->canvas_, x1, y1, x0, y1, fg_color_);
+	DrawLine(this->canvas_, x0, y1, x0, y0, fg_color_);
 
 	return info.This();
 }
@@ -146,7 +146,7 @@ Napi::Value NodeLedMatrix::draw_text(const Napi::CallbackInfo& info) {
 	const auto x = info[1].As<Napi::Number>().Int32Value();
 	const auto y = info[2].As<Napi::Number>().Int32Value();
 	const auto k = info[3].IsNumber() ? info[3].As<Napi::Number>().Int32Value() : 0;
-	auto advanced = DrawText(this->matrix_, *font_, x, y, fg_color_, &bg_color_, text, k);
+	auto advanced = DrawText(this->canvas_, *font_, x, y, fg_color_, &bg_color_, text, k);
 	return Napi::Number::New(info.Env(), advanced);
 }
 
@@ -156,13 +156,12 @@ Napi::Value NodeLedMatrix::fill(const Napi::CallbackInfo& info) {
 		const auto y0 = info[1].As<Napi::Number>().Uint32Value();
 		const auto x1 = info[2].As<Napi::Number>().Uint32Value();
 		const auto y1 = info[3].As<Napi::Number>().Uint32Value();
-		const auto black = Color(0, 0, 0);
 		for (auto y = y0; y <= y1; y++) {
-			DrawLine(this->matrix_, x0, y, x1, y, fg_color_);
+			DrawLine(this->canvas_, x0, y, x1, y, fg_color_);
 		}
 	}
 	else {
-		this->matrix_->Fill(fg_color_.r, fg_color_.g, fg_color_.b);
+		this->canvas_->Fill(fg_color_.r, fg_color_.g, fg_color_.b);
 	}
 
 	return info.This();
@@ -198,7 +197,7 @@ Napi::Value NodeLedMatrix::pwm_bits(const Napi::CallbackInfo& info) {
 Napi::Value NodeLedMatrix::set_pixel(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
-	this->matrix_->SetPixel(x, y, fg_color_.r, fg_color_.g, fg_color_.b);
+	this->canvas_->SetPixel(x, y, fg_color_.r, fg_color_.g, fg_color_.b);
 
 	return info.This();
 }
