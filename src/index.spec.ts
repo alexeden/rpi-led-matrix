@@ -40,6 +40,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50) => {
       cols: 64,
       chainLength: 2,
       hardwareMapping: GpioMapping.AdafruitHatPwm,
+      // disableHardwarePulsing: true,
       pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
     };
 

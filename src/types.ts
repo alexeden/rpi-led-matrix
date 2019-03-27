@@ -27,11 +27,14 @@ export enum RuntimeFlag {
   On = 1,
 }
 
-// Default row address type is 0, corresponding to direct setting of the
-// row, while row address type 1 is used for panels that only have A/B,
-// typically some 64x64 panels
 export enum RowAddressType {
+  /**
+   * Corresponds to direct setting of the row.
+   */
   Direct = 0,
+  /**
+   * Used for panels that only have A/B. (typically some 64x64 panels)
+   */
   AB = 1,
 }
 
@@ -44,8 +47,6 @@ export enum GpioMapping {
   ClassicPi1 = 'classic-pi1',
 }
 
-// Options to initialize the RGBMatrix. Also see the main README.md for
-// detailed descriptions of the command line flags.
 export interface MatrixOptions {
   /**
    * The type of GPIO mapping of the device.
@@ -79,18 +80,25 @@ export interface MatrixOptions {
    */
   parallel: 1 | 2 | 3 | 4;
 
-  // Set PWM bits used for output. Default is 11, but if you only deal with
-  // limited comic-colors, 1 might be sufficient. Lower require less CPU and
-  // increases refresh-rate.
+  /**
+   * Set PWM bits used for output. The maximum value is 11. Lower values
+   * will increase performance at the expense of color precision.
+   * @default 11
+   */
   pwmBits: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
 
-  // Change the base time-unit for the on-time in the lowest
-  // significant bit in nanoseconds.
-  // Higher numbers provide better quality (more accurate color, less
-  // ghosting), but have a negative impact on the frame rate.
+  /**
+   * Change the base time-unit for the on-time in the lowest
+   * significant bit in nanoseconds. Higher values will provide better image quality
+   * (more accurate color, less ghosting) at the expense of frame rate.
+   * @default 130
+   */
   pwmLsbNanoseconds: number;
 
-  // The lower bits can be time-dithered for higher refresh rate.
+  /**
+   * The lower bits can be time-dithered for higher refresh rate.
+   * @default 0
+   */
   pwmDitherBits: number;
 
   /**
@@ -99,22 +107,30 @@ export interface MatrixOptions {
    */
   brightness: number;
 
+  /**
+   * @default ScanMode.Progressive
+   */
   scanMode: ScanMode;
 
-  // Default row address type is 0, corresponding to direct setting of the
-  // row, while row address type 1 is used for panels that only have A/B,
-  // typically some 64x64 panels
+  /**
+   * @default RowAddressType.Direct
+   */
   rowAddressType: RowAddressType;
 
-  // Type of multiplexing. 0 = direct, 1 = stripe, 2 = checker (typical 1:8)
+  /**
+   * @default MuxType.Direct
+   */
   multiplexing: MuxType;
-
-  // Disable the PWM hardware subsystem to create pulses.
-  // Typically, you don't want to disable hardware pulsing, this is mostly
-  // for debugging and figuring out if there is interference with the
-  // sound system.
-  // This won't do anything if output enable is not connected to GPIO 18 in
-  // non-standard wirings.
+  /**
+   * Disable the PWM hardware subsystem to create pulses.
+   * Typically, you don't want to disable hardware pulsing, this is mostly
+   * for debugging and figuring out if there is interference with the
+   * sound system.
+   * This won't do anything if output enable is not connected to GPIO 18 in
+   * non-standard wirings.
+   *
+   * @default false
+   */
   disableHardwarePulsing: boolean;
 
   /**
@@ -123,8 +139,12 @@ export interface MatrixOptions {
    */
   showRefreshRate: boolean;
 
-  // In case the internal sequence of mapping is not "RGB", this contains the
-  // real mapping. Some panels mix up these colors.
+  /**
+   * In case the internal sequence of mapping is not "RGB", this contains the
+   * real mapping. Some panels mix up these colors.
+   *
+   * @default 'RGB'
+   */
   ledRgbSequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
 
   inverseColors: boolean;
@@ -155,12 +175,16 @@ export interface RuntimeOptions {
    * after the call (which requires that no threads have been started yet).
    * In the other cases (Off or On), the choice is already made, so the thread
    * is conveniently already started for you.
+   *
+   * @default RuntimeFlag.Off
    */
   daemon: RuntimeFlag;
 
   /**
    * Drop privileges from 'root' to 'daemon' once the hardware is initialized.
    * This is usually a good idea unless you need to stay on elevated privs.
+   *
+   * @default RuntimeFlag.On
    */
   dropPrivileges: RuntimeFlag;
 
@@ -168,6 +192,8 @@ export interface RuntimeOptions {
    * By default, the gpio is initialized for you, but if you want to manually
    * do that yourself, set this flag to false.
    * Then, you have to initialize the matrix yourself with SetGPIO().
+   *
+   * @default true
    */
   doGpioInit: boolean;
 }
@@ -233,7 +259,7 @@ export interface FontInstance {
    */
   height(): number;
   /**
-   * Return the number of pixels spanned by a given string.
+   * Return the number of pixels spanned by a string rendered with this font.
    */
   stringWidth(str: string, kerning?: number): number;
 }
