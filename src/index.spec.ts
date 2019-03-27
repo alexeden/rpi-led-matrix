@@ -69,8 +69,9 @@ const Colors = {
     console.log('matrix.width(): ', matrix.width());
 
     matrix.clear();
-    for (let i = 0; i < matrix.height() + font.baseline(); i++) {
-      matrix.clear().fgColor(Colors.black).bgColor(Colors.magenta).drawText('YAAAS!!!', 0, i);
+    for (let i = 0; i < matrix.height() + font.height(); i++) {
+      const k = Math.floor(8 * i / matrix.height());
+      matrix.clear().fgColor(Colors.black).bgColor(Colors.magenta).drawText('YAAAS!!!', 0, i, k);
       await wait(33);
     }
 

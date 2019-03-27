@@ -44,11 +44,12 @@ Napi::Value FontAddon::height(const Napi::CallbackInfo& info) {
 
 Napi::Value FontAddon::string_width(const Napi::CallbackInfo& info) {
 	const std::string str = info[0].As<Napi::String>().ToString();
+	const auto kerning = info[1].IsNumber() ? info[1].As<Napi::Number>().Int32Value() : 0;
 	int sum = 0;
 
 	for(auto c : str) {
 		uint32_t codepoint = uint_least32_t(c);
-		int width = font.CharacterWidth(codepoint);
+		int width = font.CharacterWidth(codepoint) + kerning;
 		if (width < 0) throw Napi::Error::New(info.Env(), "Character not found for this font.");
 		sum += width;
 	}

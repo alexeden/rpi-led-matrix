@@ -232,7 +232,7 @@ export interface FontInstance {
   /**
    * Return the number of pixels spanned by a given string.
    */
-  stringWidth(str: string): number;
+  stringWidth(str: string, kerning?: number): number;
 }
 
 export interface Font {
