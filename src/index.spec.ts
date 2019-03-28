@@ -80,7 +80,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
 
     const buffer = Buffer.of(Colors.red, Colors.green, Colors.blue);
     console.log('buffer info: ', buffer.length);
-    matrix.clear().drawBuffer(1, 1, buffer).sync();
+    matrix.clear().drawBuffer(buffer, 1, 1).sync();
     for (let i = 0; i < matrix.height() + font.height(); i++) {
       const k = Math.floor(8 * i / matrix.height());
       matrix.clear().fgColor(Colors.black).bgColor(Colors.magenta).drawText('YAAAS!!!', 0, i, k);
