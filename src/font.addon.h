@@ -1,17 +1,17 @@
 #ifndef FONTADDON_H
 #define FONTADDON_H
 
+#include "helpers.cc"
+#include <graphics.h>
 #include <iostream>
 #include <napi.h>
-#include <graphics.h>
-#include "helpers.cc"
 
 using namespace rgb_matrix;
 
 class FontAddon : public Napi::ObjectWrap<FontAddon> {
-public:
+  public:
 	static Napi::Object Init(Napi::Env env, Napi::Object exports);
-    FontAddon(const Napi::CallbackInfo &info);
+	FontAddon(const Napi::CallbackInfo& info);
 	~FontAddon();
 
 	Napi::Value height(const Napi::CallbackInfo& info);
@@ -19,7 +19,7 @@ public:
 	Napi::Value string_width(const Napi::CallbackInfo& info);
 	Font font;
 
-private:
+  private:
 	static Napi::FunctionReference constructor;
 };
 

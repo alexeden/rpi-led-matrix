@@ -4,8 +4,9 @@
 #include <napi.h>
 #include <sstream>
 
-namespace napi_utils {
-	static Napi::Value getProp(const Napi::Env& env, const Napi::Object& obj, const char *key) {
+namespace napi_utils
+{
+	static Napi::Value getProp(const Napi::Env& env, const Napi::Object& obj, const char* key) {
 		if (!obj.Has(key)) {
 			std::stringstream ss;
 			ss << "Object is missing the \"" << key << "\" property." << std::endl;
@@ -15,8 +16,8 @@ namespace napi_utils {
 		return obj.Get(key);
 	}
 
-	template <typename T>
-	static Napi::Buffer<T> getBufferProp(Napi::Env& env, Napi::Object& obj, const char *key) {
+	template<typename T>
+	static Napi::Buffer<T> getBufferProp(Napi::Env& env, Napi::Object& obj, const char* key) {
 		Napi::Value _value = getProp(env, obj, key);
 
 		if (!_value.IsBuffer()) {
@@ -39,6 +40,6 @@ namespace napi_utils {
 
 	// 	return _value.As<Napi::Number>();
 	// }
-}
+} // namespace napi_utils
 
 #endif
