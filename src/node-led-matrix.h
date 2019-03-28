@@ -1,12 +1,9 @@
-
 #ifndef NODELEDMATRIX_H
 #define NODELEDMATRIX_H
-#define FOREBLU "\x1B[34m"
-#define FOREMAG "\x1B[35m"
-#define RESETTEXT "\x1B[0m"
 
 #include "font.addon.h"
 #include "helpers.cc"
+#include "image.h"
 #include <graphics.h>
 #include <iostream>
 #include <led-matrix.h>
