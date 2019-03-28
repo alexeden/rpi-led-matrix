@@ -13,6 +13,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 	   StaticMethod("defaultRuntimeOptions", &NodeLedMatrix::default_runtime_options),
 	   InstanceMethod("brightness", &NodeLedMatrix::brightness),
 	   InstanceMethod("clear", &NodeLedMatrix::clear),
+	   InstanceMethod("drawBuffer", &NodeLedMatrix::draw_buffer),
 	   InstanceMethod("drawCircle", &NodeLedMatrix::draw_circle),
 	   InstanceMethod("drawLine", &NodeLedMatrix::draw_line),
 	   InstanceMethod("drawRect", &NodeLedMatrix::draw_rect),
@@ -57,12 +58,15 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo& info)
 
 	this->matrix_ = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
 	this->canvas_ = this->matrix_->CreateFrameCanvas();
+	this->image_ = new Image();
+
 	if (this->matrix_ == NULL) { throw Napi::Error::New(env, "Failed to create matrix."); }
 }
 
 NodeLedMatrix::~NodeLedMatrix(void) {
 	std::cerr << "Destroying matrix" << std::endl;
 	delete matrix_;
+	delete image_;
 }
 
 Napi::Value NodeLedMatrix::sync(const Napi::CallbackInfo& info) {
@@ -101,6 +105,15 @@ Napi::Value NodeLedMatrix::clear(const Napi::CallbackInfo& info) {
 	else {
 		this->canvas_->Clear();
 	}
+	return info.This();
+}
+
+Napi::Value NodeLedMatrix::draw_buffer(const Napi::CallbackInfo& info) {
+	const auto buffer = info[0].As<Napi::Buffer<uint8_t>>();
+	const auto data = buffer.Data();
+	const auto len = buffer.Length();
+	assert(len % 3 == 0);
+
 	return info.This();
 }
 

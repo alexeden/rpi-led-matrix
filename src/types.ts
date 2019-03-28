@@ -228,6 +228,7 @@ export interface LedMatrixInstance {
   clear(): this;
   clear(x0: number, y0: number, x1: number, y1: number): this;
 
+  drawBuffer(buffer: Buffer): this;
   drawCircle(x: number, y: number, r: number): this;
   drawLine(x0: number, y0: number, x1: number, y1: number): this;
   drawRect(x0: number, y0: number, x1: number, y1: number): this;

@@ -7,6 +7,7 @@
 #include <graphics.h>
 #include <iostream>
 #include <led-matrix.h>
+#include <assert.h>
 #include <napi.h>
 
 using namespace rgb_matrix;
@@ -20,6 +21,7 @@ class NodeLedMatrix : public Napi::ObjectWrap<NodeLedMatrix> {
 	Napi::Value bg_color(const Napi::CallbackInfo& info);
 	Napi::Value brightness(const Napi::CallbackInfo& info);
 	Napi::Value clear(const Napi::CallbackInfo& info);
+	Napi::Value draw_buffer(const Napi::CallbackInfo& info);
 	Napi::Value draw_circle(const Napi::CallbackInfo& info);
 	Napi::Value draw_line(const Napi::CallbackInfo& info);
 	Napi::Value draw_rect(const Napi::CallbackInfo& info);
@@ -52,6 +54,7 @@ class NodeLedMatrix : public Napi::ObjectWrap<NodeLedMatrix> {
 	Font* font_;
 	RGBMatrix* matrix_;
 	FrameCanvas* canvas_;
+	Image *image_;
 };
 
 #endif
