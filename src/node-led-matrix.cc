@@ -109,10 +109,12 @@ Napi::Value NodeLedMatrix::clear(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value NodeLedMatrix::draw_buffer(const Napi::CallbackInfo& info) {
-	const auto buffer = info[0].As<Napi::Buffer<uint8_t>>();
+	const auto w = info[0].As<Napi::Number>().Uint32Value();
+	const auto h = info[1].As<Napi::Number>().Uint32Value();
+	const auto buffer = info[2].As<Napi::Buffer<uint8_t>>();
 	const auto data = buffer.Data();
 	const auto len = buffer.Length();
-	assert(len % 3 == 0);
+	assert(len == w * h * 3);
 
 	return info.This();
 }

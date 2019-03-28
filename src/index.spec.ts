@@ -7,8 +7,8 @@ import { LedMatrixUtils } from './utils';
 const Colors = {
   black: { r: 0, g: 0, b: 0 },
   red: 0xFF0000,
-  green: { r: 0, g: 255, b: 0 },
-  blue: { r: 0, g: 0, b: 255 },
+  green: 0x00FF00,
+  blue: 0x0000FF,
   magenta: 0xFF00FF,
   cyan: { r: 0, g: 255, b: 255 },
   yellow: { r: 255, g: 255, b: 0 },
@@ -78,7 +78,9 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     console.log('matrix.height(): ', matrix.height());
     console.log('matrix.width(): ', matrix.width());
 
-    matrix.clear().sync();
+    const buffer = Buffer.of(Colors.red, Colors.green, Colors.blue);
+    console.log('buffer info: ', buffer.length);
+    matrix.clear().drawBuffer(1, 1, buffer).sync();
     for (let i = 0; i < matrix.height() + font.height(); i++) {
       const k = Math.floor(8 * i / matrix.height());
       matrix.clear().fgColor(Colors.black).bgColor(Colors.magenta).drawText('YAAAS!!!', 0, i, k);
