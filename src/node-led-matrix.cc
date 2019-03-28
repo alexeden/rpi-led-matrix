@@ -109,7 +109,7 @@ Napi::Value NodeLedMatrix::clear(const Napi::CallbackInfo& info) {
 Napi::Value NodeLedMatrix::draw_buffer(const Napi::CallbackInfo& info) {
 	const auto buffer = info[0].As<Napi::Buffer<uint8_t>>();
 	const auto w = info[1].IsNumber() ? info[1].As<Napi::Number>().Uint32Value() : this->matrix_->width();
-	const auto h = info[2].IsNumber() ? info[1].As<Napi::Number>().Uint32Value() : this->matrix_->height();
+	const auto h = info[2].IsNumber() ? info[2].As<Napi::Number>().Uint32Value() : this->matrix_->height();
 	const auto data = buffer.Data();
 	const auto len = buffer.Length();
 
