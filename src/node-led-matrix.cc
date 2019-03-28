@@ -119,8 +119,8 @@ Napi::Value NodeLedMatrix::draw_buffer(const Napi::CallbackInfo& info) {
 
 	Image *img	= new Image();
 	Pixel *pixels = (Pixel*) malloc(sizeof(Pixel) * w * h);
-	for (int i = 0; i < w * h; i++) {
-		int j = i * 3;
+	for (auto i = 0; i < w * h; i++) {
+		auto j = i * 3;
 		Pixel p;
 		p.r(data[j]);
 		p.g(data[j + 1]);
@@ -129,6 +129,18 @@ Napi::Value NodeLedMatrix::draw_buffer(const Napi::CallbackInfo& info) {
 	}
 
 	img->setPixels(w, h, pixels);
+
+	assert(img->isValid());
+
+	for (auto y = 0; y < h; y++) {
+		if (y > this->matrix_->height()) break;
+
+		for (auto x = 0; x < w; x++) {
+			if (x > this->matrix_->width()) break;
+			auto pixel = img->getPixel(x, y);
+			canvas_->SetPixel(x, y, pixel.r(), pixel.g(), pixel.b());
+		}
+	}
 
 	return info.This();
 }

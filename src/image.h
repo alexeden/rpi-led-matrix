@@ -20,15 +20,15 @@ class Image {
 	}
 	void Reset() {
 		pixels = NULL;
-		w	  = -1;
-		h	  = -1;
+		w	  = 0;
+		h	  = 0;
 	}
 
 	Pixel* getPixels() {
 		return pixels;
 	}
 
-	void setPixels(int w, int h, Pixel *ps) {
+	void setPixels(uint32_t w, uint32_t h, Pixel *ps) {
 		w = w;
 		h = h;
 		pixels = ps;
@@ -45,8 +45,8 @@ class Image {
 	}
 
   private:
-	int w;
-	int h;
+	uint32_t w;
+	uint32_t h;
 	Pixel* pixels;
 };
 
