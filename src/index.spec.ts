@@ -47,8 +47,6 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
       cols: 64,
       chainLength: 2,
       hardwareMapping: GpioMapping.AdafruitHatPwm,
-      // showRefreshRate: true,
-      // disableHardwarePulsing: true,
       pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
     };
 
@@ -79,7 +77,6 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     console.log('matrix.width(): ', matrix.width());
 
     const buffer = Buffer.of(Colors.red, Colors.green, Colors.blue);
-    console.log('buffer info: ', buffer.length);
     matrix.clear().drawBuffer(buffer, 1, 1).sync();
     for (let i = 0; i < matrix.height() + font.height(); i++) {
       const k = Math.floor(8 * i / matrix.height());
@@ -126,7 +123,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
       matrix.clear().sync();
       for (let i = 0; i < 10; i++) {
         matrix.fgColor(rgb[i % 3]).drawRect(0, i * rectHeight, matrix.width() - 1, (i + 1) * rectHeight).sync();
-        await wait(333);
+        await wait(200);
       }
     }
 
@@ -166,19 +163,20 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     for (let r = 0; r <= matrix.width() * 1.5; r++) {
       matrix.clear()
         .fgColor(Colors.red)
-        .drawCircle(0, 0, r)
+        .drawCircle(0, r, r)
         .fgColor(Colors.green)
-        .drawCircle(matrix.width(), matrix.height(), r)
+        .drawCircle(matrix.width(), matrix.height() - r, r)
         .fgColor(Colors.blue)
         .drawCircle(centerX, centerY, r)
         .sync();
-      await wait(44);
+      await wait(33);
     }
     matrix.clear();
-    for (let r = matrix.width() - 1; r >= 0; r--) {
+    for (let r = matrix.width() - 15; r >= 0; r--) {
       matrix.fgColor(rainbow64[r]).drawCircle(centerX, centerY, r).sync();
       await wait(44);
     }
+    await wait(1000);
 
     // await spin(matrix);
     await spin(matrix, 10);
