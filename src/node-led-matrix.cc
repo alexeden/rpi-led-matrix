@@ -114,7 +114,21 @@ Napi::Value NodeLedMatrix::draw_buffer(const Napi::CallbackInfo& info) {
 	const auto buffer = info[2].As<Napi::Buffer<uint8_t>>();
 	const auto data = buffer.Data();
 	const auto len = buffer.Length();
+
 	assert(len == w * h * 3);
+
+	Image *img	= new Image();
+	Pixel *pixels = (Pixel*) malloc(sizeof(Pixel) * w * h);
+	for (int i = 0; i < w * h; i++) {
+		int j = i * 3;
+		Pixel p;
+		p.r(data[j]);
+		p.g(data[j + 1]);
+		p.b(data[j + 2]);
+		pixels[i] = p;
+	}
+
+	img->setPixels(w, h, pixels);
 
 	return info.This();
 }

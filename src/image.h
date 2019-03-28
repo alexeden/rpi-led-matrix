@@ -28,6 +28,12 @@ class Image {
 		return pixels;
 	}
 
+	void setPixels(int w, int h, Pixel *ps) {
+		w = w;
+		h = h;
+		pixels = ps;
+	}
+
 	const Pixel& getPixel(int x, int y) {
 		static Pixel black;
 		if (x < 0 || x >= w || y < 0 || y >= h) return black;
