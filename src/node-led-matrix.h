@@ -7,7 +7,6 @@
 
 #include "font.addon.h"
 #include "helpers.cc"
-#include "napi-utils.cc"
 #include <graphics.h>
 #include <iostream>
 #include <led-matrix.h>

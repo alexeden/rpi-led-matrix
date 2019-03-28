@@ -1,7 +1,7 @@
 #include "node-led-matrix.h"
 
 using namespace rgb_matrix;
-using namespace napi_utils;
+using namespace helpers;
 
 Napi::FunctionReference NodeLedMatrix::constructor;
 
@@ -165,6 +165,10 @@ Napi::Value NodeLedMatrix::height(const Napi::CallbackInfo& info) {
 	return Napi::Number::New(info.Env(), this->matrix_->height());
 }
 
+Napi::Value NodeLedMatrix::width(const Napi::CallbackInfo& info) {
+	return Napi::Number::New(info.Env(), this->matrix_->width());
+}
+
 Napi::Value NodeLedMatrix::luminance_correct(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsBoolean()) {
 		auto correct = info[0].As<Napi::Boolean>().ToBoolean();
@@ -221,10 +225,6 @@ Napi::Value NodeLedMatrix::font(const Napi::CallbackInfo& info) {
 	auto font   = Napi::ObjectWrap<FontAddon>::Unwrap(info[0].As<Napi::Object>());
 	this->font_ = &(font->font);
 	return info.This();
-}
-
-Napi::Value NodeLedMatrix::width(const Napi::CallbackInfo& info) {
-	return Napi::Number::New(info.Env(), this->matrix_->width());
 }
 
 /**
