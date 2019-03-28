@@ -17,7 +17,7 @@ const Colors = {
 const rainbow64 = Array.from(Array(64))
   .map((_, i, { length }) => Math.floor(360 * i / length))
   .map(hue => color.hsl(hue, 100, 50).rgbNumber());
-console.log(rainbow64);
+
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
 const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
