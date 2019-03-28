@@ -181,17 +181,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     // await spin(matrix);
     await spin(matrix, 10);
     await spin(matrix, 5);
-    await spin(matrix, 5);
     await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 2);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
-    await spin(matrix, 1);
     await spin(matrix, 1);
     await spin(matrix, 1);
     await spin(matrix, 0);

@@ -58,7 +58,6 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo& info)
 
 	this->matrix_ = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
 	this->canvas_ = this->matrix_->CreateFrameCanvas();
-	this->image_ = new Image();
 
 	if (this->matrix_ == NULL) { throw Napi::Error::New(env, "Failed to create matrix."); }
 }
@@ -66,7 +65,6 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo& info)
 NodeLedMatrix::~NodeLedMatrix(void) {
 	std::cerr << "Destroying matrix" << std::endl;
 	delete matrix_;
-	delete image_;
 }
 
 Napi::Value NodeLedMatrix::sync(const Napi::CallbackInfo& info) {
@@ -141,6 +139,8 @@ Napi::Value NodeLedMatrix::draw_buffer(const Napi::CallbackInfo& info) {
 			canvas_->SetPixel(x, y, pixel.r(), pixel.g(), pixel.b());
 		}
 	}
+
+	delete img;
 
 	return info.This();
 }

@@ -54,7 +54,6 @@ class NodeLedMatrix : public Napi::ObjectWrap<NodeLedMatrix> {
 	Font* font_;
 	RGBMatrix* matrix_;
 	FrameCanvas* canvas_;
-	Image *image_;
 };
 
 #endif
