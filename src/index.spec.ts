@@ -4,15 +4,19 @@ import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType, LedMatrixI
 import { LedMatrixUtils } from './utils';
 
 // tslint:disable-next-line:variable-name
-const Colors = {
-  black: { r: 0, g: 0, b: 0 },
-  red: 0xFF0000,
-  green: 0x00FF00,
-  blue: 0x0000FF,
-  magenta: 0xFF00FF,
-  cyan: { r: 0, g: 255, b: 255 },
-  yellow: { r: 255, g: 255, b: 0 },
-};
+enum Colors {
+  black = 0x000000,
+  red = 0xFF0000,
+  green = 0x00FF00,
+  blue = 0x0000FF,
+  magenta = 0xFF00FF,
+  cyan = 0x00FFFF,
+  yellow = 0xFFFF00,
+}
+
+// const RGB = [Colors.red, Colors.green, Colors.blue];
+
+// const toBytes = (hex: number) => [0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex];
 
 const rainbow64 = Array.from(Array(64))
   .map((_, i, { length }) => Math.floor(360 * i / length))
@@ -76,8 +80,21 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     console.log('matrix.height(): ', matrix.height());
     console.log('matrix.width(): ', matrix.width());
 
-    const buffer = Buffer.of(Colors.red, Colors.green, Colors.blue);
-    matrix.clear().drawBuffer(buffer, 1, 1).sync();
+    const colorStatic = Buffer.of(
+      ...Array.from(Array(3 * matrix.height() * matrix.width())).map(() => Math.round(Math.random()) * 0xFF)
+    );
+    console.log(colorStatic.length);
+    // Buffer.of(
+    //   ...Array.from(Array(matrix.width())).flatMap((_, x) =>
+    //     Array.from(Array(matrix.height())).flatMap((__, y) =>
+    //       toBytes(RGB[Math.floor(3 * Math.random())])
+    //     )
+    //   )
+    // );
+
+    // const buffer = Buffer.of(Colors.red, Colors.green, Colors.blue);
+    matrix.clear().drawBuffer(colorStatic).sync();
+    await wait(2000);
     for (let i = 0; i < matrix.height() + font.height(); i++) {
       const k = Math.floor(8 * i / matrix.height());
       matrix.clear().fgColor(Colors.black).bgColor(Colors.magenta).drawText('YAAAS!!!', 0, i, k);
@@ -164,10 +181,14 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
       matrix.clear()
         .fgColor(Colors.red)
         .drawCircle(0, r, r)
+        .fgColor(Colors.magenta)
+        .drawCircle(matrix.width() - r, matrix.height() - r, r)
+        .fgColor(Colors.yellow)
+        .drawCircle(r, r * Math.sin(r / 180), r)
         .fgColor(Colors.green)
         .drawCircle(matrix.width(), matrix.height() - r, r)
         .fgColor(Colors.blue)
-        .drawCircle(centerX, centerY, r)
+        .drawCircle(centerX + r / 2, centerY, r)
         .sync();
       await wait(33);
     }
