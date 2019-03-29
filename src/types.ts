@@ -275,6 +275,10 @@ export interface FontInstance {
    */
   height(): number;
   /**
+   * Return the path of the font source.
+   */
+  path(): string;
+  /**
    * Return the number of pixels spanned by a string rendered with this font.
    */
   stringWidth(str: string, kerning?: number): number;
