@@ -3,7 +3,7 @@ import { GpioMapping, PixelMapperType, FontInstance } from './types';
 import { LedMatrixUtils } from './utils';
 import globby from 'globby';
 import { basename } from 'path';
-
+import { LayoutUtils } from './layout-utils';
 
 // tslint:disable-next-line:variable-name
 enum Colors {
@@ -22,10 +22,10 @@ type FontMap = { [name: string]: FontInstance };
 
 (async () => {
   try {
+
     const fontExt = '.bdf';
     const fontPaths = (await globby(`${process.cwd()}/fonts/*${fontExt}`))
       .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]));
-    console.log(fontPaths);
 
     const fonts: FontMap = fontPaths
       .reduce(
@@ -35,8 +35,6 @@ type FontMap = { [name: string]: FontInstance };
         }),
         { }
       );
-
-    console.log('fonts: ', fonts);
 
     const matrix = new addon.LedMatrix(
       {
@@ -58,19 +56,23 @@ type FontMap = { [name: string]: FontInstance };
       const nameWidth = font.stringWidth(name);
       const nameX = Math.floor((matrix.width() - nameWidth) / 2);
       const nameY = Math.floor((matrix.height() - font.height()) / 2);
-      console.log('nameWidth: ', nameWidth);
       matrix.clear().setFont(font);
 
       matrix
         .fgColor(Colors.red)
-        .drawRect(nameX, nameY, nameWidth, font.height())
-        .fgColor(Colors.yellow)
-        .drawText(name, nameX, nameY);
+        .drawRect(nameX, nameY, nameWidth, font.height());
 
+      const wrapped = LayoutUtils.wrapText(font, matrix.width(), matrix.height(), `I'm a sentence to be split into lines`);
+
+      wrapped.glyphs.forEach(glyph => {
+        matrix
+          .fgColor(wrapped.fits ? Colors.green : Colors.red)
+          .drawText(glyph.char, glyph.x, glyph.y);
+      });
 
       name.split('').map(char => console.log(`${char} width: ${font.stringWidth(char)}`));
       matrix.sync();
-      await wait(4000);
+      await wait(1000);
     }
   }
   catch (error) {
