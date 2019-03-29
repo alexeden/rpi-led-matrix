@@ -41,8 +41,10 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
  */
 NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<NodeLedMatrix>(info)
+  , bg_color_(Color(0, 0, 0))
   , fg_color_(Color(0, 0, 0))
-  , bg_color_(Color(0, 0, 0)) {
+  , font_(nullptr) {
+
 	auto env = info.Env();
 
 	if (!info[0].IsObject()) {
@@ -179,6 +181,9 @@ Napi::Value NodeLedMatrix::draw_rect(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value NodeLedMatrix::draw_text(const Napi::CallbackInfo& info) {
+	if (!font_) {
+		throw Napi::Error::New(info.Env(), "Cannot draw text because the font has not been set!");
+	}
 	const auto text = helpers::string_to_c_str(info[0].As<Napi::String>());
 	const auto x	= info[1].As<Napi::Number>().Int32Value();
 	const auto y	= info[2].As<Napi::Number>().Int32Value();
