@@ -169,13 +169,13 @@ Napi::Value NodeLedMatrix::draw_line(const Napi::CallbackInfo& info) {
 Napi::Value NodeLedMatrix::draw_rect(const Napi::CallbackInfo& info) {
 	const auto x0 = info[0].As<Napi::Number>().Uint32Value();
 	const auto y0 = info[1].As<Napi::Number>().Uint32Value();
-	const auto x1 = info[2].As<Napi::Number>().Uint32Value();
-	const auto y1 = info[3].As<Napi::Number>().Uint32Value();
+	const auto w = info[2].As<Napi::Number>().Uint32Value();
+	const auto h = info[3].As<Napi::Number>().Uint32Value();
 
-	DrawLine(this->canvas_, x0, y0, x1, y0, fg_color_);
-	DrawLine(this->canvas_, x1, y0, x1, y1, fg_color_);
-	DrawLine(this->canvas_, x1, y1, x0, y1, fg_color_);
-	DrawLine(this->canvas_, x0, y1, x0, y0, fg_color_);
+	DrawLine(this->canvas_, x0, y0, x0 + w, y0, fg_color_);
+	DrawLine(this->canvas_, x0 + w, y0, x0 + w, y0 + h, fg_color_);
+	DrawLine(this->canvas_, x0 + w, y0 + h, x0, y0 + h, fg_color_);
+	DrawLine(this->canvas_, x0, y0 + h, x0, y0, fg_color_);
 
 	return info.This();
 }

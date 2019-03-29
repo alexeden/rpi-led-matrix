@@ -63,7 +63,7 @@ type FontMap = { [name: string]: FontInstance };
 
       matrix
         .fgColor(Colors.red)
-        .drawRect(nameX, nameY, nameX + nameWidth, nameY + font.height())
+        .drawRect(nameX, nameY, nameWidth, font.height())
         .fgColor(Colors.yellow)
         .drawText(name, nameX, nameY);
 
