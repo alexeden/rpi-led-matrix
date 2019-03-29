@@ -23,16 +23,18 @@ type FontMap = { [name: string]: FontInstance };
 (async () => {
   try {
     const fontExt = '.bdf';
-    const fontPaths = await globby(`${process.cwd()}/fonts/*${fontExt}`);
+    const fontPaths = (await globby(`${process.cwd()}/fonts/*${fontExt}`))
+      .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]));
     console.log(fontPaths);
 
-    const fonts: FontMap = fontPaths.reduce(
-      (map, path) => ({
-        ...map,
-        [basename(path, fontExt)]: new addon.Font(path),
-      }),
-      { }
-    );
+    const fonts: FontMap = fontPaths
+      .reduce(
+        (map, path) => ({
+          ...map,
+          [basename(path, fontExt)]: new addon.Font(path),
+        }),
+        { }
+      );
 
     console.log('fonts: ', fonts);
 
