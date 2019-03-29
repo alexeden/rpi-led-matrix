@@ -14,13 +14,15 @@ class FontAddon : public Napi::ObjectWrap<FontAddon> {
 	FontAddon(const Napi::CallbackInfo& info);
 	~FontAddon();
 
-	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value baseline(const Napi::CallbackInfo& info);
+	Napi::Value height(const Napi::CallbackInfo& info);
+	Napi::Value path(const Napi::CallbackInfo& info);
 	Napi::Value string_width(const Napi::CallbackInfo& info);
 	Font font;
 
   private:
 	static Napi::FunctionReference constructor;
+	std::string path_;
 };
 
 #endif
