@@ -23,7 +23,8 @@ type FontMap = { [name: string]: FontInstance };
 (async () => {
   try {
     const fontExt = '.bdf';
-    const fontPaths = await globby(`../rpi-rgb-led-matrix/fonts/*${fontExt}`);
+    const fontPaths = await globby(`${process.cwd()}/fonts/*${fontExt}`);
+    console.log(fontPaths);
 
     const fonts: FontMap = fontPaths.reduce(
       (map, path) => ({

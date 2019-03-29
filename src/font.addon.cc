@@ -3,6 +3,8 @@
 Napi::FunctionReference FontAddon::constructor;
 
 Napi::Object FontAddon::Init(Napi::Env env, Napi::Object exports) {
+	Napi::HandleScope scope(env);
+
 	Napi::Function func = DefineClass(
 	  env,
 	  "Font",
