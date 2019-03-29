@@ -183,7 +183,7 @@ Napi::Value NodeLedMatrix::draw_text(const Napi::CallbackInfo& info) {
 	const auto x	= info[1].As<Napi::Number>().Int32Value();
 	const auto y	= info[2].As<Napi::Number>().Int32Value();
 	const auto k	= info[3].IsNumber() ? info[3].As<Napi::Number>().Int32Value() : 0;
-	auto advanced   = DrawText(this->canvas_, *font_, x, y, fg_color_, &bg_color_, text, k);
+	auto advanced   = DrawText(this->canvas_, *font_, x, y + font_->baseline(), fg_color_, &bg_color_, text, k);
 	return Napi::Number::New(info.Env(), advanced);
 }
 
