@@ -136,24 +136,33 @@ const createTextPrompter = () => {
     const chooseFont = createFontSelector(fontList);
     const inputText = createTextPrompter();
 
+    // Maintain a thunk of the latest render operation so that it can be repeated when options change
+    let render = () => { };
+
     while (true) {
       switch (await chooseMode()) {
         case CliMode.BgColor: {
           const { color } = await chooseBgColor(matrix.bgColor());
-          if (!color || !Number.isSafeInteger(+color)) break;
-          console.log('setting bg color to: ', color);
-          matrix.bgColor(+color);
+          if (color && Number.isSafeInteger(+color)) {
+            matrix.bgColor(+color);
+            render();
+          }
           break;
         }
         case CliMode.FgColor: {
           const { color } = await chooseFgColor(matrix.fgColor());
-          if (!color || !Number.isSafeInteger(+color)) break;
-          matrix.fgColor(+color);
+          if (color && Number.isSafeInteger(+color)) {
+            matrix.fgColor(+color);
+            render();
+          }
           break;
         }
         case CliMode.Font: {
           const { font } = await chooseFont(matrix.font());
-          if (font in fonts) matrix.font(fonts[font]);
+          if (font in fonts) {
+            matrix.font(fonts[font]);
+            render();
+          }
           break;
         }
         case CliMode.Text: {
@@ -162,12 +171,16 @@ const createTextPrompter = () => {
             const { text } = await inputText();
             // Go back to mode select if escape was pressed (text will be undefined)
             if (typeof text !== 'string') break;
-            // Otherwise, show'em some text and save the operation
-            matrix.clear();
-            LayoutUtils.wrapText(fonts[matrix.font()], matrix.width(), matrix.height(), text).glyphs.forEach(glyph => {
-              matrix.drawText(glyph.char, glyph.x, glyph.y);
-            });
-            matrix.sync();
+            // Otherwise, show'em some text and save the operation thunk
+            render = () => {
+              matrix.clear();
+              LayoutUtils.wrapText(fonts[matrix.font()], matrix.width(), matrix.height(), text).glyphs.forEach(glyph => {
+                matrix.drawText(glyph.char, glyph.x, glyph.y);
+              });
+              matrix.sync();
+            };
+
+            render();
           }
           break;
         }
