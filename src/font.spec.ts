@@ -31,6 +31,11 @@ enum CliMode {
 
 type FontMap = { [name: string]: FontInstance };
 
+const appendChoiceToGoBack = (choices: prompts.Choice[]) => [
+  ...choices,
+  { title: 'Go back', value: '' },
+];
+
 const createBrightnessPrompter = () => {
   return async (currentBrightness = 100) => {
     return prompts({
@@ -38,7 +43,7 @@ const createBrightnessPrompter = () => {
       type: 'number',
       max: 100,
       min: 0,
-      message: `Enter a brightness value between 0 and 100 (current brightness is ${currentBrightness}%)`,
+      message: `Enter a brightness value or press escape to go back (current brightness is ${currentBrightness}%)`,
     });
   };
 };
@@ -55,7 +60,7 @@ const createColorSelector = (colorType: string, colors: { [name: string]: number
       type: 'select',
       // tslint:disable-next-line: max-line-length
       message: `Select a ${colorType} color ${!currentColorName ? '' : `(current ${colorType} color is ${currentColorName.toLowerCase()})` }`,
-      choices: Object.entries(colors).map(([title, value]) => ({ title, value: `${value}` })),
+      choices: appendChoiceToGoBack(Object.entries(colors).map(([title, value]) => ({ title, value: `${value}` }))),
     });
   };
 };
@@ -66,10 +71,10 @@ const createFontSelector = (fontList: FontInstance[]) => {
       name: 'font',
       type: 'select',
       message: `Select a font ${!currentFont ? '' : `(current font is "${currentFont}")` }`,
-      choices: fontList.map(font => ({
+      choices: appendChoiceToGoBack(fontList.map(font => ({
         title: `${font.name()}\t(height ${font.height()}px)`,
         value: font.name(),
-      })),
+      }))),
     });
   };
 };
@@ -99,7 +104,7 @@ const createTextPrompter = () => {
     return prompts({
       name: 'text',
       type: 'text',
-      message: 'Input text to display',
+      message: 'Input text to display or press escape to go back',
     });
   };
 };
