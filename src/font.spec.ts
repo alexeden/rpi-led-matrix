@@ -155,7 +155,7 @@ const createModeSelector = () => {
       matrix
         .clear()
         .font(fontList[0])
-        .fgColor(Colors.Purple)
+        .fgColor(Colors.Magenta)
         .sync();
     }
 
