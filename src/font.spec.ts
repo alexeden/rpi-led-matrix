@@ -5,9 +5,9 @@ import globby from 'globby';
 import { basename } from 'path';
 import { LayoutUtils } from './layout-utils';
 import ora from 'ora';
+import * as prompts from 'prompts';
 
-// import * as prompts from 'prompts';
-// tslint:disable-next-line:variable-name
+
 enum Colors {
   black = 0x000000,
   red = 0xFF0000,
@@ -24,9 +24,7 @@ type FontMap = { [name: string]: FontInstance };
 
 (async () => {
   try {
-
     const fontLoader = ora({ color: 'magenta' }).start('Loading fonts').stopAndPersist();
-
     const fontExt = '.bdf';
     const fontList = (await globby(`${process.cwd()}/fonts/*${fontExt}`))
       .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]))
@@ -56,6 +54,18 @@ type FontMap = { [name: string]: FontInstance };
       }
     );
 
+    const fontPrompt = async () => {
+      const answer = await prompts({
+        name: 'font',
+        type: 'select',
+        message: 'Select a font',
+        choices: fontList.map(font => ({ title: font.name(), value: font.name() })),
+      });
+
+      console.log('you selected: ', answer);
+    };
+
+    await fontPrompt();
 
     for (const [name, font] of Object.entries(fonts)) {
       const nameWidth = font.stringWidth(name);
