@@ -31,22 +31,16 @@ type FontMap = { [name: string]: FontInstance };
 
 const createColorSelector = (colorType: string, colors: { [name: string]: number }) => {
   const colorIndex: { [hex: number]: string } = Object.entries(colors).reduce((index, [name, value]) => ({ ...index, [value]: name }), { });
-
-  const findColorName = ({ r, g, b }: Color) => {
-    const hex = ((r << 16) & (g << 8) & b) & 0xFFFFFF;
-    console.log('finding color', r, g, b, 'hex is ', hex, 'match is: ', colorIndex[hex]);
-
-    return colorIndex[hex];
-  };
+  const findColorName = ({ r, g, b }: Color) => colorIndex[((r << 16) | (g << 8) | b) & 0xFFFFFF];
 
   return async (currentColor: Color) => {
-    console.log(`${colorType} current color: `, currentColor);
     const currentColorName = findColorName(currentColor);
 
     return prompts({
       name: 'color',
       type: 'select',
-      message: `Select a ${colorType} color ${!currentColorName ? '' : `(current ${colorType} color is ${currentColorName})` }`,
+      // tslint:disable-next-line: max-line-length
+      message: `Select a ${colorType} color ${!currentColorName ? '' : `(current ${colorType} color is ${currentColorName.toLowerCase()})` }`,
       choices: Object.entries(colors).map(([title, value]) => ({ title, value: `${value}` })),
     });
   };
@@ -178,7 +172,6 @@ const createTextPrompter = () => {
           break;
         }
         case CliMode.Exit: {
-        // case undefined: {
           console.log('Bye!');
           process.exit(0);
         }
