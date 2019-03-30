@@ -96,7 +96,7 @@ export class LayoutUtils {
       fits: wrapper.fits,
       glyphs: wrapper.lines.flatMap((line, i) => {
         const lineW = wrapper.getLineWidth(line);
-        let offsetX = Math.round((w - lineW) / 2);
+        let offsetX = Math.round((containerW - lineW) / 2);
 
         return line.map(glyph => {
           const mapped = {
