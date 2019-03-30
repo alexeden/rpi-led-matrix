@@ -81,8 +81,8 @@ interface WrappedText {
 }
 
 export class LayoutUtils {
-  static wrapText(font: FontInstance, w: number, h: number, text: string): WrappedText {
-    const wrapper = new TextWrapper(font, w, h);
+  static wrapText(font: FontInstance, containerW: number, h: number, text: string): WrappedText {
+    const wrapper = new TextWrapper(font, containerW, h);
 
     const words = text.split(' ');
     words.forEach(word => {

@@ -227,6 +227,8 @@ const createModeSelector = () => {
             // Otherwise, show'em some text and thunk the operation
             render = () => {
               matrix.clear();
+              const fgColor = matrix.fgColor();
+              matrix.fgColor(matrix.bgColor()).fill().fgColor(fgColor);
               LayoutUtils.wrapText(fonts[matrix.font()], matrix.width(), matrix.height(), text).glyphs.forEach(glyph => {
                 matrix.drawText(glyph.char, glyph.x, glyph.y);
               });
