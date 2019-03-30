@@ -50,12 +50,14 @@ class TextWrapper {
     const wordWidth = this.font.stringWidth(word);
 
     // Start a new line if there's no room for this word
-    if (this.currentLineWidth + this.space.w + wordWidth > this.w) {
-      this.lines.push([]);
-    }
-    // Otherwise append a space
-    else {
-      this.currentLine.push({ ...this.space });
+    if (this.currentLineWidth > 0) {
+      if (this.currentLineWidth + this.space.w + wordWidth > this.w) {
+        this.lines.push([]);
+      }
+      // Otherwise append a space if line's not empty
+      else {
+        this.currentLine.push({ ...this.space });
+      }
     }
     // Convert word to glyphs
     const glyphs: Glyph[] = word.split('').map(char => ({
@@ -93,7 +95,7 @@ export class LayoutUtils {
       fits: wrapper.fits,
       glyphs: wrapper.lines.flatMap((line, i) => {
         const lineW = wrapper.getLineWidth(line);
-        let offsetX = Math.floor((w - lineW) / 2);
+        let offsetX = Math.round((w - lineW) / 2);
 
         return line.map(glyph => {
           const mapped = {
