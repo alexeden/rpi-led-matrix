@@ -86,12 +86,12 @@ const createModeSelector = () => {
       type: 'select',
       message: 'What would you like to do?',
       choices: [
-        { value: CliMode.Text, title: 'Render some text' },
-        { value: CliMode.Font, title: 'Change the font' },
-        { value: CliMode.BgColor, title: 'Pick a background color' },
-        { value: CliMode.FgColor, title: 'Pick a foreground color' },
-        { value: CliMode.Brightness, title: 'Set the display brightness' },
-        { value: CliMode.Exit, title: 'Exit' },
+        { value: CliMode.Text, title: '🔠 Render some text' },
+        { value: CliMode.Font, title: '✒️  Change the font' },
+        { value: CliMode.BgColor, title: '🎨 Pick a background color' },
+        { value: CliMode.FgColor, title: '🎨 Pick a foreground color' },
+        { value: CliMode.Brightness, title: '🌟 Set the display brightness' },
+        { value: CliMode.Exit, title: '🚪 Exit' },
       ],
     });
 
