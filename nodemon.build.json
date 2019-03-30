@@ -1,6 +1,7 @@
 {
   "ext": "ts,json,cc,h,gyp",
   "exec": "npm run build && npm run test",
+  "restartable": false,
   "events": {},
   "watch": [
     "src/**",
