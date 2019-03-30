@@ -33,7 +33,7 @@ type FontMap = { [name: string]: FontInstance };
 
 const appendChoiceToGoBack = (choices: prompts.Choice[]) => [
   ...choices,
-  { title: 'Go back', value: '' },
+  { title: '⬅️  Go back', value: '' },
 ];
 
 const createBrightnessPrompter = () => {
@@ -58,8 +58,9 @@ const createColorSelector = (colorType: string, colors: { [name: string]: number
     return prompts({
       name: 'color',
       type: 'select',
+      hint: !currentColorName ? '' : `Current ${colorType} color is ${currentColorName.toLowerCase()}`,
       // tslint:disable-next-line: max-line-length
-      message: `Select a ${colorType} color ${!currentColorName ? '' : `(current ${colorType} color is ${currentColorName.toLowerCase()})` }`,
+      message: `Select a ${colorType} color`,
       choices: appendChoiceToGoBack(Object.entries(colors).map(([title, value]) => ({ title, value: `${value}` }))),
     });
   };
@@ -70,32 +71,13 @@ const createFontSelector = (fontList: FontInstance[]) => {
     return prompts({
       name: 'font',
       type: 'select',
-      message: `Select a font ${!currentFont ? '' : `(current font is "${currentFont}")` }`,
+      message: `Select a font`,
+      hint: !currentFont ? '' : `Current font is "${currentFont}"`,
       choices: appendChoiceToGoBack(fontList.map(font => ({
         title: `${font.name()}\t(height ${font.height()}px)`,
         value: font.name(),
       }))),
     });
-  };
-};
-
-const createModeSelector = () => {
-  return async () => {
-    const { mode } = await prompts({
-      name: 'mode',
-      type: 'select',
-      message: 'What would you like to do?',
-      choices: [
-        { value: CliMode.Text, title: '🔠 Render some text' },
-        { value: CliMode.Font, title: '✒️  Change the font' },
-        { value: CliMode.BgColor, title: '🎨 Pick a background color' },
-        { value: CliMode.FgColor, title: '🎨 Pick a foreground color' },
-        { value: CliMode.Brightness, title: '🌟 Set the display brightness' },
-        { value: CliMode.Exit, title: '🚪 Exit' },
-      ],
-    });
-
-    return mode as CliMode;
   };
 };
 
@@ -109,7 +91,26 @@ const createTextPrompter = () => {
   };
 };
 
+const createModeSelector = () => {
+  return async () => {
+    const { mode } = await prompts({
+      name: 'mode',
+      type: 'select',
+      message: 'What would you like to do?',
+      hint: 'Use tab or arrow keys and press enter to select.',
+      choices: [
+        { value: CliMode.Text, title: '🔠 Render some text' },
+        { value: CliMode.Font, title: '✒️  Change the font' },
+        { value: CliMode.BgColor, title: '🎨 Pick a background color' },
+        { value: CliMode.FgColor, title: '🎨 Pick a foreground color' },
+        { value: CliMode.Brightness, title: '🌟 Set the display brightness' },
+        { value: CliMode.Exit, title: '🚪 Exit' },
+      ],
+    });
 
+    return mode as CliMode;
+  };
+};
 
 // tslint:disable-next-line: cyclomatic-complexity
 (async () => {
