@@ -1,5 +1,5 @@
 import { addon } from './addon';
-import { GpioMapping, PixelMapperType, FontInstance } from './types';
+import { GpioMapping, PixelMapperType, FontInstance, Color } from './types';
 import { LedMatrixUtils } from './utils';
 import globby from 'globby';
 import { basename } from 'path';
@@ -7,38 +7,98 @@ import { LayoutUtils } from './layout-utils';
 import ora from 'ora';
 import * as prompts from 'prompts';
 
+const Colors = {
+  Aquamarine: 0x7FFFD4,
+  Black: 0x000000,
+  Red: 0xFF0000,
+  Green: 0x00FF00,
+  Blue: 0x0000FF,
+  Magenta: 0xFF00FF,
+  Cyan: 0x00FFFF,
+  Purple: 0x800080,
+  Yellow: 0xFFFF00,
+};
 
-enum Colors {
-  black = 0x000000,
-  red = 0xFF0000,
-  green = 0x00FF00,
-  blue = 0x0000FF,
-  magenta = 0xFF00FF,
-  cyan = 0x00FFFF,
-  yellow = 0xFFFF00,
+enum CliMode {
+  Text = 'text',
+  Font = 'font',
+  Exit = 'exit',
+  BgColor = 'bgColor',
+  FgColor = 'fgColor',
 }
-
-const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
 type FontMap = { [name: string]: FontInstance };
 
+const createColorSelector = (colorType: string, colors: { [name: string]: number }) => {
+  const colorIndex: { [hex: number]: string } = Object.entries(colors).reduce((index, [name, value]) => ({ ...index, [value]: name }), { });
+
+  const findColorName = ({ r, g, b }: Color) => {
+    const hex = ((r << 16) & (g << 8) & b) & 0xFFFFFF;
+    console.log('finding color', r, g, b, 'hex is ', hex, 'match is: ', colorIndex[hex]);
+
+    return colorIndex[hex];
+  };
+
+  return async (currentColor: Color) => {
+    console.log(`${colorType} current color: `, currentColor);
+    const currentColorName = findColorName(currentColor);
+
+    return prompts({
+      name: 'color',
+      type: 'select',
+      message: `Select a ${colorType} color ${!currentColorName ? '' : `(current ${colorType} color is ${currentColorName})` }`,
+      choices: Object.entries(colors).map(([title, value]) => ({ title, value: `${value}` })),
+    });
+  };
+};
+
+const createFontSelector = (fontList: FontInstance[]) => {
+  return async (currentFont = '') => {
+    return prompts({
+      name: 'font',
+      type: 'select',
+      message: `Select a font ${!currentFont ? '' : `(current font is "${currentFont}")` }`,
+      choices: fontList.map(font => ({
+        title: `${font.name()}\t(height ${font.height()}px)`,
+        value: font.name(),
+      })),
+    });
+  };
+};
+
+const createModeSelector = () => {
+  return async () => {
+    const { mode } = await prompts({
+      name: 'mode',
+      type: 'select',
+      message: 'CLI Mode',
+      choices: [
+        { value: CliMode.Text, title: 'Text input' },
+        { value: CliMode.Font, title: 'Select font' },
+        { value: CliMode.BgColor, title: 'Select background color' },
+        { value: CliMode.FgColor, title: 'Select foreground color' },
+        { value: CliMode.Exit, title: 'Exit' },
+      ],
+    });
+
+    return mode as CliMode;
+  };
+};
+
+const createTextPrompter = () => {
+  return async () => {
+    return prompts({
+      name: 'text',
+      type: 'text',
+      message: 'Input text to display',
+    });
+  };
+};
+
+
+
 (async () => {
   try {
-    const fontLoader = ora({ color: 'magenta' }).start('Loading fonts').stopAndPersist();
-    const fontExt = '.bdf';
-    const fontList = (await globby(`${process.cwd()}/fonts/*${fontExt}`))
-      .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]))
-      .map(path => {
-        const name = basename(path, fontExt);
-        fontLoader.start(`"${name}"`);
-        const font = new addon.Font(basename(path, fontExt), path);
-        fontLoader.succeed();
-
-        return font;
-      });
-
-    const fonts: FontMap = fontList.reduce((map, font) => ({ ...map, [font.name()]: font }), { });
-
     const matrix = new addon.LedMatrix(
       {
         ...addon.LedMatrix.defaultMatrixOptions(),
@@ -54,44 +114,78 @@ type FontMap = { [name: string]: FontInstance };
       }
     );
 
-    const fontPrompt = async () => {
-      const answer = await prompts({
-        name: 'font',
-        type: 'select',
-        message: 'Select a font',
-        choices: fontList.map(font => ({ title: font.name(), value: font.name() })),
+    const fontLoader = ora({ color: 'magenta' }).start('Loading fonts').stopAndPersist();
+    const fontExt = '.bdf';
+    const fontList = (await globby(`${process.cwd()}/fonts/*${fontExt}`))
+      .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]))
+      .map(path => {
+        const name = basename(path, fontExt);
+        fontLoader.start(`"${name}"`);
+        const font = new addon.Font(basename(path, fontExt), path);
+        fontLoader.succeed();
+
+        return font;
       });
 
-      console.log('you selected: ', answer);
-    };
+    if (fontList.length < 1) {
+      throw new Error(`No fonts were loaded!`);
+    }
+    else {
+      matrix.font(fontList[0]);
+    }
 
-    await fontPrompt();
+    const fonts: FontMap = fontList.reduce((map, font) => ({ ...map, [font.name()]: font }), { });
 
-    for (const [name, font] of Object.entries(fonts)) {
-      const nameWidth = font.stringWidth(name);
-      const nameX = Math.floor((matrix.width() - nameWidth) / 2);
-      const nameY = Math.floor((matrix.height() - font.height()) / 2);
-      matrix.clear().font(font);
+    const chooseBgColor = createColorSelector('background', Colors);
+    const chooseFgColor = createColorSelector('foreground', Colors);
+    const chooseMode = createModeSelector();
+    const chooseFont = createFontSelector(fontList);
+    const inputText = createTextPrompter();
 
-      matrix
-        .fgColor(Colors.red)
-        .drawRect(nameX, nameY, nameWidth, font.height());
-
-      const wrapped = LayoutUtils.wrapText(font, matrix.width(), matrix.height(), `I'm a sentence to be split into lines`);
-
-      wrapped.glyphs.forEach(glyph => {
-        matrix
-          .fgColor(wrapped.fits ? Colors.green : Colors.red)
-          .drawText(glyph.char, glyph.x, glyph.y);
-      });
-
-      name.split('').map(char => console.log(`${char} width: ${font.stringWidth(char)}`));
-      matrix.sync();
-      await wait(1000);
+    while (true) {
+      switch (await chooseMode()) {
+        case CliMode.BgColor: {
+          const { color } = await chooseBgColor(matrix.bgColor());
+          if (!color || !Number.isSafeInteger(+color)) break;
+          console.log('setting bg color to: ', color);
+          matrix.bgColor(+color);
+          break;
+        }
+        case CliMode.FgColor: {
+          const { color } = await chooseFgColor(matrix.fgColor());
+          if (!color || !Number.isSafeInteger(+color)) break;
+          matrix.fgColor(+color);
+          break;
+        }
+        case CliMode.Font: {
+          const { font } = await chooseFont(matrix.font());
+          if (font in fonts) matrix.font(fonts[font]);
+          break;
+        }
+        case CliMode.Text: {
+          // Stay in text mode until escaped
+          while (true) {
+            const { text } = await inputText();
+            // Go back to mode select if escape was pressed (text will be undefined)
+            if (typeof text !== 'string') break;
+            // Otherwise, show'em some text and save the operation
+            matrix.clear();
+            LayoutUtils.wrapText(fonts[matrix.font()], matrix.width(), matrix.height(), text).glyphs.forEach(glyph => {
+              matrix.drawText(glyph.char, glyph.x, glyph.y);
+            });
+            matrix.sync();
+          }
+          break;
+        }
+        case CliMode.Exit: {
+        // case undefined: {
+          console.log('Bye!');
+          process.exit(0);
+        }
+      }
     }
   }
   catch (error) {
     console.error(`${__filename} caught: `, error);
   }
-
 })();
