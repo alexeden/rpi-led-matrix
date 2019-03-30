@@ -31,9 +31,9 @@ enum CliMode {
 
 type FontMap = { [name: string]: FontInstance };
 
-const appendChoiceToGoBack = (choices: prompts.Choice[]) => [
-  ...choices,
+const prependChoiceToGoBack = (choices: prompts.Choice[]) => [
   { title: '⬅️  Go back', value: '' },
+  ...choices,
 ];
 
 const createBrightnessPrompter = () => {
@@ -54,26 +54,30 @@ const createColorSelector = (colorType: string, colors: { [name: string]: number
 
   return async (currentColor: Color) => {
     const currentColorName = findColorName(currentColor);
+    const currentColorIndex = Object.keys(colors).indexOf(currentColorName) || 0;
 
     return prompts({
       name: 'color',
       type: 'select',
       hint: !currentColorName ? '' : `Current ${colorType} color is ${currentColorName.toLowerCase()}`,
-      // tslint:disable-next-line: max-line-length
+      initial: currentColorIndex + 1,
       message: `Select a ${colorType} color`,
-      choices: appendChoiceToGoBack(Object.entries(colors).map(([title, value]) => ({ title, value: `${value}` }))),
+      choices: prependChoiceToGoBack(Object.entries(colors).map(([title, value]) => ({ title, value: `${value}` }))),
     });
   };
 };
 
 const createFontSelector = (fontList: FontInstance[]) => {
   return async (currentFont = '') => {
+    const currentFontIndex = fontList.map(f => f.name()).indexOf(currentFont) || 0;
+
     return prompts({
       name: 'font',
       type: 'select',
       message: `Select a font`,
+      initial: currentFontIndex + 1,
       hint: !currentFont ? '' : `Current font is "${currentFont}"`,
-      choices: appendChoiceToGoBack(fontList.map(font => ({
+      choices: prependChoiceToGoBack(fontList.map(font => ({
         title: `${font.name()}\t(height ${font.height()}px)`,
         value: font.name(),
       }))),
@@ -133,7 +137,7 @@ const createModeSelector = () => {
     const fontLoader = ora({ color: 'magenta' }).start('Loading fonts').stopAndPersist();
     const fontExt = '.bdf';
     const fontList = (await globby(`${process.cwd()}/fonts/*${fontExt}`))
-      // .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]))
+      .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]))
       .map(path => {
         const name = basename(path, fontExt);
         fontLoader.start(`"${name}"`);
