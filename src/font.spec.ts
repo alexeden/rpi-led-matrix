@@ -148,8 +148,10 @@ const createTextPrompter = () => {
     else {
       // Set some default values
       matrix
+        .clear()
         .font(fontList[0])
-        .fgColor(Colors.Purple);
+        .fgColor(Colors.Purple)
+        .sync();
     }
 
     const fonts: FontMap = fontList.reduce((map, font) => ({ ...map, [font.name()]: font }), { });
