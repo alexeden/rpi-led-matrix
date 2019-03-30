@@ -4,8 +4,9 @@ import { LedMatrixUtils } from './utils';
 import globby from 'globby';
 import { basename } from 'path';
 import { LayoutUtils } from './layout-utils';
-// import * as prompts from 'prompts';
+import ora from 'ora';
 
+// import * as prompts from 'prompts';
 // tslint:disable-next-line:variable-name
 enum Colors {
   black = 0x000000,
@@ -24,10 +25,19 @@ type FontMap = { [name: string]: FontInstance };
 (async () => {
   try {
 
+    const fontLoader = ora({ color: 'magenta' }).start('Loading fonts').stopAndPersist();
+
     const fontExt = '.bdf';
     const fontList = (await globby(`${process.cwd()}/fonts/*${fontExt}`))
       .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]))
-      .map(path => new addon.Font(basename(path, fontExt), path));
+      .map(path => {
+        const name = basename(path, fontExt);
+        fontLoader.start(`"${name}"`);
+        const font = new addon.Font(basename(path, fontExt), path);
+        fontLoader.succeed();
+
+        return font;
+      });
 
     const fonts: FontMap = fontList.reduce((map, font) => ({ ...map, [font.name()]: font }), { });
 
