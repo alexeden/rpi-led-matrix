@@ -240,6 +240,9 @@ export interface LedMatrixInstance {
   fill(): this;
   fill(x0: number, y0: number, x1: number, y1: number): this;
 
+  font(font: FontInstance): this;
+  font(): string;
+
   height(): number;
 
   luminanceCorrect(correct: boolean): this;
@@ -248,7 +251,6 @@ export interface LedMatrixInstance {
   pwmBits(pwmBits: number): this;
   pwmBits(): number;
 
-  setFont(font: FontInstance): this;
   setPixel(x: number, y: number): this;
 
   sync(): void;

@@ -24,7 +24,7 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 	   InstanceMethod("pwmBits", &NodeLedMatrix::pwm_bits),
 	   InstanceMethod("bgColor", &NodeLedMatrix::bg_color),
 	   InstanceMethod("fgColor", &NodeLedMatrix::fg_color),
-	   InstanceMethod("setFont", &NodeLedMatrix::font),
+	   InstanceMethod("font", &NodeLedMatrix::font),
 	   InstanceMethod("setPixel", &NodeLedMatrix::set_pixel),
 	   InstanceMethod("sync", &NodeLedMatrix::sync),
 	   InstanceMethod("width", &NodeLedMatrix::width)});
@@ -43,7 +43,8 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<NodeLedMatrix>(info)
   , bg_color_(Color(0, 0, 0))
   , fg_color_(Color(0, 0, 0))
-  , font_(nullptr) {
+  , font_(nullptr)
+  , font_name_("") {
 
 	auto env = info.Env();
 
@@ -269,9 +270,15 @@ Napi::Value NodeLedMatrix::bg_color(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value NodeLedMatrix::font(const Napi::CallbackInfo& info) {
-	auto font   = Napi::ObjectWrap<FontAddon>::Unwrap(info[0].As<Napi::Object>());
-	this->font_ = &(font->font);
-	return info.This();
+	if (info.Length() > 0) {
+		auto font   = Napi::ObjectWrap<FontAddon>::Unwrap(info[0].As<Napi::Object>());
+		this->font_ = &(font->font);
+		font_name_ = font->name(info).ToString();
+		return info.This();
+	}
+	else {
+		return Napi::String::New(info.Env(), font_name_);
+	}
 }
 
 /**

@@ -69,7 +69,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
 
     const matrix = new addon.LedMatrix(matrixOpts, runtimeOpts);
     console.log('new addon.LedMatrix: ', matrix);
-    console.log('matrix chainable setters: ', matrix.bgColor(Colors.black).fgColor(Colors.red).setFont(font));
+    console.log('matrix chainable setters: ', matrix.bgColor(Colors.black).fgColor(Colors.red).font(font));
     console.log('matrix.fgColor()', matrix.fgColor());
     console.log('matrix.bgColor()', matrix.bgColor());
     console.log('matrix.pwmBits(): ', matrix.pwmBits());

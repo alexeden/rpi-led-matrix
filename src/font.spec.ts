@@ -71,7 +71,7 @@ type FontMap = { [name: string]: FontInstance };
       const nameWidth = font.stringWidth(name);
       const nameX = Math.floor((matrix.width() - nameWidth) / 2);
       const nameY = Math.floor((matrix.height() - font.height()) / 2);
-      matrix.clear().setFont(font);
+      matrix.clear().font(font);
 
       matrix
         .fgColor(Colors.red)
