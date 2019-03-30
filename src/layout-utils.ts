@@ -49,21 +49,22 @@ class TextWrapper {
   addWord(word: string) {
     const wordWidth = this.font.stringWidth(word);
 
-    // Start a new line if there's no room for this word
     if (this.currentLineWidth > 0) {
+      // Start a new line if there's no room for this word
       if (this.currentLineWidth + this.space.w + wordWidth > this.w) {
         this.lines.push([]);
       }
-      // Otherwise append a space if line's not empty
+      // Otherwise append a space
       else {
         this.currentLine.push({ ...this.space });
       }
     }
     // Convert word to glyphs
-    const glyphs: Glyph[] = word.split('').map(char => ({
+    const glyphs: Glyph[] = word.split('').map((char, index) => ({
       w: this.font.stringWidth(char),
       h: this.fontH,
       char,
+      index,
     }));
 
     this.currentLine.push(...glyphs);
