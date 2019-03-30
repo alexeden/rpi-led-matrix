@@ -1,5 +1,5 @@
 {
-  "name": "rpi-rgb-led-matrix-node",
+  "name": "rpi-matrix-node",
   "version": "1.0.0",
   "description": "Node.js Typescript bindings for hzeller/rpi-rgb-led-matrix",
   "main": "src/index.ts",
@@ -7,7 +7,7 @@
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alexeden/rpi-rgb-led-matrix-node.git"
+    "url": "git+https://github.com/alexeden/rpi-matrix-node.git"
   },
   "scripts": {
     "rebuild": "node-gyp rebuild",
