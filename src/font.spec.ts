@@ -189,8 +189,8 @@ const createTextPrompter = () => {
           break;
         }
         case CliMode.Font: {
-          const { font } = await chooseFont(matrix.font());
           while (true) {
+            const { font } = await chooseFont(matrix.font());
             if (font in fonts) {
               matrix.font(fonts[font]);
               render();
