@@ -10,24 +10,38 @@ import * as prompts from 'prompts';
 const Colors = {
   Aquamarine: 0x7FFFD4,
   Black: 0x000000,
-  Red: 0xFF0000,
-  Green: 0x00FF00,
   Blue: 0x0000FF,
-  Magenta: 0xFF00FF,
   Cyan: 0x00FFFF,
+  Green: 0x00FF00,
+  Magenta: 0xFF00FF,
   Purple: 0x800080,
+  Red: 0xFF0000,
+  White: 0xFFFFFF,
   Yellow: 0xFFFF00,
 };
 
 enum CliMode {
-  Text = 'text',
-  Font = 'font',
-  Exit = 'exit',
   BgColor = 'bgColor',
+  Brightness = 'brightness',
+  Exit = 'exit',
   FgColor = 'fgColor',
+  Font = 'font',
+  Text = 'text',
 }
 
 type FontMap = { [name: string]: FontInstance };
+
+const createBrightnessPrompter = () => {
+  return async (currentBrightness = 100) => {
+    return prompts({
+      name: 'brightness',
+      type: 'number',
+      max: 100,
+      min: 0,
+      message: `Enter a brightness value between 0 and 100 (current brightness is ${currentBrightness}%)`,
+    });
+  };
+};
 
 const createColorSelector = (colorType: string, colors: { [name: string]: number }) => {
   const colorIndex: { [hex: number]: string } = Object.entries(colors).reduce((index, [name, value]) => ({ ...index, [value]: name }), { });
@@ -65,12 +79,13 @@ const createModeSelector = () => {
     const { mode } = await prompts({
       name: 'mode',
       type: 'select',
-      message: 'CLI Mode',
+      message: 'What would you like to do?',
       choices: [
-        { value: CliMode.Text, title: 'Text input' },
-        { value: CliMode.Font, title: 'Select font' },
-        { value: CliMode.BgColor, title: 'Select background color' },
-        { value: CliMode.FgColor, title: 'Select foreground color' },
+        { value: CliMode.Text, title: 'Render some text' },
+        { value: CliMode.Font, title: 'Change the font' },
+        { value: CliMode.BgColor, title: 'Pick a background color' },
+        { value: CliMode.FgColor, title: 'Pick a foreground color' },
+        { value: CliMode.Brightness, title: 'Set the display brightness' },
         { value: CliMode.Exit, title: 'Exit' },
       ],
     });
@@ -111,7 +126,7 @@ const createTextPrompter = () => {
     const fontLoader = ora({ color: 'magenta' }).start('Loading fonts').stopAndPersist();
     const fontExt = '.bdf';
     const fontList = (await globby(`${process.cwd()}/fonts/*${fontExt}`))
-      .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]))
+      // .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]))
       .map(path => {
         const name = basename(path, fontExt);
         fontLoader.start(`"${name}"`);
@@ -125,7 +140,10 @@ const createTextPrompter = () => {
       throw new Error(`No fonts were loaded!`);
     }
     else {
-      matrix.font(fontList[0]);
+      // Set some default values
+      matrix
+        .font(fontList[0])
+        .fgColor(Colors.Purple);
     }
 
     const fonts: FontMap = fontList.reduce((map, font) => ({ ...map, [font.name()]: font }), { });
@@ -135,6 +153,7 @@ const createTextPrompter = () => {
     const chooseMode = createModeSelector();
     const chooseFont = createFontSelector(fontList);
     const inputText = createTextPrompter();
+    const setBrightness = createBrightnessPrompter();
 
     // Maintain a thunk of the latest render operation so that it can be repeated when options change
     let render = () => { };
@@ -165,13 +184,21 @@ const createTextPrompter = () => {
           }
           break;
         }
+        case CliMode.Brightness: {
+          const { brightness } = await setBrightness(matrix.brightness());
+          if (Number.isSafeInteger(brightness)) {
+            matrix.brightness(brightness);
+            render();
+          }
+          break;
+        }
         case CliMode.Text: {
           // Stay in text mode until escaped
           while (true) {
             const { text } = await inputText();
             // Go back to mode select if escape was pressed (text will be undefined)
             if (typeof text !== 'string') break;
-            // Otherwise, show'em some text and save the operation thunk
+            // Otherwise, show'em some text and thunk the operation
             render = () => {
               matrix.clear();
               LayoutUtils.wrapText(fonts[matrix.font()], matrix.width(), matrix.height(), text).glyphs.forEach(glyph => {
