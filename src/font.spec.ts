@@ -106,6 +106,7 @@ const createTextPrompter = () => {
 
 
 
+// tslint:disable-next-line: cyclomatic-complexity
 (async () => {
   try {
     const matrix = new addon.LedMatrix(
@@ -161,34 +162,47 @@ const createTextPrompter = () => {
     while (true) {
       switch (await chooseMode()) {
         case CliMode.BgColor: {
-          const { color } = await chooseBgColor(matrix.bgColor());
-          if (color && Number.isSafeInteger(+color)) {
-            matrix.bgColor(+color);
-            render();
+          while (true) {
+            const { color } = await chooseBgColor(matrix.bgColor());
+            if (color && Number.isSafeInteger(+color)) {
+              matrix.bgColor(+color);
+              render();
+            }
+            else break;
           }
           break;
         }
         case CliMode.FgColor: {
-          const { color } = await chooseFgColor(matrix.fgColor());
-          if (color && Number.isSafeInteger(+color)) {
-            matrix.fgColor(+color);
-            render();
+          while (true) {
+            const { color } = await chooseFgColor(matrix.fgColor());
+            if (color && Number.isSafeInteger(+color)) {
+              matrix.fgColor(+color);
+              render();
+            }
+            else break;
           }
           break;
         }
         case CliMode.Font: {
           const { font } = await chooseFont(matrix.font());
-          if (font in fonts) {
-            matrix.font(fonts[font]);
-            render();
+          while (true) {
+            if (font in fonts) {
+              matrix.font(fonts[font]);
+              render();
+            }
+            else break;
           }
+
           break;
         }
         case CliMode.Brightness: {
-          const { brightness } = await setBrightness(matrix.brightness());
-          if (Number.isSafeInteger(brightness)) {
-            matrix.brightness(brightness);
-            render();
+          while (true) {
+            const { brightness } = await setBrightness(matrix.brightness());
+            if (Number.isSafeInteger(brightness)) {
+              matrix.brightness(brightness);
+              render();
+            }
+            else break;
           }
           break;
         }
