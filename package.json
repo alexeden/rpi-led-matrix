@@ -25,9 +25,11 @@
   "devDependencies": {
     "@types/color": "^3.0.0",
     "@types/node": "^11.11.4",
+    "@types/prompts": "^1.2.0",
     "chalk": "^2.4.2",
     "globby": "^9.1.0",
     "nodemon": "^1.18.10",
+    "prompts": "^2.0.4",
     "rimraf": "^2.6.3",
     "rsync": "^0.6.1",
     "tslint": "^5.14.0",
