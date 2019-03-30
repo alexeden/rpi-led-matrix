@@ -142,7 +142,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
       const rgb = [Colors.red, Colors.green, Colors.blue];
       matrix.clear().sync();
       for (let i = 0; i < 10; i++) {
-        matrix.fgColor(rgb[i % 3]).drawRect(0, i * rectHeight, matrix.width() - 1, (i + 1) * rectHeight).sync();
+        matrix.fgColor(rgb[i % 3]).drawRect(0, i * rectHeight, matrix.width() - 1, rectHeight).sync();
         await wait(200);
       }
     }
