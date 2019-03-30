@@ -275,6 +275,10 @@ export interface FontInstance {
    */
   height(): number;
   /**
+   * Return the name of the font.
+   */
+  name(): string;
+  /**
    * Return the path of the font source.
    */
   path(): string;
@@ -287,6 +291,7 @@ export interface FontInstance {
 export interface Font {
   // tslint:disable-next-line:callable-types
   new (
+    name: string,
     path: string
   ): FontInstance;
 }

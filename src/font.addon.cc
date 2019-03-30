@@ -10,6 +10,7 @@ Napi::Object FontAddon::Init(Napi::Env env, Napi::Object exports) {
 	  "Font",
 	  { InstanceMethod("baseline", &FontAddon::baseline),
 		InstanceMethod("height", &FontAddon::height),
+		InstanceMethod("name", &FontAddon::name),
 		InstanceMethod("path", &FontAddon::path),
 		InstanceMethod("stringWidth", &FontAddon::string_width) });
 
@@ -23,14 +24,10 @@ Napi::Object FontAddon::Init(Napi::Env env, Napi::Object exports) {
 
 FontAddon::FontAddon(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<FontAddon>(info)
-  , path_("") {
+  , name_(info[0].As<Napi::String>().ToString())
+  , path_(info[1].As<Napi::String>().ToString()) {
 	auto env = info.Env();
-	if (!info[0].IsString()) {
-		throw Napi::Error::New(env, "Font constructor expects its first parameter to be a path to the font asset.");
-	}
 	Napi::HandleScope scope(env);
-	path_ = info[0].As<Napi::String>().ToString();
-
 	if (!font.LoadFont(path_.c_str())) throw Napi::Error::New(env, "Failed to load font located at " + path_);
 }
 
@@ -44,6 +41,10 @@ Napi::Value FontAddon::baseline(const Napi::CallbackInfo& info) {
 
 Napi::Value FontAddon::height(const Napi::CallbackInfo& info) {
 	return Napi::Number::New(info.Env(), font.height());
+}
+
+Napi::Value FontAddon::name(const Napi::CallbackInfo& info) {
+	return Napi::String::New(info.Env(), name_);
 }
 
 Napi::Value FontAddon::path(const Napi::CallbackInfo& info) {

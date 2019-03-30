@@ -4,6 +4,7 @@ import { LedMatrixUtils } from './utils';
 import globby from 'globby';
 import { basename } from 'path';
 import { LayoutUtils } from './layout-utils';
+// import * as prompts from 'prompts';
 
 // tslint:disable-next-line:variable-name
 enum Colors {
@@ -24,17 +25,11 @@ type FontMap = { [name: string]: FontInstance };
   try {
 
     const fontExt = '.bdf';
-    const fontPaths = (await globby(`${process.cwd()}/fonts/*${fontExt}`))
-      .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]));
+    const fontList = (await globby(`${process.cwd()}/fonts/*${fontExt}`))
+      .filter(path => !Number.isSafeInteger(+basename(path, fontExt)[0]))
+      .map(path => new addon.Font(basename(path, fontExt), path));
 
-    const fonts: FontMap = fontPaths
-      .reduce(
-        (map, path) => ({
-          ...map,
-          [basename(path, fontExt)]: new addon.Font(path),
-        }),
-        { }
-      );
+    const fonts: FontMap = fontList.reduce((map, font) => ({ ...map, [font.name()]: font }), { });
 
     const matrix = new addon.LedMatrix(
       {
