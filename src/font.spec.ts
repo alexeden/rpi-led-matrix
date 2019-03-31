@@ -3,7 +3,7 @@ import { GpioMapping, PixelMapperType, FontInstance, Color } from './types';
 import { LedMatrixUtils } from './utils';
 import globby from 'globby';
 import { basename } from 'path';
-import { LayoutUtils } from './layout-utils';
+import { LayoutUtils, HorizontalAlignment, VerticalAlignment } from './layout-utils';
 import ora from 'ora';
 import * as prompts from 'prompts';
 
@@ -26,7 +26,9 @@ enum CliMode {
   Exit = 'exit',
   FgColor = 'fgColor',
   Font = 'font',
+  HorizontalAlignment = 'horizontalAlignment',
   Text = 'text',
+  VerticalAlignment = 'verticalAlignment',
 }
 
 type FontMap = { [name: string]: FontInstance };
@@ -85,6 +87,24 @@ const createFontSelector = (fontList: FontInstance[]) => {
   };
 };
 
+const createAlignmentSelector = (alignmentType: string, alignments: any) => {
+  return async (currentAlignment = '') => {
+    const currentIndex = Object.values(alignments).indexOf(currentAlignment) || 0;
+
+    return prompts({
+      name: 'alignment',
+      type: 'select',
+      message: `Set the ${alignmentType} alignment`,
+      initial: currentIndex + 1,
+      hint: !currentAlignment ? '' : `Current alignment is "${currentAlignment}"`,
+      choices: prependChoiceToGoBack(Object.entries(alignments).map(([k, v]) => ({
+        title: k,
+        value: v as string,
+      }))),
+    });
+  };
+};
+
 const createTextPrompter = () => {
   return async () => {
     return prompts({
@@ -107,6 +127,8 @@ const createModeSelector = () => {
         { value: CliMode.Font, title: '✒️  Change the font' },
         { value: CliMode.BgColor, title: '🎨 Pick a background color' },
         { value: CliMode.FgColor, title: '🎨 Pick a foreground color' },
+        { value: CliMode.HorizontalAlignment, title: 'Set the horizontal alignment' },
+        { value: CliMode.VerticalAlignment, title: 'Set the vertical alignment' },
         { value: CliMode.Brightness, title: '🌟 Set the display brightness' },
         { value: CliMode.Exit, title: '🚪 Exit' },
       ],
@@ -153,20 +175,40 @@ const createModeSelector = () => {
     else {
       // Set some default values
       matrix
-        .clear()
-        .font(fontList[0])
-        .fgColor(Colors.Magenta)
-        .sync();
+      .clear()
+      .font(fontList[0])
+      .fgColor(Colors.Magenta)
+      .sync();
     }
 
     const fonts: FontMap = fontList.reduce((map, font) => ({ ...map, [font.name()]: font }), { });
 
+    {
+      const font = fonts[matrix.font()];
+      const lines = LayoutUtils.textToLines(font, matrix.width(), 'Oh hey there!');
+
+      LayoutUtils.linesToMappedGlyphs(lines, font.height(), matrix.width(), matrix.height()).map(glyph => {
+        matrix.drawText(glyph.char, glyph.x, glyph.y);
+      });
+
+      matrix.sync();
+    }
+
+    // LayoutUtils.wrapText(fonts[matrix.font()], matrix.width(), matrix.height(), 'Oh hey there!');
+
+
     const chooseBgColor = createColorSelector('background', Colors);
     const chooseFgColor = createColorSelector('foreground', Colors);
+    const chooseHorizontalAlignment = createAlignmentSelector('horizontal', HorizontalAlignment);
+    const chooseVerticalAlignment = createAlignmentSelector('vertical', VerticalAlignment);
     const chooseMode = createModeSelector();
     const chooseFont = createFontSelector(fontList);
     const inputText = createTextPrompter();
     const setBrightness = createBrightnessPrompter();
+
+    // Maintain the alignment state
+    let alignmentH: HorizontalAlignment = HorizontalAlignment.Center;
+    let alignmentV: VerticalAlignment = VerticalAlignment.Middle;
 
     // Maintain a thunk of the latest render operation so that it can be repeated when options change
     let render = () => { };
@@ -204,7 +246,6 @@ const createModeSelector = () => {
             }
             else break;
           }
-
           break;
         }
         case CliMode.Brightness: {
@@ -212,6 +253,28 @@ const createModeSelector = () => {
             const { brightness } = await setBrightness(matrix.brightness());
             if (Number.isSafeInteger(brightness)) {
               matrix.brightness(brightness);
+              render();
+            }
+            else break;
+          }
+          break;
+        }
+        case CliMode.HorizontalAlignment: {
+          while (true) {
+            const { alignment } = await chooseHorizontalAlignment(alignmentH) as any;
+            if (alignment) {
+              alignmentH = alignment;
+              render();
+            }
+            else break;
+          }
+          break;
+        }
+        case CliMode.VerticalAlignment: {
+          while (true) {
+            const { alignment } = await chooseVerticalAlignment(alignmentV) as any;
+            if (alignment) {
+              alignmentV = alignment;
               render();
             }
             else break;
@@ -232,12 +295,9 @@ const createModeSelector = () => {
               const font = fonts[matrix.font()];
               const lines = LayoutUtils.textToLines(font, matrix.width(), text);
 
-              LayoutUtils.linesToMappedGlyphs(lines, font.height(), matrix.width(), matrix.height()).map(glyph => {
+              LayoutUtils.linesToMappedGlyphs(lines, font.height(), matrix.width(), matrix.height(), alignmentH, alignmentV).map(glyph => {
                 matrix.drawText(glyph.char, glyph.x, glyph.y);
               });
-              // LayoutUtils.wrapText(font, matrix.width(), matrix.height(), text).glyphs.forEach(glyph => {
-              //   matrix.drawText(glyph.char, glyph.x, glyph.y);
-              // });
               matrix.sync();
             };
 
