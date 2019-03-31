@@ -14,79 +14,6 @@ export interface MappedGlyph extends Glyph {
 export type Word = Glyph[];
 export type Line = Word[];
 
-
-class TextWrapper {
-  readonly lines: Glyph[][] = [[]];
-  readonly space: Glyph;
-  readonly fontH: number;
-  constructor(
-    readonly font: FontInstance,
-    private readonly w: number,
-    private readonly h: number
-  ) {
-    this.fontH = this.font.height();
-
-    this.space = {
-      w: this.font.stringWidth(' '),
-      h: this.fontH,
-      char: ' ',
-    };
-  }
-
-  private get currentLine(): Glyph[] {
-    return this.lines[this.lines.length - 1];
-  }
-
-  private get currentLineString(): string {
-    return this.currentLine.map(line => line.char).join(' ');
-  }
-
-  private get currentLineWidth() {
-    return this.font.stringWidth(this.currentLineString);
-  }
-
-  get wrappedHeight() {
-    return this.lines.length * this.font.height();
-  }
-
-  get fits() {
-    return this.wrappedHeight <= this.h;
-  }
-
-  addWord(word: string) {
-    const wordWidth = this.font.stringWidth(word);
-
-    if (this.currentLineWidth > 0) {
-      // Start a new line if there's no room for this word
-      if (this.currentLineWidth + this.space.w + wordWidth > this.w) {
-        this.lines.push([]);
-      }
-      // Otherwise append a space
-      else {
-        this.currentLine.push({ ...this.space });
-      }
-    }
-    // Convert word to glyphs
-    const glyphs: Glyph[] = word.split('').map((char, index) => ({
-      w: this.font.stringWidth(char),
-      h: this.fontH,
-      char,
-      index,
-    }));
-
-    this.currentLine.push(...glyphs);
-  }
-
-  getLineWidth(line: Glyph[]) {
-    return this.font.stringWidth(line.map(g => g.char).join(''));
-  }
-}
-
-interface WrappedText {
-  glyphs: MappedGlyph[];
-  fits: boolean;
-}
-
 const isSeparator = ({ char }: Glyph) => char === ' ';
 
 export const glphysToWords = (glphys: Glyph[]): Word[] => {
@@ -171,7 +98,13 @@ export class LayoutUtils {
     return lines.flatMap((line, i) => {
       const lineGlyphs = line.flatMap(l => l);
       const lineW = calcWordWidth(lineGlyphs);
-      let offsetX = Math.round((containerW - lineW) / 2);
+      let offsetX = (() => {
+        switch (alignH) {
+          case HorizontalAlignment.Left: return 0;
+          case HorizontalAlignment.Center: return Math.floor((containerW - lineW) / 2);
+          case HorizontalAlignment.Right: return containerW - lineW;
+        }
+      })();
 
       return lineGlyphs.map(glyph => {
         const mapped = {
@@ -184,47 +117,5 @@ export class LayoutUtils {
         return mapped;
       });
     });
-  }
-
-  static wrapText(font: FontInstance, containerW: number, h: number, text: string): WrappedText {
-    const wrapper = new TextWrapper(font, containerW, h);
-    const fontHeight = font.height();
-
-    const gs: Glyph[] = text.split('').map(char => ({
-      char,
-      h: fontHeight,
-      w: font.stringWidth(char),
-    }));
-
-    const words = glphysToWords(gs);
-    const lines = wordsToLines(containerW, words);
-
-    console.log(JSON.stringify(lines, null, 4));
-
-    text.split(' ').forEach(word => {
-      wrapper.addWord(word);
-    });
-
-    const lineHeight = font.height();
-    const offsetY = Math.floor((h - wrapper.lines.length * lineHeight) / 2);
-
-    return {
-      fits: wrapper.fits,
-      glyphs: wrapper.lines.flatMap((line, i) => {
-        const lineW = wrapper.getLineWidth(line);
-        let offsetX = Math.round((containerW - lineW) / 2);
-
-        return line.map(glyph => {
-          const mapped = {
-            ...glyph,
-            x: offsetX,
-            y: offsetY + i * font.height(),
-          };
-          offsetX += glyph.w;
-
-          return mapped;
-        });
-      }),
-    };
   }
 }
