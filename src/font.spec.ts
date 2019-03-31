@@ -229,9 +229,15 @@ const createModeSelector = () => {
               matrix.clear();
               const fgColor = matrix.fgColor();
               matrix.fgColor(matrix.bgColor()).fill().fgColor(fgColor);
-              LayoutUtils.wrapText(fonts[matrix.font()], matrix.width(), matrix.height(), text).glyphs.forEach(glyph => {
+              const font = fonts[matrix.font()];
+              const lines = LayoutUtils.textToLines(font, matrix.width(), text);
+
+              LayoutUtils.linesToMappedGlyphs(lines, font.height(), matrix.width(), matrix.height()).map(glyph => {
                 matrix.drawText(glyph.char, glyph.x, glyph.y);
               });
+              // LayoutUtils.wrapText(font, matrix.width(), matrix.height(), text).glyphs.forEach(glyph => {
+              //   matrix.drawText(glyph.char, glyph.x, glyph.y);
+              // });
               matrix.sync();
             };
 

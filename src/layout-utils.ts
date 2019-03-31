@@ -138,7 +138,7 @@ export enum VerticalAlignment {
 }
 
 export class LayoutUtils {
-  static wrapTextToLines(font: FontInstance, maxW: number, text: string): Line[] {
+  static textToLines(font: FontInstance, maxW: number, text: string): Line[] {
     const fontHeight = font.height();
     const glphys = text.split('').map(char => ({
       char,
@@ -149,9 +149,41 @@ export class LayoutUtils {
     return wordsToLines(maxW, glphysToWords(glphys));
   }
 
-  static mapLinesToContainer(lines: Line[], lineH: number, containerW: number, containerH: number): MappedGlyph[] {
+  static linesToMappedGlyphs(
+    lines: Line[],
+    lineH: number,
+    containerW: number,
+    containerH: number,
+    alignH = HorizontalAlignment.Center,
+    alignV = VerticalAlignment.Middle
+  ): MappedGlyph[] {
+    const blockH = lineH * lines.length;
 
-    return [];
+    const offsetY = (() => {
+      switch (alignV) {
+        case VerticalAlignment.Top: return 0;
+        case VerticalAlignment.Middle: return Math.floor((containerH - blockH) / 2);
+        case VerticalAlignment.Bottom: return containerH - blockH;
+      }
+    })();
+
+
+    return lines.flatMap((line, i) => {
+      const lineGlyphs = line.flatMap(l => l);
+      const lineW = calcWordWidth(lineGlyphs);
+      let offsetX = Math.round((containerW - lineW) / 2);
+
+      return lineGlyphs.map(glyph => {
+        const mapped = {
+          ...glyph,
+          x: offsetX,
+          y: offsetY + i * lineH,
+        };
+        offsetX += glyph.w;
+
+        return mapped;
+      });
+    });
   }
 
   static wrapText(font: FontInstance, containerW: number, h: number, text: string): WrappedText {
