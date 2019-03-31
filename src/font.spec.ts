@@ -127,8 +127,8 @@ const createModeSelector = () => {
         { value: CliMode.Font, title: '✒️  Change the font' },
         { value: CliMode.BgColor, title: '🎨 Pick a background color' },
         { value: CliMode.FgColor, title: '🎨 Pick a foreground color' },
-        { value: CliMode.HorizontalAlignment, title: 'Set the horizontal alignment' },
-        { value: CliMode.VerticalAlignment, title: 'Set the vertical alignment' },
+        { value: CliMode.HorizontalAlignment, title: '↔️ Set the horizontal alignment' },
+        { value: CliMode.VerticalAlignment, title: '↕️ Set the vertical alignment' },
         { value: CliMode.Brightness, title: '🌟 Set the display brightness' },
         { value: CliMode.Exit, title: '🚪 Exit' },
       ],
@@ -175,27 +175,13 @@ const createModeSelector = () => {
     else {
       // Set some default values
       matrix
-      .clear()
-      .font(fontList[0])
-      .fgColor(Colors.Magenta)
-      .sync();
+        .clear()
+        .font(fontList[0])
+        .fgColor(Colors.Magenta)
+        .sync();
     }
 
     const fonts: FontMap = fontList.reduce((map, font) => ({ ...map, [font.name()]: font }), { });
-
-    {
-      const font = fonts[matrix.font()];
-      const lines = LayoutUtils.textToLines(font, matrix.width(), 'Oh hey there!');
-
-      LayoutUtils.linesToMappedGlyphs(lines, font.height(), matrix.width(), matrix.height()).map(glyph => {
-        matrix.drawText(glyph.char, glyph.x, glyph.y);
-      });
-
-      matrix.sync();
-    }
-
-    // LayoutUtils.wrapText(fonts[matrix.font()], matrix.width(), matrix.height(), 'Oh hey there!');
-
 
     const chooseBgColor = createColorSelector('background', Colors);
     const chooseFgColor = createColorSelector('foreground', Colors);
@@ -211,7 +197,21 @@ const createModeSelector = () => {
     let alignmentV: VerticalAlignment = VerticalAlignment.Middle;
 
     // Maintain a thunk of the latest render operation so that it can be repeated when options change
-    let render = () => { };
+    let render = () => {
+      matrix.clear();
+      const fgColor = matrix.fgColor();
+      matrix.fgColor(matrix.bgColor()).fill().fgColor(fgColor);
+      const font = fonts[matrix.font()];
+      const lines = LayoutUtils.textToLines(font, matrix.width(), 'Hello, matrix!');
+
+      LayoutUtils.linesToMappedGlyphs(lines, font.height(), matrix.width(), matrix.height(), alignmentH, alignmentV).map(glyph => {
+        matrix.drawText(glyph.char, glyph.x, glyph.y);
+      });
+      matrix.sync();
+    };
+
+    // Render the hello message
+    render();
 
     while (true) {
       switch (await chooseMode()) {
