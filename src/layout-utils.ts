@@ -16,7 +16,7 @@ export type Line = Word[];
 
 const isSeparator = ({ char }: Glyph) => char === ' ';
 
-export const glphysToWords = (glphys: Glyph[]): Word[] => {
+const glphysToWords = (glphys: Glyph[]): Word[] => {
   const index = glphys
     .map((g, i) => i === 0 && isSeparator(g) ? null : g.char)
     .indexOf(' ');
@@ -26,9 +26,9 @@ export const glphysToWords = (glphys: Glyph[]): Word[] => {
     : [glphys];
 };
 
-export const calcWordWidth = (gs: Glyph[]) => gs.reduce((sum, { w }) => sum + w, 0);
+const calcWordWidth = (gs: Glyph[]) => gs.reduce((sum, { w }) => sum + w, 0);
 
-export const wordsToLines = (maxWidth: number, words: Word[]): Line[] => {
+const wordsToLines = (maxWidth: number, words: Word[]): Line[] => {
   const lines: Line[] = [];
   let tmpLine: Line = [];
   let tmpLineWidth = 0;
