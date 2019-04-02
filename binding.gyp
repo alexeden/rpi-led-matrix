@@ -1,7 +1,7 @@
 {
   "targets": [
     {
-      "target_name": "led-matrix",
+      "target_name": "rpi-led-matrix",
       "sources": [
         "src/addon.cc",
       ],
