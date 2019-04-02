@@ -12,11 +12,11 @@
 
 using namespace rgb_matrix;
 
-class NodeLedMatrix : public Napi::ObjectWrap<NodeLedMatrix> {
+class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
   public:
 	static Napi::Object Init(Napi::Env env, Napi::Object exports);
-	NodeLedMatrix(const Napi::CallbackInfo& info);
-	~NodeLedMatrix();
+	LedMatrixAddon(const Napi::CallbackInfo& info);
+	~LedMatrixAddon();
 
 	Napi::Value bg_color(const Napi::CallbackInfo& info);
 	Napi::Value brightness(const Napi::CallbackInfo& info);

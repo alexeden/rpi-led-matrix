@@ -1,33 +1,33 @@
-#include "node-led-matrix.h"
+#include "led-matrix.addon.h"
 
 using namespace rgb_matrix;
 using namespace helpers;
 
-Napi::FunctionReference NodeLedMatrix::constructor;
+Napi::FunctionReference LedMatrixAddon::constructor;
 
-Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
+Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 	Napi::Function func = DefineClass(
 	  env,
-	  "NodeLedMatrix",
-	  {StaticMethod("defaultMatrixOptions", &NodeLedMatrix::default_matrix_options),
-	   StaticMethod("defaultRuntimeOptions", &NodeLedMatrix::default_runtime_options),
-	   InstanceMethod("brightness", &NodeLedMatrix::brightness),
-	   InstanceMethod("clear", &NodeLedMatrix::clear),
-	   InstanceMethod("drawBuffer", &NodeLedMatrix::draw_buffer),
-	   InstanceMethod("drawCircle", &NodeLedMatrix::draw_circle),
-	   InstanceMethod("drawLine", &NodeLedMatrix::draw_line),
-	   InstanceMethod("drawRect", &NodeLedMatrix::draw_rect),
-	   InstanceMethod("drawText", &NodeLedMatrix::draw_text),
-	   InstanceMethod("fill", &NodeLedMatrix::fill),
-	   InstanceMethod("height", &NodeLedMatrix::height),
-	   InstanceMethod("luminanceCorrect", &NodeLedMatrix::luminance_correct),
-	   InstanceMethod("pwmBits", &NodeLedMatrix::pwm_bits),
-	   InstanceMethod("bgColor", &NodeLedMatrix::bg_color),
-	   InstanceMethod("fgColor", &NodeLedMatrix::fg_color),
-	   InstanceMethod("font", &NodeLedMatrix::font),
-	   InstanceMethod("setPixel", &NodeLedMatrix::set_pixel),
-	   InstanceMethod("sync", &NodeLedMatrix::sync),
-	   InstanceMethod("width", &NodeLedMatrix::width)});
+	  "LedMatrix",
+	  {StaticMethod("defaultMatrixOptions", &LedMatrixAddon::default_matrix_options),
+	   StaticMethod("defaultRuntimeOptions", &LedMatrixAddon::default_runtime_options),
+	   InstanceMethod("brightness", &LedMatrixAddon::brightness),
+	   InstanceMethod("clear", &LedMatrixAddon::clear),
+	   InstanceMethod("drawBuffer", &LedMatrixAddon::draw_buffer),
+	   InstanceMethod("drawCircle", &LedMatrixAddon::draw_circle),
+	   InstanceMethod("drawLine", &LedMatrixAddon::draw_line),
+	   InstanceMethod("drawRect", &LedMatrixAddon::draw_rect),
+	   InstanceMethod("drawText", &LedMatrixAddon::draw_text),
+	   InstanceMethod("fill", &LedMatrixAddon::fill),
+	   InstanceMethod("height", &LedMatrixAddon::height),
+	   InstanceMethod("luminanceCorrect", &LedMatrixAddon::luminance_correct),
+	   InstanceMethod("pwmBits", &LedMatrixAddon::pwm_bits),
+	   InstanceMethod("bgColor", &LedMatrixAddon::bg_color),
+	   InstanceMethod("fgColor", &LedMatrixAddon::fg_color),
+	   InstanceMethod("font", &LedMatrixAddon::font),
+	   InstanceMethod("setPixel", &LedMatrixAddon::set_pixel),
+	   InstanceMethod("sync", &LedMatrixAddon::sync),
+	   InstanceMethod("width", &LedMatrixAddon::width)});
 
 	constructor = Napi::Persistent(func);
 	constructor.SuppressDestruct();
@@ -39,8 +39,8 @@ Napi::Object NodeLedMatrix::Init(Napi::Env env, Napi::Object exports) {
 /**
  * Process matrix & runtime options and initialize the internal RGBMatrix.
  */
-NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo& info)
-  : Napi::ObjectWrap<NodeLedMatrix>(info)
+LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
+  : Napi::ObjectWrap<LedMatrixAddon>(info)
   , bg_color_(Color(0, 0, 0))
   , fg_color_(Color(0, 0, 0))
   , font_(nullptr)
@@ -65,12 +65,12 @@ NodeLedMatrix::NodeLedMatrix(const Napi::CallbackInfo& info)
 	if (this->matrix_ == NULL) { throw Napi::Error::New(env, "Failed to create matrix."); }
 }
 
-NodeLedMatrix::~NodeLedMatrix(void) {
+LedMatrixAddon::~LedMatrixAddon(void) {
 	std::cerr << "Destroying matrix" << std::endl;
 	delete matrix_;
 }
 
-Napi::Value NodeLedMatrix::sync(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 	const char* data;
 	size_t len;
 
@@ -83,7 +83,7 @@ Napi::Value NodeLedMatrix::sync(const Napi::CallbackInfo& info) {
 	return Napi::Number::New(info.Env(), 0);
 }
 
-Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::brightness(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsNumber()) {
 		auto brightness = info[0].As<Napi::Number>().Uint32Value();
 		this->matrix_->SetBrightness(brightness);
@@ -94,7 +94,7 @@ Napi::Value NodeLedMatrix::brightness(const Napi::CallbackInfo& info) {
 	}
 }
 
-Napi::Value NodeLedMatrix::clear(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::clear(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0) {
 		const auto x0	= info[0].As<Napi::Number>().Uint32Value();
 		const auto y0	= info[1].As<Napi::Number>().Uint32Value();
@@ -109,7 +109,7 @@ Napi::Value NodeLedMatrix::clear(const Napi::CallbackInfo& info) {
 	return info.This();
 }
 
-Napi::Value NodeLedMatrix::draw_buffer(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 	const auto buffer = info[0].As<Napi::Buffer<uint8_t>>();
 	const auto w = info[1].IsNumber() ? info[1].As<Napi::Number>().Uint32Value() : this->matrix_->width();
 	const auto h = info[2].IsNumber() ? info[2].As<Napi::Number>().Uint32Value() : this->matrix_->height();
@@ -148,7 +148,7 @@ Napi::Value NodeLedMatrix::draw_buffer(const Napi::CallbackInfo& info) {
 	return info.This();
 }
 
-Napi::Value NodeLedMatrix::draw_circle(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
 	const auto r = info[2].As<Napi::Number>().Uint32Value();
@@ -157,7 +157,7 @@ Napi::Value NodeLedMatrix::draw_circle(const Napi::CallbackInfo& info) {
 	return info.This();
 }
 
-Napi::Value NodeLedMatrix::draw_line(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::draw_line(const Napi::CallbackInfo& info) {
 	const auto x0 = info[0].As<Napi::Number>().Uint32Value();
 	const auto y0 = info[1].As<Napi::Number>().Uint32Value();
 	const auto x1 = info[2].As<Napi::Number>().Uint32Value();
@@ -167,7 +167,7 @@ Napi::Value NodeLedMatrix::draw_line(const Napi::CallbackInfo& info) {
 	return info.This();
 }
 
-Napi::Value NodeLedMatrix::draw_rect(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::draw_rect(const Napi::CallbackInfo& info) {
 	const auto x0 = info[0].As<Napi::Number>().Uint32Value();
 	const auto y0 = info[1].As<Napi::Number>().Uint32Value();
 	const auto w = info[2].As<Napi::Number>().Uint32Value();
@@ -181,11 +181,11 @@ Napi::Value NodeLedMatrix::draw_rect(const Napi::CallbackInfo& info) {
 	return info.This();
 }
 
-Napi::Value NodeLedMatrix::draw_text(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::draw_text(const Napi::CallbackInfo& info) {
 	if (!font_) {
 		throw Napi::Error::New(info.Env(), "Cannot draw text because the font has not been set!");
 	}
-	const auto text = helpers::string_to_c_str(info[0].As<Napi::String>());
+	const auto text = std::string(info[0].As<Napi::String>()).c_str();
 	const auto x	= info[1].As<Napi::Number>().Int32Value();
 	const auto y	= info[2].As<Napi::Number>().Int32Value();
 	const auto k	= info[3].IsNumber() ? info[3].As<Napi::Number>().Int32Value() : 0;
@@ -194,7 +194,7 @@ Napi::Value NodeLedMatrix::draw_text(const Napi::CallbackInfo& info) {
 	return Napi::Number::New(info.Env(), advanced);
 }
 
-Napi::Value NodeLedMatrix::fill(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::fill(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0) {
 		const auto x0 = info[0].As<Napi::Number>().Uint32Value();
 		const auto y0 = info[1].As<Napi::Number>().Uint32Value();
@@ -209,15 +209,15 @@ Napi::Value NodeLedMatrix::fill(const Napi::CallbackInfo& info) {
 	return info.This();
 }
 
-Napi::Value NodeLedMatrix::height(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::height(const Napi::CallbackInfo& info) {
 	return Napi::Number::New(info.Env(), this->matrix_->height());
 }
 
-Napi::Value NodeLedMatrix::width(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::width(const Napi::CallbackInfo& info) {
 	return Napi::Number::New(info.Env(), this->matrix_->width());
 }
 
-Napi::Value NodeLedMatrix::luminance_correct(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::luminance_correct(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsBoolean()) {
 		auto correct = info[0].As<Napi::Boolean>().ToBoolean();
 		this->matrix_->set_luminance_correct(correct);
@@ -228,7 +228,7 @@ Napi::Value NodeLedMatrix::luminance_correct(const Napi::CallbackInfo& info) {
 	}
 }
 
-Napi::Value NodeLedMatrix::pwm_bits(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::pwm_bits(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsNumber()) {
 		auto bits = info[0].As<Napi::Number>().Uint32Value();
 		this->matrix_->SetPWMBits(bits);
@@ -239,7 +239,7 @@ Napi::Value NodeLedMatrix::pwm_bits(const Napi::CallbackInfo& info) {
 	}
 }
 
-Napi::Value NodeLedMatrix::set_pixel(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::set_pixel(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
 	this->canvas_->SetPixel(x, y, fg_color_.r, fg_color_.g, fg_color_.b);
@@ -247,29 +247,29 @@ Napi::Value NodeLedMatrix::set_pixel(const Napi::CallbackInfo& info) {
 	return info.This();
 }
 
-Napi::Value NodeLedMatrix::fg_color(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::fg_color(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0) {
-		auto color = NodeLedMatrix::color_from_callback_info(info);
+		auto color = LedMatrixAddon::color_from_callback_info(info);
 		fg_color_  = color;
 		return info.This();
 	}
 	else {
-		return NodeLedMatrix::obj_from_color(info.Env(), fg_color_);
+		return LedMatrixAddon::obj_from_color(info.Env(), fg_color_);
 	}
 }
 
-Napi::Value NodeLedMatrix::bg_color(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::bg_color(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0) {
-		auto color = NodeLedMatrix::color_from_callback_info(info);
+		auto color = LedMatrixAddon::color_from_callback_info(info);
 		bg_color_  = color;
 		return info.This();
 	}
 	else {
-		return NodeLedMatrix::obj_from_color(info.Env(), bg_color_);
+		return LedMatrixAddon::obj_from_color(info.Env(), bg_color_);
 	}
 }
 
-Napi::Value NodeLedMatrix::font(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::font(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0) {
 		auto font   = Napi::ObjectWrap<FontAddon>::Unwrap(info[0].As<Napi::Object>());
 		this->font_ = &(font->font);
@@ -284,19 +284,22 @@ Napi::Value NodeLedMatrix::font(const Napi::CallbackInfo& info) {
 /**
  * Create an instance of Options from a JS object.
  */
-RGBMatrix::Options NodeLedMatrix::create_matrix_options(const Napi::Env& env, const Napi::Object& obj) {
+RGBMatrix::Options LedMatrixAddon::create_matrix_options(const Napi::Env& env, const Napi::Object& obj) {
 	RGBMatrix::Options options = RGBMatrix::Options();
 
 	options.brightness				 = getProp(env, obj, "brightness").As<Napi::Number>();
 	options.chain_length			 = getProp(env, obj, "chainLength").As<Napi::Number>();
 	options.cols					 = getProp(env, obj, "cols").As<Napi::Number>();
 	options.disable_hardware_pulsing = getProp(env, obj, "disableHardwarePulsing").As<Napi::Boolean>();
-	options.hardware_mapping	= helpers::string_to_c_str(getProp(env, obj, "hardwareMapping").As<Napi::String>());
+	// std::cerr << "hardware mapping: " << std::string(obj.Get("hardwareMapping").As<Napi::String>()).c_str() << std::endl;
+	options.hardware_mapping	= std::string(obj.Get("hardwareMapping").As<Napi::String>()).c_str();
+		// getProp(env, obj, "hardwareMapping").As<Napi::String>()).c_str();
 	options.inverse_colors		= getProp(env, obj, "inverseColors").As<Napi::Boolean>();
-	options.led_rgb_sequence	= helpers::string_to_c_str(getProp(env, obj, "ledRgbSequence").As<Napi::String>());
+	std::cerr << "led rgb sequence: " << std::string(obj.Get("ledRgbSequence").As<Napi::String>()).c_str() << std::endl;
+	options.led_rgb_sequence	= std::string(getProp(env, obj, "ledRgbSequence").As<Napi::String>()).c_str();
 	options.multiplexing		= getProp(env, obj, "multiplexing").As<Napi::Number>();
 	options.parallel			= getProp(env, obj, "parallel").As<Napi::Number>();
-	options.pixel_mapper_config = helpers::string_to_c_str(getProp(env, obj, "pixelMapperConfig").As<Napi::String>());
+	options.pixel_mapper_config = std::string(getProp(env, obj, "pixelMapperConfig").As<Napi::String>()).c_str();
 	options.pwm_bits			= getProp(env, obj, "pwmBits").As<Napi::Number>();
 	options.pwm_dither_bits		= getProp(env, obj, "pwmDitherBits").As<Napi::Number>();
 	options.pwm_lsb_nanoseconds = getProp(env, obj, "pwmLsbNanoseconds").As<Napi::Number>();
@@ -315,7 +318,7 @@ RGBMatrix::Options NodeLedMatrix::create_matrix_options(const Napi::Env& env, co
 /**
  * Create an instance of RuntimeOptions from a JS object.
  */
-RuntimeOptions NodeLedMatrix::create_runtime_options(const Napi::Env& env, const Napi::Object& obj) {
+RuntimeOptions LedMatrixAddon::create_runtime_options(const Napi::Env& env, const Napi::Object& obj) {
 	RuntimeOptions options = RuntimeOptions();
 
 	options.gpio_slowdown   = getProp(env, obj, "gpioSlowdown").As<Napi::Number>();
@@ -329,7 +332,7 @@ RuntimeOptions NodeLedMatrix::create_runtime_options(const Napi::Env& env, const
 /**
  * Create a JS object from an instance of RGBMatrix::Options.
  */
-Napi::Object NodeLedMatrix::matrix_options_to_obj(const Napi::Env& env, const RGBMatrix::Options& options) {
+Napi::Object LedMatrixAddon::matrix_options_to_obj(const Napi::Env& env, const RGBMatrix::Options& options) {
 	auto obj = Napi::Object::New(env);
 
 	std::string hardware_mapping = options.hardware_mapping == NULL ? "" : std::string(options.hardware_mapping);
@@ -363,7 +366,7 @@ Napi::Object NodeLedMatrix::matrix_options_to_obj(const Napi::Env& env, const RG
 /**
  * Create a JS object from an instance of RuntimeOptions.
  */
-Napi::Object NodeLedMatrix::runtime_options_to_obj(const Napi::Env& env, const RuntimeOptions& options) {
+Napi::Object LedMatrixAddon::runtime_options_to_obj(const Napi::Env& env, const RuntimeOptions& options) {
 	auto obj = Napi::Object::New(env);
 
 	obj.Set("gpioSlowdown", Napi::Number::New(env, options.gpio_slowdown));
@@ -377,24 +380,24 @@ Napi::Object NodeLedMatrix::runtime_options_to_obj(const Napi::Env& env, const R
 /**
  * Create a JS object from the default matrix options.
  */
-Napi::Value NodeLedMatrix::default_matrix_options(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::default_matrix_options(const Napi::CallbackInfo& info) {
 	auto env		   = info.Env();
 	const auto options = RGBMatrix::Options();
-	return NodeLedMatrix::matrix_options_to_obj(env, options);
+	return LedMatrixAddon::matrix_options_to_obj(env, options);
 }
 
 /**
  * Create a JS object from the default runtime options.
  */
-Napi::Value NodeLedMatrix::default_runtime_options(const Napi::CallbackInfo& info) {
+Napi::Value LedMatrixAddon::default_runtime_options(const Napi::CallbackInfo& info) {
 	auto env = info.Env();
-	return NodeLedMatrix::runtime_options_to_obj(env, RuntimeOptions());
+	return LedMatrixAddon::runtime_options_to_obj(env, RuntimeOptions());
 }
 
 /**
  * Create a Color instance from CallbackInfo.
  */
-Color NodeLedMatrix::color_from_callback_info(const Napi::CallbackInfo& info) {
+Color LedMatrixAddon::color_from_callback_info(const Napi::CallbackInfo& info) {
 	if (info.Length() == 3) {
 		uint8_t r = info[0].As<Napi::Number>().Uint32Value();
 		uint8_t g = info[1].As<Napi::Number>().Uint32Value();
@@ -420,7 +423,7 @@ Color NodeLedMatrix::color_from_callback_info(const Napi::CallbackInfo& info) {
 /**
  * Create an Object from a Color.
  */
-Napi::Object NodeLedMatrix::obj_from_color(const Napi::Env& env, const Color& color) {
+Napi::Object LedMatrixAddon::obj_from_color(const Napi::Env& env, const Color& color) {
 	Napi::Object obj = Napi::Object::New(env);
 	obj.Set("r", color.r);
 	obj.Set("g", color.g);

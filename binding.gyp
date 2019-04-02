@@ -5,8 +5,7 @@
       "sources": [
         "src/addon.cc",
         "src/helpers.cc",
-        "src/napi-utils.cc",
-        "src/node-led-matrix.cc",
+        "src/led-matrix.addon.cc",
         "src/font.addon.cc",
       ],
       'include_dirs': [
