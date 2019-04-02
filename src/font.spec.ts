@@ -20,6 +20,8 @@ const Colors = {
   Yellow: 0xFFFF00,
 };
 
+const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
+
 enum CliMode {
   BgColor = 'bgColor',
   Brightness = 'brightness',
@@ -137,6 +139,7 @@ const createModeSelector = () => {
     return mode as CliMode;
   };
 };
+
 
 // tslint:disable-next-line: cyclomatic-complexity
 (async () => {
@@ -288,17 +291,21 @@ const createModeSelector = () => {
             // Go back to mode select if escape was pressed (text will be undefined)
             if (typeof text !== 'string') break;
             // Otherwise, show'em some text and thunk the operation
-            render = () => {
+            render = async () => {
               matrix.clear();
               const fgColor = matrix.fgColor();
               matrix.fgColor(matrix.bgColor()).fill().fgColor(fgColor);
               const font = fonts[matrix.font()];
               const lines = LayoutUtils.textToLines(font, matrix.width(), text);
 
-              LayoutUtils.linesToMappedGlyphs(lines, font.height(), matrix.width(), matrix.height(), alignmentH, alignmentV).map(glyph => {
+              const glyphs = LayoutUtils.linesToMappedGlyphs(lines, font.height(), matrix.width(), matrix.height(), alignmentH, alignmentV);
+
+              for (const glyph of glyphs) {
                 matrix.drawText(glyph.char, glyph.x, glyph.y);
-              });
-              matrix.sync();
+                matrix.sync();
+                await wait(150 * Math.random() + 20);
+              }
+
             };
 
             render();
