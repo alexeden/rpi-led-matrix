@@ -2,7 +2,8 @@
   "name": "rpi-matrix-node",
   "version": "1.0.0",
   "description": "Node.js Typescript bindings for hzeller/rpi-rgb-led-matrix",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Alex Eden",
   "license": "ISC",
   "repository": {
