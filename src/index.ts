@@ -1,2 +1,9 @@
 export * from './types';
-export * from './addon';
+
+import { LedMatrixAddon } from 'types';
+const { Font, LedMatrix }: LedMatrixAddon = require('bindings')('led-matrix');
+
+export {
+  Font,
+  LedMatrix,
+};
