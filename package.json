@@ -5,14 +5,32 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Alex Eden",
-  "license": "ISC",
+  "license": "MITNFA",
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "bugs": {
+    "url": "https://github.com/alexeden/rpi-led-matrix/issues"
+  },
+  "homepage": "https://github.com/alexeden/rpi-led-matrix#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alexeden/rpi-led-matrix.git"
   },
+  "keywords": [
+    "led",
+    "matrix",
+    "iot",
+    "raspberry",
+    "pi",
+    "rpi",
+    "n-api",
+    "node-addon-api",
+    "napi"
+  ],
   "scripts": {
     "rebuild": "node-gyp rebuild",
-    "build": "rimraf dist && node-gyp build && tsc -p src",
+    "build": "tslint --project src && rimraf dist && node-gyp build && tsc -p src",
     "test": "node dist/font.spec.js",
     "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json",
     "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",
