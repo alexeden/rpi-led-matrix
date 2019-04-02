@@ -29,22 +29,36 @@ import * as matrix from 'rpi-led-matrix';
 const matrix = require('rpi-led-matrix');
 ```
 
-## Package exports
+## API
 
 The package exports the following enums, types, and classes:
 
-#### Configuration enums
+#### Configuration option enums
 
 - `GpioMapping`
 - `MuxType`
+- `PixelMapper`
 - `PixelMapperType`
 - `RowAddressType`
 - `RuntimeFlag`
 - `ScanMode`
 
+---
+
+### Configuration interfaces
+
+The underlying [rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix#changing-parameters-via-command-line-flags) draws a distinction between two types of configurations: matrix and runtime. This package exposes two interfaces that reflect them:
+
+- `MatrixOptions`
+- `RuntimeOptions`
+
+---
+
 #### `LedMatrixUtils`
 
 Provides helper methods for configuring a matrix.
+
+---
 
 #### `Font` and `LedMatrix`
 
@@ -57,6 +71,7 @@ There are also the associated TypeScript interfaces that describe the static and
 - `LedMatrix`
 - `LedMatrixInstance`
 
+---
 
 #### `LayoutUtils`
 
@@ -69,6 +84,7 @@ There is also a set of enums and types associated with the utility methods:
 - `HorizontalAlignment`
 - `VerticalAlignment`
 
+---
 
 ## Developing Locally
 
