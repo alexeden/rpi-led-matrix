@@ -29,6 +29,45 @@ import * as matrix from 'rpi-led-matrix';
 const matrix = require('rpi-led-matrix');
 ```
 
+## Package exports
+
+The package exports the following enums, types, and classes:
+
+#### Configuration enums
+
+- `GpioMapping`
+- `MuxType`
+- `PixelMapperType`
+- `RowAddressType`
+- `RuntimeFlag`
+- `ScanMode`
+
+#### `LedMatrixUtils`
+
+Provides helper methods for configuring a matrix.
+
+#### `Font` and `LedMatrix`
+
+The instantiable classes that wrap the native `Font` and `LedMatrix` entities.
+
+There are also the associated TypeScript interfaces that describe the static and instance methods of `Font` and `LedMatrix`:
+
+- `Font`
+- `FontInstance`
+- `LedMatrix`
+- `LedMatrixInstance`
+
+
+#### `LayoutUtils`
+
+A gratuitious set of functionality for making text rendering super easy.
+
+There is also a set of enums and types associated with the utility methods:
+
+- `MappedGlyph`
+- `Line`
+- `HorizontalAlignment`
+- `VerticalAlignment`
 
 
 ## Developing Locally
