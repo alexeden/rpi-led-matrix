@@ -1,6 +1,6 @@
 {
   "name": "rpi-led-matrix",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Node.js/Typescript bindings for hzeller/rpi-rgb-led-matrix",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -35,6 +35,7 @@
     "test": "node dist/font.spec.js",
     "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json",
     "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",
+    "prepublish": "npm run build",
     "merge-submodule-upstream": "(cd rpi-rgb-led-matrix && git fetch && git merge origin/master)"
   },
   "dependencies": {
