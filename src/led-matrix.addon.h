@@ -3,10 +3,10 @@
 
 #include "font.addon.h"
 #include "image.h"
+#include <assert.h>
 #include <graphics.h>
 #include <iostream>
 #include <led-matrix.h>
-#include <assert.h>
 #include <napi.h>
 
 using namespace rgb_matrix;
