@@ -36,7 +36,7 @@ class Image {
 
 	const Pixel& getPixel(int x, int y) {
 		static Pixel black;
-		if (x < 0 || x >= w || y < 0 || y >= h) return black;
+		if (x < 0 || x >= (signed) w || y < 0 || y >= (signed) h) return black;
 		return pixels[x + w * y];
 	}
 

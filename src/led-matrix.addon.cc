@@ -40,8 +40,8 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
  */
 LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
 	: Napi::ObjectWrap<LedMatrixAddon>(info)
-	, bg_color_(Color(0, 0, 0))
 	, fg_color_(Color(0, 0, 0))
+	, bg_color_(Color(0, 0, 0))
 	, font_(nullptr)
 	, font_name_("") {
 
@@ -116,7 +116,7 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 
 	Image *img  = new Image();
 	Pixel *pixels = (Pixel*) malloc(sizeof(Pixel) * w * h);
-	for (auto i = 0; i < w * h; i++) {
+	for (unsigned int i = 0; i < w * h; i++) {
 		auto j = i * 3;
 		Pixel p;
 		p.r(data[j]);
@@ -129,10 +129,10 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 
 	assert(img->isValid());
 
-	for (auto y = 0; y < h; y++) {
-		if (y > this->matrix_->height()) break;
-		for (auto x = 0; x < w; x++) {
-			if (x > this->matrix_->width()) break;
+	for (unsigned int y = 0; y < h; y++) {
+		if (y > (unsigned) this->matrix_->height()) break;
+		for (unsigned int x = 0; x < w; x++) {
+			if (x > (unsigned) this->matrix_->width()) break;
 			auto pixel = img->getPixel(x, y);
 			canvas_->SetPixel(x, y, pixel.r(), pixel.g(), pixel.b());
 		}
