@@ -1,5 +1,5 @@
 import * as color from 'color';
-import { addon } from './addon';
+import { Font, LedMatrix } from './index';
 import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType, LedMatrixInstance } from './types';
 import { LedMatrixUtils } from './utils';
 
@@ -42,13 +42,12 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
 
 (async () => {
   try {
-    console.log('addon: ', addon);
-    console.log('addon.Font: ', addon.Font);
-    console.log('addon.LedMatrix: ', addon.LedMatrix);
-    console.log('addon.LedMatrix.defaultMatrixOptions(): ', addon.LedMatrix.defaultMatrixOptions());
-    console.log('addon.LedMatrix.defaultRuntimeOptions(): ', addon.LedMatrix.defaultRuntimeOptions());
+    console.log('Font: ', Font);
+    console.log('LedMatrix: ', LedMatrix);
+    console.log('LedMatrix.defaultMatrixOptions(): ', LedMatrix.defaultMatrixOptions());
+    console.log('LedMatrix.defaultRuntimeOptions(): ', LedMatrix.defaultRuntimeOptions());
     const matrixOpts: MatrixOptions = {
-      ...addon.LedMatrix.defaultMatrixOptions(),
+      ...LedMatrix.defaultMatrixOptions(),
       rows: 32,
       cols: 64,
       chainLength: 2,
@@ -57,18 +56,18 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     };
 
     const runtimeOpts: RuntimeOptions = {
-      ...addon.LedMatrix.defaultRuntimeOptions(),
+      ...LedMatrix.defaultRuntimeOptions(),
       gpioSlowdown: 1,
     };
 
-    const font = new addon.Font('9x15B', '../rpi-rgb-led-matrix/fonts/9x15B.bdf');
-    console.log('new addon.Font: ', font);
+    const font = new Font('9x15B', '../rpi-rgb-led-matrix/fonts/9x15B.bdf');
+    console.log('new Font: ', font);
     console.log('font.baseline(): ', font.baseline());
     console.log('font.height(): ', font.height());
     console.log('font.stringWidth("abc"): ', font.stringWidth('Mi'));
 
-    const matrix = new addon.LedMatrix(matrixOpts, runtimeOpts);
-    console.log('new addon.LedMatrix: ', matrix);
+    const matrix = new LedMatrix(matrixOpts, runtimeOpts);
+    console.log('new LedMatrix: ', matrix);
     console.log('matrix chainable setters: ', matrix.bgColor(Colors.black).fgColor(Colors.red).font(font));
     console.log('matrix.fgColor()', matrix.fgColor());
     console.log('matrix.bgColor()', matrix.bgColor());

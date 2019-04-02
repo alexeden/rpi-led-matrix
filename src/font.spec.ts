@@ -1,4 +1,4 @@
-import { addon } from './addon';
+import { Font, LedMatrix } from './index';
 import { GpioMapping, PixelMapperType, FontInstance, Color } from './types';
 import { LedMatrixUtils } from './utils';
 import globby from 'globby';
@@ -144,9 +144,9 @@ const createModeSelector = () => {
 // tslint:disable-next-line: cyclomatic-complexity
 (async () => {
   try {
-    const matrix = new addon.LedMatrix(
+    const matrix = new LedMatrix(
       {
-        ...addon.LedMatrix.defaultMatrixOptions(),
+        ...LedMatrix.defaultMatrixOptions(),
         rows: 32,
         cols: 64,
         chainLength: 2,
@@ -154,7 +154,7 @@ const createModeSelector = () => {
         pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
       },
       {
-        ...addon.LedMatrix.defaultRuntimeOptions(),
+        ...LedMatrix.defaultRuntimeOptions(),
         gpioSlowdown: 1,
       }
     );
@@ -166,7 +166,7 @@ const createModeSelector = () => {
       .map(path => {
         const name = basename(path, fontExt);
         fontLoader.start(`"${name}"`);
-        const font = new addon.Font(basename(path, fontExt), path);
+        const font = new Font(basename(path, fontExt), path);
         fontLoader.succeed();
 
         return font;
