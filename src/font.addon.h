@@ -1,7 +1,6 @@
 #ifndef FONTADDON_H
 #define FONTADDON_H
 
-#include "helpers.cc"
 #include <graphics.h>
 #include <iostream>
 #include <napi.h>

@@ -2,7 +2,6 @@
 #define NODELEDMATRIX_H
 
 #include "font.addon.h"
-#include "helpers.cc"
 #include "image.h"
 #include <graphics.h>
 #include <iostream>
