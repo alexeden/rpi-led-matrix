@@ -30,8 +30,9 @@
   ],
   "scripts": {
     "rebuild": "node-gyp rebuild",
-    "build": "tslint --project src && rimraf dist && node-gyp rebuild && tsc -p src",
+    "build": "npm run lint && rimraf dist && rimraf 'examples/**/*.!(md)' && node-gyp rebuild && tsc -p src/lib && tsc -p src/examples",
     "quick-build": "rimraf dist && node-gyp build && tsc -p src",
+    "lint": "tslint -c src/tslint.json --project src/examples && tslint -c src/tslint.json --project src/lib",
     "test": "node dist/font.spec.js",
     "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json",
     "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",

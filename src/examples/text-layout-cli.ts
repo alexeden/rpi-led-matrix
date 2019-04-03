@@ -1,11 +1,19 @@
-import { Font, LedMatrix } from './index';
-import { GpioMapping, PixelMapperType, FontInstance, Color } from './types';
-import { LedMatrixUtils } from './utils';
 import globby from 'globby';
 import { basename } from 'path';
-import { LayoutUtils, HorizontalAlignment, VerticalAlignment } from './layout-utils';
 import ora from 'ora';
 import * as prompts from 'prompts';
+import {
+  LedMatrixUtils,
+  Font,
+  LedMatrix,
+  GpioMapping,
+  PixelMapperType,
+  FontInstance,
+  Color,
+  LayoutUtils,
+  HorizontalAlignment,
+  VerticalAlignment,
+} from 'rpi-led-matrix';
 
 const Colors = {
   Aquamarine: 0x7FFFD4,

@@ -1,7 +1,14 @@
 import * as color from 'color';
-import { Font, LedMatrix } from './index';
-import { MatrixOptions, RuntimeOptions, GpioMapping, PixelMapperType, LedMatrixInstance } from './types';
-import { LedMatrixUtils } from './utils';
+import {
+  Font,
+  LedMatrix,
+  MatrixOptions,
+  RuntimeOptions,
+  GpioMapping,
+  PixelMapperType,
+  LedMatrixInstance,
+  LedMatrixUtils,
+} from 'rpi-led-matrix';
 
 // tslint:disable-next-line:variable-name
 enum Colors {
