@@ -187,7 +187,7 @@ After getting your configuration figured out, you've now got an `LedMatrixInstan
 The interface for a matrix instance looks like this:
 
 ```ts
-export interface LedMatrixInstance {
+interface LedMatrixInstance {
   bgColor(color: Color | number): this;
   bgColor(): Color;
   brightness(brightness: number): this;
