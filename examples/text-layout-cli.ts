@@ -3,17 +3,15 @@ import { basename } from 'path';
 import ora from 'ora';
 import * as prompts from 'prompts';
 import {
-  LedMatrixUtils,
   Font,
   LedMatrix,
-  GpioMapping,
-  PixelMapperType,
   FontInstance,
   Color,
   LayoutUtils,
   HorizontalAlignment,
   VerticalAlignment,
 } from '../src';
+import { matrixOptions, runtimeOptions } from './_config';
 
 const Colors = {
   Aquamarine: 0x7FFFD4,
@@ -152,20 +150,7 @@ const createModeSelector = () => {
 // tslint:disable-next-line: cyclomatic-complexity
 (async () => {
   try {
-    const matrix = new LedMatrix(
-      {
-        ...LedMatrix.defaultMatrixOptions(),
-        rows: 32,
-        cols: 64,
-        chainLength: 2,
-        hardwareMapping: GpioMapping.AdafruitHatPwm,
-        pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
-      },
-      {
-        ...LedMatrix.defaultRuntimeOptions(),
-        gpioSlowdown: 1,
-      }
-    );
+    const matrix = new LedMatrix(matrixOptions, runtimeOptions);
 
     const fontLoader = ora({ color: 'magenta' }).start('Loading fonts').stopAndPersist();
     const fontExt = '.bdf';

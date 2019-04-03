@@ -1,16 +1,7 @@
 import * as color from 'color';
-import {
-  Font,
-  LedMatrix,
-  MatrixOptions,
-  RuntimeOptions,
-  GpioMapping,
-  PixelMapperType,
-  LedMatrixInstance,
-  LedMatrixUtils,
-} from '../src';
+import { LedMatrix, LedMatrixInstance } from '../src';
+import { matrixOptions, runtimeOptions } from './_config';
 
-// tslint:disable-next-line:variable-name
 enum Colors {
   black = 0x000000,
   red = 0xFF0000,
@@ -20,10 +11,6 @@ enum Colors {
   cyan = 0x00FFFF,
   yellow = 0xFFFF00,
 }
-
-// const RGB = [Colors.red, Colors.green, Colors.blue];
-
-// const toBytes = (hex: number) => [0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex];
 
 const rainbow64 = Array.from(Array(64))
   .map((_, i, { length }) => Math.floor(360 * i / length))
@@ -49,67 +36,13 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
 
 (async () => {
   try {
-    console.log('Font: ', Font);
-    console.log('LedMatrix: ', LedMatrix);
-    console.log('LedMatrix.defaultMatrixOptions(): ', LedMatrix.defaultMatrixOptions());
-    console.log('LedMatrix.defaultRuntimeOptions(): ', LedMatrix.defaultRuntimeOptions());
-    const matrixOpts: MatrixOptions = {
-      ...LedMatrix.defaultMatrixOptions(),
-      rows: 32,
-      cols: 64,
-      chainLength: 2,
-      hardwareMapping: GpioMapping.AdafruitHatPwm,
-      pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
-    };
-
-    const runtimeOpts: RuntimeOptions = {
-      ...LedMatrix.defaultRuntimeOptions(),
-      gpioSlowdown: 1,
-    };
-
-    const font = new Font('9x15B', '../vendor/fonts/9x15B.bdf');
-    console.log('new Font: ', font);
-    console.log('font.baseline(): ', font.baseline());
-    console.log('font.height(): ', font.height());
-    console.log('font.stringWidth("abc"): ', font.stringWidth('Mi'));
-
-    const matrix = new LedMatrix(matrixOpts, runtimeOpts);
-    console.log('new LedMatrix: ', matrix);
-    console.log('matrix chainable setters: ', matrix.bgColor(Colors.black).fgColor(Colors.red).font(font));
-    console.log('matrix.fgColor()', matrix.fgColor());
-    console.log('matrix.bgColor()', matrix.bgColor());
-    console.log('matrix.pwmBits(): ', matrix.pwmBits());
-    console.log('matrix.pwmBits(1): ', matrix.pwmBits(1));
-    console.log('matrix.pwmBits(12): ', matrix.pwmBits(12));
-    console.log('matrix.pwmBits(11): ', matrix.pwmBits(11));
-    console.log('matrix.brightness(): ', matrix.brightness());
-    console.log('matrix.brightness(0): ', matrix.brightness(0));
-    console.log('matrix.brightness(100): ', matrix.brightness(100));
-    console.log('matrix.height(): ', matrix.height());
-    console.log('matrix.width(): ', matrix.width());
+    const matrix = new LedMatrix(matrixOptions, runtimeOptions);
 
     const colorStatic = Buffer.of(
       ...Array.from(Array(3 * matrix.height() * matrix.width())).map(() => Math.round(Math.random()) * 0xFF)
     );
 
-    // Buffer.of(
-    //   ...Array.from(Array(matrix.width())).flatMap((_, x) =>
-    //     Array.from(Array(matrix.height())).flatMap((__, y) =>
-    //       toBytes(RGB[Math.floor(3 * Math.random())])
-    //     )
-    //   )
-    // );
-
-    // const buffer = Buffer.of(Colors.red, Colors.green, Colors.blue);
     matrix.clear().drawBuffer(colorStatic).sync();
-    // await wait(2000);
-    for (let i = -font.height(); i < matrix.height() + font.height(); i++) {
-      const k = Math.round(5 * i / matrix.height());
-      const xOffset = (matrix.width() - font.stringWidth('Hello!', k)) / 2;
-      matrix.clear().fgColor(rainbow(i)).drawText('Hello!', xOffset, i, k);
-      matrix.sync();
-      await wait(44);
-    }
 
     const interval = 200;
     matrix.fgColor(Colors.red).fill().sync();
@@ -227,18 +160,3 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
   }
 
 })();
-
-
-/*
-
-sudo ./scrolling-text-example \
-  --led-rows=32 \
-  --led-cols=64 \
-  --led-chain=2 \
-  --led-pixel-mapper="U-mapper" \
-  -C 255,0,255 \
-  -s 5 \
-  -S -1 \
-  -f ../fonts/helvR12.bdf \
-  "YAAAAAS! yas."
-*/
