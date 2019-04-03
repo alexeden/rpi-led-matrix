@@ -52,7 +52,7 @@ interface LedMatrix {
 
 Both `MatrixOptions` and `RuntimeOptions` are of a non-trivial size in terms of available options. Fortunately, `LedMatrix` has those two static methods that return either config types with all properties set to their default values.
 
-With the use of those helper methods, this is all it takes to create a matrix (of types `LedMatrixInstance`) ready to render:
+With the use of those helper methods, this is all it takes to create a matrix (of types `LedMatrixInstance`) that's ready to glow:
 
 ```ts
 import { LedMatrix } from 'rpi-led-matrix';
@@ -61,6 +61,123 @@ const matrix = new LedMatrix(
   LedMatrix.defaultMatrixOptions(),
   LedMatrix.defaultRuntimeOptions()
 );
+```
+
+## Configure to taste
+
+![extending defaults](./docs/text-layout-center-middle.jpg)
+
+The `LedMatrix` constructor expects _all_ configuration properties to be defined. So, identify the options you want to change, and extend the default options.
+
+The image above are the panels I've been using to test, and below is how I've configured it in my code. Keep in mind that every setup is different, so you'll need to find the config that works for you.
+
+```ts
+import { LedMatrix, GpioMapping, LedMatrixUtils, PixelMapperType } from 'rpi-led-matrix';
+
+const matrix = new LedMatrix(
+  {
+    ...LedMatrix.defaultMatrixOptions(),
+    rows: 32,
+    cols: 64,
+    chainLength: 2,
+    hardwareMapping: GpioMapping.AdafruitHatPwm,
+    pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
+  },
+  {
+    ...LedMatrix.defaultRuntimeOptions(),
+    gpioSlowdown: 1,
+  }
+);
+```
+
+The best part of the configuration is that it's all typed. If you try to use an invalid option or option value, the compiler will berate you for your incompetence.
+
+For most options with a fixed, discrete set of valid values, like `hardwareMapping`, there is a corresponding `enum` you can use to see the possible values.
+
+`pixelMapperConfig`, which specifies special mappings that describe the physical configuration of your LED matrices, requires a more complex value with the desired mapping encoded as a string. For that, you can use `LedMatrixUtils`, which provides the static method `encodeMappers` that generates the encoded string for you.
+
+## Options on options
+
+### Matrix options
+
+The full `MatrixOptions` interface and the enums it uses are outlined below.
+
+> **Note**: I've added comments for the meaning of each option in the source files. In general, I'd suggest referencing the [original library on which these options are based](https://github.com/hzeller/rpi-rgb-led-matrix), which might provide more detailed descriptions.
+
+```ts
+interface MatrixOptions {
+  brightness: number;
+  chainLength: 1 | 2 | 3 | 4;
+  cols: 16 | 32 | 40 | 64;
+  disableHardwarePulsing: boolean;
+  hardwareMapping: GpioMapping;
+  inverseColors: boolean;
+  ledRgbSequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
+  multiplexing: MuxType;
+  parallel: 1 | 2 | 3 | 4;
+  pixelMapperConfig: string;
+  pwmBits: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+  pwmDitherBits: number;
+  pwmLsbNanoseconds: number;
+  rowAddressType: RowAddressType;
+  rows: 16 | 32 | 64;
+  scanMode: ScanMode;
+  showRefreshRate: boolean;
+}
+```
+
+```ts
+enum ScanMode {
+  Progressive = 0,
+  Interlaced = 1,
+}
+```
+
+```ts
+enum MuxType {
+  Direct = 0,
+  Stripe = 1,
+  Checker = 2,
+}
+```
+
+```ts
+enum RowAddressType {
+  Direct = 0,
+  AB = 1,
+}
+```
+
+```ts
+enum GpioMapping {
+  Regular = 'regular',
+  AdafruitHat = 'adafruit-hat',
+  AdafruitHatPwm = 'adafruit-hat-pwm',
+  RegularPi1 = 'regular-pi1',
+  Classic = 'classic',
+  ClassicPi1 = 'classic-pi1',
+}
+```
+
+### Runtime options
+
+The `RuntimeOptions` interface and its associated enum look like this:
+
+```ts
+interface RuntimeOptions {
+  daemon: RuntimeFlag;
+  doGpioInit: boolean;
+  dropPrivileges: RuntimeFlag;
+  gpioSlowdown: 0 | 1 | 2 | 3 | 4;
+}
+```
+
+```ts
+enum RuntimeFlag {
+  Disabled = -1,
+  Off = 0,
+  On = 1,
+}
 ```
 
 
