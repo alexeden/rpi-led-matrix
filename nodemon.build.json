@@ -5,6 +5,7 @@
   "events": {},
   "watch": [
     "src/**",
+    "examples/**",
     "package.json",
     "binding.gyp"
   ]
