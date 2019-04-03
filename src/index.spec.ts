@@ -60,7 +60,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
       gpioSlowdown: 1,
     };
 
-    const font = new Font('9x15B', '../rpi-rgb-led-matrix/fonts/9x15B.bdf');
+    const font = new Font('9x15B', '../vendor/fonts/9x15B.bdf');
     console.log('new Font: ', font);
     console.log('font.baseline(): ', font.baseline());
     console.log('font.height(): ', font.height());

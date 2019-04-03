@@ -36,7 +36,7 @@
     "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json",
     "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",
     "prepublish": "npm run build",
-    "merge-submodule-upstream": "(cd rpi-rgb-led-matrix && git fetch && git merge origin/master)"
+    "merge-submodule-upstream": "(cd vendor && git fetch && git merge origin/master)"
   },
   "dependencies": {
     "bindings": "^1.5.0",

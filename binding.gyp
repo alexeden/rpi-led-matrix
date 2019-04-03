@@ -12,10 +12,10 @@
             "src/font.addon.cc",
           ],
           'include_dirs': [
-            "./rpi-rgb-led-matrix/include",
+            "./vendor/include",
           ],
           'dependencies': [
-            "./binding.gyp:rpi-rgb-led-matrix",
+            "./binding.gyp:vendor",
           ],
         }],
       ],
@@ -38,7 +38,7 @@
       },
     },
     {
-			"target_name": "rpi-rgb-led-matrix",
+			"target_name": "vendor",
 			"type": "static_library",
       "defines": [
         "DREMOVE_DEPRECATED_TRANSFORMERS"
@@ -51,26 +51,26 @@
         }],
         [ 'OS=="linux"', {
           'sources': [
-            "./rpi-rgb-led-matrix/lib/thread.cc",
-            "./rpi-rgb-led-matrix/lib/pixel-mapper.cc",
-            "./rpi-rgb-led-matrix/lib/options-initialize.cc",
-            "./rpi-rgb-led-matrix/lib/multiplex-mappers.cc",
-            "./rpi-rgb-led-matrix/lib/led-matrix-c.cc",
-            "./rpi-rgb-led-matrix/lib/led-matrix.cc",
-            "./rpi-rgb-led-matrix/lib/graphics.cc",
-            "./rpi-rgb-led-matrix/lib/gpio.cc",
-            "./rpi-rgb-led-matrix/lib/framebuffer.cc",
-            "./rpi-rgb-led-matrix/lib/content-streamer.cc",
-            "./rpi-rgb-led-matrix/lib/bdf-font.cc",
-            "./rpi-rgb-led-matrix/lib/hardware-mapping.c"
+            "./vendor/lib/thread.cc",
+            "./vendor/lib/pixel-mapper.cc",
+            "./vendor/lib/options-initialize.cc",
+            "./vendor/lib/multiplex-mappers.cc",
+            "./vendor/lib/led-matrix-c.cc",
+            "./vendor/lib/led-matrix.cc",
+            "./vendor/lib/graphics.cc",
+            "./vendor/lib/gpio.cc",
+            "./vendor/lib/framebuffer.cc",
+            "./vendor/lib/content-streamer.cc",
+            "./vendor/lib/bdf-font.cc",
+            "./vendor/lib/hardware-mapping.c"
           ],
           "libraries": ["-lrt", "-lm", "-lpthread"],
           "include_dirs": [
-            "./rpi-rgb-led-matrix/include"
+            "./vendor/include"
           ],
           "direct_dependent_settings": {
             "include_dirs": [
-              "./rpi-rgb-led-matrix/include"
+              "./vendor/include"
             ]
           }
         }]
