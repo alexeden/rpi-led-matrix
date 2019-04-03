@@ -244,7 +244,7 @@ matrix
 
 And we'll get this:
 
-![simple-shapes](simple-shapes.jpg)
+![simple-shapes](/docs/simple-shapes.jpg)
 
 # API
 
