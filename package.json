@@ -29,15 +29,14 @@
     "napi"
   ],
   "scripts": {
-    "rebuild": "node-gyp rebuild",
-    "build": "rimraf dist && node-gyp rebuild && tsc -p src",
-    "quick-build": "rimraf dist && node-gyp build && tsc -p src",
-    "lint": "tslint -c ./tslint.json --project examples && tslint -c ./tslint.json --project src",
-    "test": "node dist/font.spec.js",
-    "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json",
     "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",
+    "build": "rimraf dist && node-gyp rebuild && tsc -p src",
+    "example": "ts-node -P examples/tsconfig.json",
+    "lint": "tslint -c ./tslint.json --project examples && tslint -c ./tslint.json --project src",
+    "merge-submodule-upstream": "(cd vendor && git fetch && git merge origin/master)",
     "prepublish": "npm run lint && npm run build",
-    "merge-submodule-upstream": "(cd vendor && git fetch && git merge origin/master)"
+    "quick-build": "rimraf dist && node-gyp build && tsc -p src",
+    "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json"
   },
   "dependencies": {
     "bindings": "^1.5.0",
