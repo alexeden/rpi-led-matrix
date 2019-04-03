@@ -232,7 +232,7 @@ export interface LedMatrixInstance {
   drawCircle(x: number, y: number, r: number): this;
   drawLine(x0: number, y0: number, x1: number, y1: number): this;
   drawRect(x0: number, y0: number, width: number, height: number): this;
-  drawText(text: string, x: number, y: number, kerning?: number): number;
+  drawText(text: string, x: number, y: number, kerning?: number): this;
 
   fgColor(color: Color | number): this;
   fgColor(): Color;
