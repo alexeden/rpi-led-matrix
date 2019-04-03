@@ -13,7 +13,7 @@ import {
   LayoutUtils,
   HorizontalAlignment,
   VerticalAlignment,
-} from 'rpi-led-matrix';
+} from '../src';
 
 const Colors = {
   Aquamarine: 0x7FFFD4,

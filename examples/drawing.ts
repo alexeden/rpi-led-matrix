@@ -8,7 +8,7 @@ import {
   PixelMapperType,
   LedMatrixInstance,
   LedMatrixUtils,
-} from 'rpi-led-matrix';
+} from '../src';
 
 // tslint:disable-next-line:variable-name
 enum Colors {
