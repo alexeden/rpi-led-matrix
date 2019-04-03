@@ -23,13 +23,46 @@ $ npm install --save rpi-led-matrix
 
 Usage:
 
-```
+```ts
 // In a .ts file
 import * as matrix from 'rpi-led-matrix';
 
 // Or, in a .js file
 const matrix = require('rpi-led-matrix');
 ```
+
+# Getting Started
+
+The majority of the work in getting your LED matrix up and shining will inevitably be getting it configured first. This package provides a couple of helpers that should make configuration painless.
+
+## The bare minimum
+
+Creating a matrix means creating an instance of the class `LedMatrix`, whose constructor has the following signature (with a few static methods described below):
+
+```ts
+interface LedMatrix {
+  new(mOpts: MatrixOptions, rOpts: RuntimeOptions): LedMatrixInstance;
+
+  defaultMatrixOptions(): MatrixOptions;
+  defaultRuntimeOptions(): RuntimeOptions;
+}
+```
+
+> **Note**: `LedMatrix` is represented as an `interface` rather than a `class` because the actual `LedMatrix` module is a native C++ addon.
+
+Both `MatrixOptions` and `RuntimeOptions` are of a non-trivial size in terms of available options. Fortunately, `LedMatrix` has those two static methods that return either config types with all properties set to their default values.
+
+With the use of those helper methods, this is all it takes to create a matrix (of types `LedMatrixInstance`) ready to render:
+
+```ts
+import { LedMatrix } from 'rpi-led-matrix';
+
+const matrix = new LedMatrix(
+  LedMatrix.defaultMatrixOptions(),
+  LedMatrix.defaultRuntimeOptions()
+);
+```
+
 
 # API
 
@@ -95,7 +128,7 @@ There is also a set of enums and types associated with the utility methods:
 
 Clone/fork this repo onto both your local machine and your Raspberry Pi.
 
-```
+```bash
 $ git clone --recurse-submodules https://github.com/alexeden/rpi-led-matrix
 ```
 
@@ -104,7 +137,7 @@ $ git clone --recurse-submodules https://github.com/alexeden/rpi-led-matrix
 
 Create a file called `sync.config.json` on the machine on which you'll be developing, and substitute these values with your own:
 
-```
+```json
 {
   "username": "<username>",
   "hostname": "<hostname or IP address of your Pi>",
