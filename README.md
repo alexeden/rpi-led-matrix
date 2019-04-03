@@ -1,3 +1,5 @@
+![npm version](https://img.shields.io/npm/v/rpi-led-matrix.svg?style=for-the-badge&logo=npm&color=c41949)
+
 # Raspberry Pi LED Matrix
 
 Control an RGB LED matrix connected to a Raspberry Pi using using Node.js. This library is a Node/Typescript binding of the brilliant [hzeller/rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library, plus some additional functionality. Builds on some of the mechanisms implemented by [easybotics/node-rpi-rgb-led-matrix](https://github.com/easybotics/node-rpi-rgb-led-matrix) for double-buffering bitframes to get silky-smooth rendering.
@@ -29,7 +31,7 @@ import * as matrix from 'rpi-led-matrix';
 const matrix = require('rpi-led-matrix');
 ```
 
-## API
+# API
 
 The package exports the following enums, types, and classes:
 
@@ -86,12 +88,21 @@ There is also a set of enums and types associated with the utility methods:
 
 ---
 
-## Developing Locally
+# Developing Locally
 
-- Make sure you have [passwordless SSH](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) access to your Raspberry Pi.
-- Clone/fork this repo onto both your local machine and your Raspberry Pi.
-- `npm install` inside both repos.
-- Locally, create a file called `sync.config.json` with these values:
+> Make sure you have [passwordless SSH](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) access to your Raspberry Pi.
+
+
+Clone/fork this repo onto both your local machine and your Raspberry Pi.
+
+```
+$ git clone --recurse-submodules https://github.com/alexeden/rpi-led-matrix
+```
+
+`npm install` inside both repos.
+
+
+Create a file called `sync.config.json` on the machine on which you'll be developing, and substitute these values with your own:
 
 ```
 {
@@ -102,5 +113,6 @@ There is also a set of enums and types associated with the utility methods:
 }
 ```
 
-- Locally, you can now run `npm run sync-changes`, and any changes made to files inside `/src` will automatically be uploaded to your Pi.
-- From the Pi, you can run `npm run build-changes`, and any changes pushed to `/src` will automatically be rebuilt. You can run additional scripts (test scripts, etc) by appending the shell commands to the `exec` property inside `nodemon.build.json`.
+**Locally**, you can now run `npm run sync-changes`, and any changes made to files inside `/src` or `/examples` will automatically be uploaded to your Pi.
+
+**From the Pi**, you can run `npm run build-changes`, and any changes pushed from your local machine will automatically be rebuilt. You can run additional scripts (test scripts, etc) by appending the shell commands to the `exec` property inside `nodemon.build.json`.
