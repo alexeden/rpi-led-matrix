@@ -30,13 +30,13 @@
   ],
   "scripts": {
     "rebuild": "node-gyp rebuild",
-    "build": "npm run lint && rimraf dist && rimraf 'examples/**/*.!(md)' && node-gyp rebuild && tsc -p src/lib && tsc -p src/examples",
+    "build": "rimraf dist && node-gyp rebuild && tsc -p src",
     "quick-build": "rimraf dist && node-gyp build && tsc -p src",
-    "lint": "tslint -c src/tslint.json --project src/examples && tslint -c src/tslint.json --project src/lib",
+    "lint": "tslint -c ./tslint.json --project examples && tslint -c ./tslint.json --project src",
     "test": "node dist/font.spec.js",
     "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json",
     "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",
-    "prepublish": "npm run build",
+    "prepublish": "npm run lint && npm run build",
     "merge-submodule-upstream": "(cd vendor && git fetch && git merge origin/master)"
   },
   "dependencies": {
