@@ -63,7 +63,7 @@ const matrix = new LedMatrix(
 );
 ```
 
-## Configure to taste
+# Configuration
 
 ![extending defaults](./docs/text-layout-center-middle.jpg)
 
@@ -180,6 +180,71 @@ enum RuntimeFlag {
 }
 ```
 
+# Drawing
+
+After getting your configuration figured out, you've now got an `LedMatrixInstance` to play with.
+
+The interface for a matrix instance looks like this:
+
+```ts
+export interface LedMatrixInstance {
+  bgColor(color: Color | number): this;
+  bgColor(): Color;
+  brightness(brightness: number): this;
+  brightness(): number;
+  clear(): this;
+  clear(x0: number, y0: number, x1: number, y1: number): this;
+  drawBuffer(buffer: Buffer, w?: number, h?: number): this;
+  drawCircle(x: number, y: number, r: number): this;
+  drawLine(x0: number, y0: number, x1: number, y1: number): this;
+  drawRect(x0: number, y0: number, width: number, height: number): this;
+  drawText(text: string, x: number, y: number, kerning?: number): this;
+  fgColor(color: Color | number): this;
+  fgColor(): Color;
+  fill(): this;
+  fill(x0: number, y0: number, x1: number, y1: number): this;
+  font(font: FontInstance): this;
+  font(): string;
+  height(): number;
+  luminanceCorrect(correct: boolean): this;
+  luminanceCorrect(): boolean;
+  pwmBits(pwmBits: number): this;
+  pwmBits(): number;
+  setPixel(x: number, y: number): this;
+  sync(): void;
+  width(): number;
+}
+```
+
+## Usage Patterns
+
+There are a few patterns you might notice about the matrix instance type.
+
+The majority of methods come in two forms: a getter and a setter. If you call a method without any arguments, you'll get the current value back. If you call a method _with_ argument, the method acts as a setter, and the same matrix instance is returned. This means that **nearly all matrix operations are chainable.**
+
+So we can have something like this:
+
+```ts
+matrix
+  .clear()            // clear the display
+  .brightness(100)    // set the panel brightness to 100%
+  .fgColor(0x0000FF)  // set the active color to blue
+  .fill()             // color the entire diplay blue
+  .fgColor(0xFFFF00)  // set the active color to yellow
+  // draw a yellow circle around the display
+  .drawCircle(matrix.width() / 2, matrix.height() / 2, matrix.width() / 2 - 1)
+  // draw a yellow rectangle
+  .drawRect(matrix.width() / 4, matrix.height() / 4, matrix.width() / 2, matrix.height() / 2)
+  // sets the active color to red
+  .fgColor({ r: 255, g: 0, b: 0 })
+  // draw two diagonal red lines connecting the corners
+  .drawLine(0, 0, matrix.width(), matrix.height())
+  .drawLine(matrix.width() - 1, 0, 0, matrix.height() - 1);
+```
+
+And we'll get this:
+
+![simple-shapes](simple-shapes.jpg)
 
 # API
 
