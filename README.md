@@ -319,12 +319,12 @@ $ git clone --recurse-submodules https://github.com/alexeden/rpi-led-matrix
 
 Create a file called `sync.config.json` on the machine on which you'll be developing, and substitute these values with your own:
 
-```json
+```jsonc
 {
   "username": "<username>",
   "hostname": "<hostname or IP address of your Pi>",
   "directory": "<parent directory on Pi into which the repo was cloned>",
-  "quiet": <true|false> // Disable most rsync logs (defaults to false)
+  "quiet": false // Disable most rsync logs (defaults to false)
 }
 ```
 
