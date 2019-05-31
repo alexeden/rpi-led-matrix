@@ -4,6 +4,11 @@
 
 Control an RGB LED matrix connected to a Raspberry Pi using using Node.js. This library is a Node/Typescript binding of the brilliant [hzeller/rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library, plus some additional functionality. Builds on some of the mechanisms implemented by [easybotics/node-rpi-rgb-led-matrix](https://github.com/easybotics/node-rpi-rgb-led-matrix) for double-buffering bitframes to get silky-smooth rendering.
 
+Click the image below (links to a video) to get a taste of what this library can empower you to create:
+
+[![full demo](./docs/demo-thumbnail.png)](https://storage.googleapis.com/apeworks-222.appspot.com/assets/matrix%203-28-19.mp4)
+
+
 ## Features
 
 - Uses [N-API](https://nodejs.org/api/n-api.html) to wrap the native code, so there's no risk of breakages with future Node.js version upgrades.
