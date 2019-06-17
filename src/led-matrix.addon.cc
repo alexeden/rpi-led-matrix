@@ -84,10 +84,16 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 		throw Napi::Error::New(info.Env(), "Failed to get the current time.");
 	}
 
+	auto env = info.Env();
 	t_dsync_nsec_ = t.tv_nsec - t_sync_nsec_;
 	t_sync_nsec_ = t.tv_nsec;
 
-	return Napi::Number::New(info.Env(), 0);
+	after_sync_cb_.Call(info.This(), {
+		Napi::Number::New(env, t_dsync_nsec_),
+		Napi::Number::New(env, t_sync_nsec_)
+	});
+
+	return Napi::Number::New(env, 0);
 }
 
 Napi::Value LedMatrixAddon::after_sync(const Napi::CallbackInfo& info) {
