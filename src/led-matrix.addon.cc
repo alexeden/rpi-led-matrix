@@ -3,7 +3,7 @@
 #define BILLION  1000000000L;
 
 inline long get_now() {
-	timespec t;
+	struct timespec t;
 	if (clock_gettime(CLOCK_MONOTONIC_RAW, &t) < 0) {
 		throw "Failed to get the current time.";
 	}
