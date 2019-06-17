@@ -79,6 +79,7 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 	if (!canvas_->Deserialize(data, len)) {
 		throw Napi::Error::New(info.Env(), "Failed to sync canvas buffer with matrix.");
 	}
+
 	timespec t;
 	if (clock_gettime(CLOCK_MONOTONIC_RAW, &t) < 0) {
 		throw Napi::Error::New(info.Env(), "Failed to get the current time.");
@@ -89,6 +90,7 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 	t_sync_nsec_ = t.tv_nsec;
 
 	after_sync_cb_.Call(info.This(), {
+		info.This(),
 		Napi::Number::New(env, t_dsync_nsec_),
 		Napi::Number::New(env, t_sync_nsec_)
 	});
@@ -104,6 +106,8 @@ Napi::Value LedMatrixAddon::after_sync(const Napi::CallbackInfo& info) {
 
 	after_sync_cb_ = Napi::Persistent(cb);
 	after_sync_cb_.SuppressDestruct();
+
+	return info.This();
 }
 
 Napi::Value LedMatrixAddon::brightness(const Napi::CallbackInfo& info) {
