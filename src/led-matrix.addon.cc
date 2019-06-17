@@ -1,5 +1,16 @@
 #include "led-matrix.addon.h"
 
+#define BILLION  1000000000L;
+
+inline long get_now() {
+	timespec t;
+	if (clock_gettime(CLOCK_MONOTONIC_RAW, &t) < 0) {
+		throw "Failed to get the current time.";
+	}
+
+	return t.tv_nsec + BILLION * &t.tv_sec;
+}
+
 using namespace rgb_matrix;
 
 Napi::FunctionReference LedMatrixAddon::constructor;
@@ -47,7 +58,8 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   , font_(nullptr)
   , font_name_("")
   , t_sync_nsec_(0)
-  , t_dsync_nsec_(0) {
+  , t_dsync_nsec_(0)
+  , t_start_(get_now()) {
 	auto env = info.Env();
 
 	if (!info[0].IsObject()) {
@@ -80,14 +92,10 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 		throw Napi::Error::New(info.Env(), "Failed to sync canvas buffer with matrix.");
 	}
 
-	timespec t;
-	if (clock_gettime(CLOCK_MONOTONIC_RAW, &t) < 0) {
-		throw Napi::Error::New(info.Env(), "Failed to get the current time.");
-	}
-
 	auto env = info.Env();
-	t_dsync_nsec_ = t.tv_nsec - t_sync_nsec_;
-	t_sync_nsec_ = t.tv_nsec;
+	auto now_nsec = get_now() - t_start_;
+	t_dsync_nsec_ = now_nsec - t_sync_nsec_;
+	t_sync_nsec_ = now_nsec;
 
 	after_sync_cb_.Call(info.This(), {
 		info.This(),
