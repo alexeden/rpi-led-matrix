@@ -7,6 +7,7 @@
 #include <graphics.h>
 #include <iostream>
 #include <led-matrix.h>
+#include <time.h>
 #include <napi.h>
 
 using namespace rgb_matrix;
@@ -54,6 +55,8 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	std::string font_name_;
 	RGBMatrix* matrix_;
 	FrameCanvas* canvas_;
+	long t_sync_nsec_;
+	long t_dsync_nsec_;
 };
 
 #endif

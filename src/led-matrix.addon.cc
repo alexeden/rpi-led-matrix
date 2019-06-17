@@ -43,7 +43,9 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   , fg_color_(Color(0, 0, 0))
   , bg_color_(Color(0, 0, 0))
   , font_(nullptr)
-  , font_name_("") {
+  , font_name_("")
+  , t_sync_nsec_(0)
+  , t_dsync_nsec_(0) {
 	auto env = info.Env();
 
 	if (!info[0].IsObject()) {
@@ -75,6 +77,14 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 	if (!canvas_->Deserialize(data, len)) {
 		throw Napi::Error::New(info.Env(), "Failed to sync canvas buffer with matrix.");
 	}
+	timespec t;
+	if (clock_gettime(CLOCK_MONOTONIC_RAW, &t) < 0) {
+		throw Napi::Error::New(info.Env(), "Failed to get the current time.");
+	}
+
+	t_dsync_nsec_ = t.tv_nsec - t_sync_nsec_;
+	t_sync_nsec_ = t.tv_nsec;
+
 	return Napi::Number::New(info.Env(), 0);
 }
 
