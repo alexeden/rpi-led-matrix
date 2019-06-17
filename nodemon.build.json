@@ -1,7 +1,7 @@
 {
   "ext": "ts,json,cc,h,gyp",
-  "exec": "npm run quick-build && npm run example -- examples/text-layout-cli.ts",
-  "restartable": false,
+  "exec": "npm run quick-build && npm run example -- examples/sync-hooks.ts",
+  "restartable": true,
   "events": {},
   "watch": [
     "src/**",

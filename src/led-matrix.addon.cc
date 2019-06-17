@@ -1,14 +1,15 @@
 #include "led-matrix.addon.h"
 
 #define BILLION  1000000000L;
+#define MILLION  1000000000L;
 
-inline long get_now() {
+inline double get_now_ms() {
 	struct timespec t;
 	if (clock_gettime(CLOCK_MONOTONIC_RAW, &t) < 0) {
 		throw "Failed to get the current time.";
 	}
 
-	return t.tv_nsec + BILLION * &t.tv_sec;
+	return (t.tv_sec * 1000) + (t.tv_nsec / 1000000);
 }
 
 using namespace rgb_matrix;
@@ -52,14 +53,14 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
  */
 LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<LedMatrixAddon>(info)
-  , after_sync_cb_(Napi::FunctionReference::FunctionReference())
+  , after_sync_cb_(Napi::FunctionReference())
   , fg_color_(Color(0, 0, 0))
   , bg_color_(Color(0, 0, 0))
   , font_(nullptr)
   , font_name_("")
-  , t_sync_nsec_(0)
-  , t_dsync_nsec_(0)
-  , t_start_(get_now()) {
+  , t_start_(get_now_ms())
+  , t_sync_ms_(0)
+  , t_dsync_ms_(0) {
 	auto env = info.Env();
 
 	if (!info[0].IsObject()) {
@@ -93,21 +94,21 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 	}
 
 	auto env = info.Env();
-	auto now_nsec = get_now() - t_start_;
-	t_dsync_nsec_ = now_nsec - t_sync_nsec_;
-	t_sync_nsec_ = now_nsec;
+	auto now = get_now_ms();
+	auto now_ms = now - t_start_;
+	t_dsync_ms_ = now_ms - t_sync_ms_;
+	t_sync_ms_ = now_ms;
 
 	after_sync_cb_.Call(info.This(), {
 		info.This(),
-		Napi::Number::New(env, t_dsync_nsec_),
-		Napi::Number::New(env, t_sync_nsec_)
+		Napi::Number::New(env, t_dsync_ms_),
+		Napi::Number::New(env, t_sync_ms_)
 	});
 
 	return Napi::Number::New(env, 0);
 }
 
 Napi::Value LedMatrixAddon::after_sync(const Napi::CallbackInfo& info) {
-	auto env = info.Env();
 	auto cb = info[0].As<Napi::Function>();
 
 	assert(cb.IsFunction());

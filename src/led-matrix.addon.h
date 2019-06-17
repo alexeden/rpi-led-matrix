@@ -58,8 +58,8 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	RGBMatrix* matrix_;
 	FrameCanvas* canvas_;
 	const long t_start_;
-	long t_sync_nsec_;
-	long t_dsync_nsec_;
+	long t_sync_ms_;
+	long t_dsync_ms_;
 };
 
 #endif
