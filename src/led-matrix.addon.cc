@@ -10,6 +10,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 	  "LedMatrix",
 	  { StaticMethod("defaultMatrixOptions", &LedMatrixAddon::default_matrix_options),
 		StaticMethod("defaultRuntimeOptions", &LedMatrixAddon::default_runtime_options),
+		InstanceMethod("afterSync", &LedMatrixAddon::after_sync),
 		InstanceMethod("brightness", &LedMatrixAddon::brightness),
 		InstanceMethod("clear", &LedMatrixAddon::clear),
 		InstanceMethod("drawBuffer", &LedMatrixAddon::draw_buffer),
@@ -40,6 +41,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
  */
 LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<LedMatrixAddon>(info)
+  , after_sync_cb_(Napi::FunctionReference::FunctionReference())
   , fg_color_(Color(0, 0, 0))
   , bg_color_(Color(0, 0, 0))
   , font_(nullptr)
@@ -86,6 +88,16 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 	t_sync_nsec_ = t.tv_nsec;
 
 	return Napi::Number::New(info.Env(), 0);
+}
+
+Napi::Value LedMatrixAddon::after_sync(const Napi::CallbackInfo& info) {
+	auto env = info.Env();
+	auto cb = info[0].As<Napi::Function>();
+
+	assert(cb.IsFunction());
+
+	after_sync_cb_ = Napi::Persistent(cb);
+	after_sync_cb_.SuppressDestruct();
 }
 
 Napi::Value LedMatrixAddon::brightness(const Napi::CallbackInfo& info) {
