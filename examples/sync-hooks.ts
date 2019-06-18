@@ -10,7 +10,7 @@ class Pulser {
 
   nextColor(t: number): number {
     /** You could easily work position-dependent logic into this expression */
-    const brightness = 0xFF & (255 / 2 * (Math.sin(this.f * t / 1000) + 1));
+    const brightness = 0xFF & Math.max(0, (255 * (Math.sin(this.f * t / 1000))));
 
     return (brightness << 16) | (brightness << 8) | brightness;
   }
@@ -24,7 +24,7 @@ class Pulser {
 
     for (let x = 0; x < matrix.width(); x++) {
       for (let y = 0; y < matrix.height(); y++) {
-        pulsers.push(new Pulser(x, y, 10 * Math.random()));
+        pulsers.push(new Pulser(x, y, 5 * Math.random()));
       }
     }
 
