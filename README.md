@@ -316,7 +316,7 @@ After that, we're left with this (click for video):
 [![full demo](./docs/sync-hook-thumbnail.png)](https://apemedia.s3.us-east-2.amazonaws.com/twinkle720.mp4)
 
 
-# Running Examples
+# Running the Examples
 
 The examples can be run by using the `example` npm script:
 
