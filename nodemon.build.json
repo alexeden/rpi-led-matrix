@@ -1,6 +1,6 @@
 {
   "ext": "ts,json,cc,h,gyp",
-  "exec": "npm run quick-build && npm run example -- examples/sync-hooks.ts",
+  "exec": "npm run quick-build && npm run example -- examples/kitchen-sink.ts",
   "restartable": true,
   "events": {},
   "watch": [
