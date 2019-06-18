@@ -1,5 +1,5 @@
 import * as color from 'color';
-import { LedMatrix, LedMatrixInstance } from '../src';
+import { LedMatrix, LedMatrixInstance, Font, LayoutUtils, HorizontalAlignment, VerticalAlignment } from '../src';
 import { matrixOptions, runtimeOptions } from './_config';
 
 enum Colors {
@@ -38,12 +38,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions);
 
-    const colorStatic = Buffer.of(
-      ...Array.from(Array(3 * matrix.height() * matrix.width())).map(() => Math.round(Math.random()) * 0xFF)
-    );
-
-    matrix.clear().drawBuffer(colorStatic).sync();
-
+    // RGB fills
     const interval = 200;
     matrix.fgColor(Colors.red).fill().sync();
     await wait(interval);
@@ -53,6 +48,26 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     await wait(interval);
     matrix.clear();
     await wait(interval);
+
+    {
+      // Text positions
+      const font = new Font('helvR12', `${process.cwd()}/fonts/helvR12.bdf`);
+      matrix.font(font);
+      const lines = LayoutUtils.textToLines(font, matrix.width(), 'Hello, matrix!');
+
+      for (const alignmentH of [HorizontalAlignment.Left, HorizontalAlignment.Center, HorizontalAlignment.Right]) {
+        for (const alignmentV of [VerticalAlignment.Top, VerticalAlignment.Middle, VerticalAlignment.Bottom]) {
+          matrix.fgColor(rainbow(Math.floor(64 * Math.random()))).clear();
+          LayoutUtils.linesToMappedGlyphs(lines, font.height(), matrix.width(), matrix.height(), alignmentH, alignmentV)
+            .map(glyph => {
+              matrix.drawText(glyph.char, glyph.x, glyph.y);
+            });
+          matrix.sync();
+          await wait(400);
+        }
+      }
+    }
+
 
     // Clear section
     {
