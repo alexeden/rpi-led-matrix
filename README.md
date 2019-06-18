@@ -199,7 +199,7 @@ interface LedMatrixInstance {
   brightness(): number;
   clear(): this;
   clear(x0: number, y0: number, x1: number, y1: number): this;
-  drawBuffer(buffer: Buffer, w?: number, h?: number): this;
+  drawBuffer(buffer: Buffer | Uint8Array, w?: number, h?: number): this;
   drawCircle(x: number, y: number, r: number): this;
   drawLine(x0: number, y0: number, x1: number, y1: number): this;
   drawRect(x0: number, y0: number, width: number, height: number): this;
@@ -244,12 +244,77 @@ matrix
   .fgColor({ r: 255, g: 0, b: 0 })
   // draw two diagonal red lines connecting the corners
   .drawLine(0, 0, matrix.width(), matrix.height())
-  .drawLine(matrix.width() - 1, 0, 0, matrix.height() - 1);
+  .drawLine(matrix.width() - 1, 0, 0, matrix.height() - 1)
+  .sync();
 ```
 
 And we'll get this:
 
 ![simple-shapes](/docs/simple-shapes.jpg)
+
+## Sync Hook
+
+For more time-dependent animations, an `LedMatrixInstance` has an `afterSync` method that you can supply with a callback function that will be called automatically after each matrix sync. The callback you provide has the following type:
+
+```ts
+type SyncHook = (matrix: LedMatrixInstance, dt: number, t: number) => void;
+```
+
+Where `matrix` is the matrix instance, `dt` is the amount of time (in milliseconds) since the previous sync, and `t` is the monotonically-increasing time (in milliseconds) of the system clock.
+
+If we wanted to write a program such that all of the matrix's LEDs pulsed individually with their own random frequency, I could write a wrapper class like this:
+
+```ts
+class Pulser {
+  constructor(
+    readonly x: number,
+    readonly y: number,
+    readonly f: number
+  ) { }
+
+  nextColor(t: number): number {
+    /** You could easily work position-dependent logic into this expression */
+    const brightness = 0xFF & Math.max(0, 255 * (Math.sin(this.f * t / 1000)));
+
+    return (brightness << 16) | (brightness << 8) | brightness;
+  }
+}
+```
+
+Initialize the matrix and create an instance of `Pulser` for each pixel:
+
+```ts
+const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+const pulsers: Pulser[] = [];
+
+for (let x = 0; x < matrix.width(); x++) {
+  for (let y = 0; y < matrix.height(); y++) {
+    pulsers.push(new Pulser(x, y, 5 * Math.random()));
+  }
+}
+```
+
+Finally, apply a sync hook that updates each pixel after each sync:
+
+```ts
+matrix.afterSync((mat, dt, t) => {
+  pulsers.forEach(pulser => {
+    matrix.fgColor(pulser.nextColor(t)).setPixel(pulser.x, pulser.y);
+  });
+
+  setTimeout(() => matrix.sync(), 0);
+});
+
+// Get it started
+matrix.sync();
+```
+
+This pattern is somewhat reflective of `requestAnimationFrame` recursion on the frontend. **NOTE:** Make sure to wrap the call to `.sync()` inside the sync hook callback function in a `setTimeout` so that the call is defered to the next event loop cycle. Otherwise, you'll quickly get a stack overflow error.
+
+After that, we're left with this (click for video):
+
+[![full demo](./docs/sync-hook-thumbnail.png)](https://apemedia.s3.us-east-2.amazonaws.com/twinkle720.mp4)
+
 
 # Running Examples
 
