@@ -218,7 +218,11 @@ export interface Color {
   b: number;
 }
 
+type SyncHook = (this: LedMatrixInstance, matrix: LedMatrixInstance, dt: number, t: number) => void;
+
 export interface LedMatrixInstance {
+  afterSync(hook: SyncHook): LedMatrixInstance;
+
   bgColor(color: Color | number): this;
   bgColor(): Color;
 
@@ -228,7 +232,7 @@ export interface LedMatrixInstance {
   clear(): this;
   clear(x0: number, y0: number, x1: number, y1: number): this;
 
-  drawBuffer(buffer: Buffer, w?: number, h?: number): this;
+  drawBuffer(buffer: Buffer | Uint8Array, w?: number, h?: number): this;
   drawCircle(x: number, y: number, r: number): this;
   drawLine(x0: number, y0: number, x1: number, y1: number): this;
   drawRect(x0: number, y0: number, width: number, height: number): this;

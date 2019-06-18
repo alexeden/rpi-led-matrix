@@ -7,6 +7,7 @@
 #include <graphics.h>
 #include <iostream>
 #include <led-matrix.h>
+#include <time.h>
 #include <napi.h>
 
 using namespace rgb_matrix;
@@ -17,6 +18,7 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	LedMatrixAddon(const Napi::CallbackInfo& info);
 	~LedMatrixAddon();
 
+	Napi::Value after_sync(const Napi::CallbackInfo& info);
 	Napi::Value bg_color(const Napi::CallbackInfo& info);
 	Napi::Value brightness(const Napi::CallbackInfo& info);
 	Napi::Value clear(const Napi::CallbackInfo& info);
@@ -48,12 +50,16 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	static RGBMatrix::Options create_matrix_options(const Napi::Env& env, const Napi::Object& obj);
 	static RuntimeOptions create_runtime_options(const Napi::Env& env, const Napi::Object& obj);
 
+	Napi::FunctionReference after_sync_cb_;
 	Color fg_color_;
 	Color bg_color_;
 	Font* font_;
 	std::string font_name_;
 	RGBMatrix* matrix_;
 	FrameCanvas* canvas_;
+	const long t_start_;
+	long t_sync_ms_;
+	long t_dsync_ms_;
 };
 
 #endif

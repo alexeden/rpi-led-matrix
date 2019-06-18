@@ -150,7 +150,7 @@ const createModeSelector = () => {
 // tslint:disable-next-line: cyclomatic-complexity
 (async () => {
   try {
-    const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+    const matrix = new LedMatrix(matrixOptions, runtimeOptions).afterSync(() => { });
 
     const fontLoader = ora({ color: 'magenta' }).start('Loading fonts').stopAndPersist();
     const fontExt = '.bdf';

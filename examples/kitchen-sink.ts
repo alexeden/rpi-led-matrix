@@ -1,5 +1,5 @@
 import * as color from 'color';
-import { LedMatrix, LedMatrixInstance } from '../src';
+import { LedMatrix, LedMatrixInstance, Font, LayoutUtils, HorizontalAlignment, VerticalAlignment } from '../src';
 import { matrixOptions, runtimeOptions } from './_config';
 
 enum Colors {
@@ -16,7 +16,7 @@ const rainbow64 = Array.from(Array(64))
   .map((_, i, { length }) => Math.floor(360 * i / length))
   .map(hue => color.hsl(hue, 100, 50).rgbNumber());
 
-const rainbow = (i: number) => rainbow64[Math.min(rainbow64.length - 1, Math.max(i, 0))];
+const rainbow = (i: number) => rainbow64[Math.min(rainbow64.length - 1, Math.max(i % 64, 0))];
 
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
@@ -38,12 +38,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions);
 
-    const colorStatic = Buffer.of(
-      ...Array.from(Array(3 * matrix.height() * matrix.width())).map(() => Math.round(Math.random()) * 0xFF)
-    );
-
-    matrix.clear().drawBuffer(colorStatic).sync();
-
+    // RGB fills
     const interval = 200;
     matrix.fgColor(Colors.red).fill().sync();
     await wait(interval);
@@ -53,6 +48,26 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     await wait(interval);
     matrix.clear();
     await wait(interval);
+
+    {
+      // Text positions
+      const font = new Font('helvR12', `${process.cwd()}/fonts/helvR12.bdf`);
+      matrix.font(font);
+      const lines = LayoutUtils.textToLines(font, matrix.width(), 'Hello, matrix!');
+
+      for (const alignmentH of [HorizontalAlignment.Left, HorizontalAlignment.Center, HorizontalAlignment.Right]) {
+        for (const alignmentV of [VerticalAlignment.Top, VerticalAlignment.Middle, VerticalAlignment.Bottom]) {
+          matrix.fgColor(rainbow(Math.floor(64 * Math.random()))).clear();
+          LayoutUtils.linesToMappedGlyphs(lines, font.height(), matrix.width(), matrix.height(), alignmentH, alignmentV)
+            .map(glyph => {
+              matrix.drawText(glyph.char, glyph.x, glyph.y);
+            });
+          matrix.sync();
+          await wait(400);
+        }
+      }
+    }
+
 
     // Clear section
     {
@@ -136,7 +151,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     }
     matrix.clear();
     for (let r = matrix.width() - 15; r >= 0; r--) {
-      matrix.fgColor(rainbow64[r]).drawCircle(centerX, centerY, r).sync();
+      matrix.fgColor(rainbow64[r % 64]).drawCircle(centerX, centerY, r).sync();
       await wait(44);
     }
     await wait(1000);
