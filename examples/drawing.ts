@@ -16,7 +16,7 @@ const rainbow64 = Array.from(Array(64))
   .map((_, i, { length }) => Math.floor(360 * i / length))
   .map(hue => color.hsl(hue, 100, 50).rgbNumber());
 
-const rainbow = (i: number) => rainbow64[Math.min(rainbow64.length - 1, Math.max(i, 0))];
+const rainbow = (i: number) => rainbow64[Math.min(rainbow64.length - 1, Math.max(i % 64, 0))];
 
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
@@ -36,7 +36,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
 
 (async () => {
   try {
-    const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+    const matrix = new LedMatrix(matrixOptions, runtimeOptions).afterSync(() => { });
 
     const colorStatic = Buffer.of(
       ...Array.from(Array(3 * matrix.height() * matrix.width())).map(() => Math.round(Math.random()) * 0xFF)
@@ -136,7 +136,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     }
     matrix.clear();
     for (let r = matrix.width() - 15; r >= 0; r--) {
-      matrix.fgColor(rainbow64[r]).drawCircle(centerX, centerY, r).sync();
+      matrix.fgColor(rainbow64[r % 64]).drawCircle(centerX, centerY, r).sync();
       await wait(44);
     }
     await wait(1000);
