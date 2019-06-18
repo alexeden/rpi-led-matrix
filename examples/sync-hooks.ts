@@ -24,7 +24,7 @@ class Pulser {
 
     for (let x = 0; x < matrix.width(); x++) {
       for (let y = 0; y < matrix.height(); y++) {
-        pulsers.push(new Pulser(x, y, 3 * Math.random()));
+        pulsers.push(new Pulser(x, y, 10 * Math.random()));
       }
     }
 

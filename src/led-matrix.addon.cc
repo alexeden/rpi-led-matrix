@@ -99,11 +99,13 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 	t_dsync_ms_ = now_ms - t_sync_ms_;
 	t_sync_ms_ = now_ms;
 
-	after_sync_cb_.Call(info.This(), {
-		info.This(),
-		Napi::Number::New(env, t_dsync_ms_),
-		Napi::Number::New(env, t_sync_ms_)
-	});
+	if (!after_sync_cb_.IsEmpty()) {
+		after_sync_cb_.Call(info.This(), {
+			info.This(),
+			Napi::Number::New(env, t_dsync_ms_),
+			Napi::Number::New(env, t_sync_ms_)
+		});
+	}
 
 	return Napi::Number::New(env, 0);
 }

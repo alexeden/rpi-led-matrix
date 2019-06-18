@@ -36,7 +36,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
 
 (async () => {
   try {
-    const matrix = new LedMatrix(matrixOptions, runtimeOptions).afterSync(() => { });
+    const matrix = new LedMatrix(matrixOptions, runtimeOptions);
 
     const colorStatic = Buffer.of(
       ...Array.from(Array(3 * matrix.height() * matrix.width())).map(() => Math.round(Math.random()) * 0xFF)
