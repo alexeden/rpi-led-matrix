@@ -59,7 +59,7 @@ export interface MatrixOptions {
    * Acts as a multiplier of the total number of columns.
    * @default 1
    */
-  chainLength: 1 | 2 | 3 | 4;
+  chainLength: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
 
   /**
    * The number of columns supported by a single display panel.
