@@ -7,47 +7,47 @@
 class Image {
   public:
 	Image()
-	  : w(-1)
-	  , h(-1)
-	  , pixels(NULL) {
+	  : w_(0)
+	  , h_(0)
+	  , pixels_(NULL) {
 	}
 	~Image() {
 		Delete();
 	}
 	void Delete() {
-		delete[] pixels;
+		delete[] pixels_;
 		Reset();
 	}
 	void Reset() {
-		pixels = NULL;
-		w	  = 0;
-		h	  = 0;
+		pixels_ = NULL;
+		w_	  	= 0;
+		h_	  	= 0;
 	}
 
 	Pixel* getPixels() {
-		return pixels;
+		return pixels_;
 	}
 
 	void setPixels(uint32_t w, uint32_t h, Pixel* ps) {
-		w	  = w;
-		h	  = h;
-		pixels = ps;
+		w_	  = w;
+		h_	  = h;
+		pixels_ = ps;
 	}
 
-	const Pixel& getPixel(int x, int y) {
+	const Pixel& getPixel(uint32_t x, uint32_t y) {
 		static Pixel black;
-		if (x < 0 || x >= (signed) w || y < 0 || y >= (signed) h) return black;
-		return pixels[x + w * y];
+		if (x >= w_ || y >= h_) return black;
+		return pixels_[x + w_ * y];
 	}
 
 	bool isValid() {
-		return pixels && h > 0 && w > 0;
+		return pixels_ && h_ > 0 && w_ > 0;
 	}
 
   private:
-	uint32_t w;
-	uint32_t h;
-	Pixel* pixels;
+	uint32_t w_;
+	uint32_t h_;
+	Pixel* pixels_;
 };
 
 #endif

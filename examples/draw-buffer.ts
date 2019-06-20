@@ -10,7 +10,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
     matrix.clear().brightness(100);
 
     const buffer = Buffer.of(
-      ...[...Array(matrix.width() * matrix.height() * 3).keys()].map(() => 0xFF)
+      ...[...Array(matrix.width() * matrix.height() * 3).keys()].map(() => Math.random() > 0.4 ? 0xFF : 0x00)
     );
 
     matrix.drawBuffer(buffer).sync();

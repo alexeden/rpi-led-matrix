@@ -172,11 +172,11 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 	assert(img->isValid());
 
 	for (unsigned int y = 0; y < h; y++) {
-		if (y > (unsigned) this->matrix_->height()) break;
+		if (y > h) break;
 		for (unsigned int x = 0; x < w; x++) {
-			if (x > (unsigned) this->matrix_->width()) break;
+			if (x > w) break;
 			auto pixel = img->getPixel(x, y);
-			canvas_->SetPixel(x, y, pixel.r(), pixel.g(), pixel.b());
+			this->canvas_->SetPixel(x, y, pixel.r(), pixel.g(), pixel.b());
 		}
 	}
 
