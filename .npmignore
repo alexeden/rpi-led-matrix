@@ -3,3 +3,8 @@
 /docs/*.jpg
 sync.config.json
 /vendor/bindings
+/vendor/adapter
+/vendor/examples-api-use
+/vendor/fonts
+/vendor/img
+/vendor/utils
