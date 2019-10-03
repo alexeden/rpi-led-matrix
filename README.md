@@ -422,3 +422,5 @@ Create a file called `sync.config.json` on the machine on which you'll be develo
 **Locally**, you can now run `npm run sync-changes`, and any changes made to files inside `/src` or `/examples` will automatically be uploaded to your Pi.
 
 **From the Pi**, you can run `npm run build-changes`, and any changes pushed from your local machine will automatically be rebuilt. You can run additional scripts (test scripts, etc) by appending the shell commands to the `exec` property inside `nodemon.build.json`.
+
+> Per [this issue](https://github.com/alexeden/rpi-led-matrix/issues/2), if you get the error "TypeError: cannot use a string pattern on a bytes-like object" when running `npm install`, try switching your environment to python 2.7.
