@@ -1,6 +1,6 @@
 {
   "name": "rpi-led-matrix",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Node.js/Typescript bindings for hzeller/rpi-rgb-led-matrix",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -56,6 +56,6 @@
     "rsync": "^0.6.1",
     "ts-node": "^8.0.3",
     "tslint": "^5.14.0",
-    "typescript": "^3.4.1"
+    "typescript": "^3.6.4"
   }
 }

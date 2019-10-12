@@ -95,8 +95,8 @@ export class LayoutUtils {
     })();
 
 
-    return lines.flatMap((line, i) => {
-      const lineGlyphs = line.flatMap(l => l);
+    return lines.map((words, i) => {
+      const lineGlyphs = words.reduce((glyphs, word) => [...glyphs, ...word], []);
       const lineW = calcWordWidth(lineGlyphs);
       let offsetX = (() => {
         switch (alignH) {
@@ -116,6 +116,7 @@ export class LayoutUtils {
 
         return mapped;
       });
-    });
+    })
+    .reduce((glyphs, words) => [...glyphs, ...words], []);
   }
 }
