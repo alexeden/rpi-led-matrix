@@ -218,7 +218,7 @@ export interface Color {
   b: number;
 }
 
-type SyncHook = (this: LedMatrixInstance, matrix: LedMatrixInstance, dt: number, t: number) => void;
+type SyncHook = (this: LedMatrixInstance, matrix: LedMatrixInstance, dt: number, t: number) => any;
 
 export interface LedMatrixInstance {
   afterSync(hook: SyncHook): LedMatrixInstance;
@@ -251,6 +251,8 @@ export interface LedMatrixInstance {
 
   luminanceCorrect(correct: boolean): this;
   luminanceCorrect(): boolean;
+
+  map(cb: (coords: [number, number, number], t: number) => number): this;
 
   pwmBits(pwmBits: number): this;
   pwmBits(): number;

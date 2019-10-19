@@ -23,6 +23,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 	  { StaticMethod("defaultMatrixOptions", &LedMatrixAddon::default_matrix_options),
 		StaticMethod("defaultRuntimeOptions", &LedMatrixAddon::default_runtime_options),
 		InstanceMethod("afterSync", &LedMatrixAddon::after_sync),
+		InstanceMethod("bgColor", &LedMatrixAddon::bg_color),
 		InstanceMethod("brightness", &LedMatrixAddon::brightness),
 		InstanceMethod("clear", &LedMatrixAddon::clear),
 		InstanceMethod("drawBuffer", &LedMatrixAddon::draw_buffer),
@@ -30,13 +31,13 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("drawLine", &LedMatrixAddon::draw_line),
 		InstanceMethod("drawRect", &LedMatrixAddon::draw_rect),
 		InstanceMethod("drawText", &LedMatrixAddon::draw_text),
+		InstanceMethod("fgColor", &LedMatrixAddon::fg_color),
 		InstanceMethod("fill", &LedMatrixAddon::fill),
+		InstanceMethod("font", &LedMatrixAddon::font),
 		InstanceMethod("height", &LedMatrixAddon::height),
 		InstanceMethod("luminanceCorrect", &LedMatrixAddon::luminance_correct),
+		InstanceMethod("map", &LedMatrixAddon::map),
 		InstanceMethod("pwmBits", &LedMatrixAddon::pwm_bits),
-		InstanceMethod("bgColor", &LedMatrixAddon::bg_color),
-		InstanceMethod("fgColor", &LedMatrixAddon::fg_color),
-		InstanceMethod("font", &LedMatrixAddon::font),
 		InstanceMethod("setPixel", &LedMatrixAddon::set_pixel),
 		InstanceMethod("sync", &LedMatrixAddon::sync),
 		InstanceMethod("width", &LedMatrixAddon::width) });
@@ -100,11 +101,15 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 	t_sync_ms_ = now_ms;
 
 	if (!after_sync_cb_.IsEmpty()) {
-		after_sync_cb_.Call(info.This(), {
+		auto resync = after_sync_cb_.Call(info.This(), {
 			info.This(),
 			Napi::Number::New(env, t_dsync_ms_),
 			Napi::Number::New(env, t_sync_ms_)
 		});
+
+        if (resync.ToBoolean() == true) {
+            sync(info);
+        }
 	}
 
 	return Napi::Number::New(env, 0);
@@ -117,6 +122,44 @@ Napi::Value LedMatrixAddon::after_sync(const Napi::CallbackInfo& info) {
 
 	after_sync_cb_ = Napi::Persistent(cb);
 	after_sync_cb_.SuppressDestruct();
+
+	return info.This();
+}
+
+Napi::Value LedMatrixAddon::map(const Napi::CallbackInfo& info) {
+	auto cb = info[0].As<Napi::Function>();
+
+	assert(cb.IsFunction());
+
+	auto env = info.Env();
+	auto now = get_now_ms();
+	auto now_ms = Napi::Number::New(env, now - t_start_);
+
+    Napi::Array coord_array = Napi::Array::New(env, 3);
+    uint32_t zero = 0; // The compiler can't match the overloaded signature if given 0 explicitly
+    uint32_t one = 1;
+    uint32_t two = 2;
+
+    auto i = 0;
+
+    for (int x = 0; x < this->matrix_->width(); x++) {
+        coord_array.Set(zero, x);
+
+        for (int y = 0; y < this->matrix_->height(); y++) {
+            coord_array.Set(one, y);
+            coord_array.Set(two, i++);
+
+            auto color = cb.Call(info.This(), {
+                coord_array,
+                now_ms
+            });
+
+            assert(color.IsNumber());
+
+            const auto hex = color.As<Napi::Number>().Uint32Value();
+            this->matrix_->SetPixel(x, y, 0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex);
+        }
+    }
 
 	return info.This();
 }
