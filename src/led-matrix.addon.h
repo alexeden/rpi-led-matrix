@@ -30,6 +30,7 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::Value fg_color(const Napi::CallbackInfo& info);
 	Napi::Value fill(const Napi::CallbackInfo& info);
 	Napi::Value font(const Napi::CallbackInfo& info);
+    Napi::Value map(const Napi::CallbackInfo& info);
 	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value luminance_correct(const Napi::CallbackInfo& info);
 	Napi::Value pwm_bits(const Napi::CallbackInfo& info);

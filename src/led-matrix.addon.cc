@@ -122,6 +122,39 @@ Napi::Value LedMatrixAddon::after_sync(const Napi::CallbackInfo& info) {
 	return info.This();
 }
 
+Napi::Value LedMatrixAddon::map(const Napi::CallbackInfo& info) {
+	auto cb = info[0].As<Napi::Function>();
+
+	assert(cb.IsFunction());
+
+	auto env = info.Env();
+	auto now = get_now_ms();
+	auto now_ms = Napi::Number::New(env, now - t_start_);
+
+    Napi::Array coord_array = Napi::Array::New(env, 3);
+    uint32_t zero = 0; // The compiler can't match the overloaded signature if given 0 explicitly
+    uint32_t one = 1;
+    uint32_t two = 1;
+
+    auto i = 0;
+
+    for (int x = 0; x < this->matrix_->width(); x++) {
+        coord_array.Set(zero, x);
+
+        for (int y = 0; y < this->matrix_->height(); y++) {
+            coord_array.Set(one, y);
+            coord_array.Set(two, i++);
+
+            cb.Call(info.This(), {
+                coord_array,
+                now_ms
+            });
+        }
+    }
+
+	return info.This();
+}
+
 Napi::Value LedMatrixAddon::brightness(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsNumber()) {
 		auto brightness = info[0].As<Napi::Number>().Uint32Value();
