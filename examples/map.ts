@@ -10,15 +10,11 @@ const nextColor = (f: number, t: number): number => {
 (async () => {
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions);
-    const freqs = [...Array(matrix.width() * matrix.height()).keys()].map(i => i / 20);
+    const freqs = [...Array(matrix.width() * matrix.height()).keys()].map(i => i / 30);
 
-    matrix.afterSync((mat, dt, t) => {
-      matrix.map(([x, y, i]) => {
-        return nextColor(freqs[i], t);
-      });
-
-      setTimeout(() => matrix.sync(), 0);
-    });
+    matrix.afterSync((mat, dt, t) =>
+      matrix.map(([x, y, i]) => nextColor(freqs[i], t))
+    );
 
     matrix.sync();
   }
