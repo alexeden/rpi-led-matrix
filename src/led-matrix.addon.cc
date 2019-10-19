@@ -134,7 +134,7 @@ Napi::Value LedMatrixAddon::map(const Napi::CallbackInfo& info) {
     Napi::Array coord_array = Napi::Array::New(env, 3);
     uint32_t zero = 0; // The compiler can't match the overloaded signature if given 0 explicitly
     uint32_t one = 1;
-    uint32_t two = 1;
+    uint32_t two = 2;
 
     auto i = 0;
 
@@ -145,10 +145,15 @@ Napi::Value LedMatrixAddon::map(const Napi::CallbackInfo& info) {
             coord_array.Set(one, y);
             coord_array.Set(two, i++);
 
-            cb.Call(info.This(), {
+            auto color = cb.Call(info.This(), {
                 coord_array,
                 now_ms
             });
+
+            assert(color.IsNumber());
+
+            const auto hex = color.As<Napi::Number>().Uint32Value();
+            this->matrix_->SetPixel(x, y, 0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex);
         }
     }
 
