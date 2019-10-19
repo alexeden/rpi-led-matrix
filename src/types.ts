@@ -218,7 +218,7 @@ export interface Color {
   b: number;
 }
 
-type SyncHook = (this: LedMatrixInstance, matrix: LedMatrixInstance, dt: number, t: number) => void;
+type SyncHook = (this: LedMatrixInstance, matrix: LedMatrixInstance, dt: number, t: number) => any;
 
 export interface LedMatrixInstance {
   afterSync(hook: SyncHook): LedMatrixInstance;
