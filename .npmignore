@@ -1,6 +1,6 @@
 /build
 /.vscode
-/docs/*.jpg
+/docs
 sync.config.json
 /vendor/bindings
 /vendor/adapter
