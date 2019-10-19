@@ -101,11 +101,15 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 	t_sync_ms_ = now_ms;
 
 	if (!after_sync_cb_.IsEmpty()) {
-		after_sync_cb_.Call(info.This(), {
+		auto resync = after_sync_cb_.Call(info.This(), {
 			info.This(),
 			Napi::Number::New(env, t_dsync_ms_),
 			Napi::Number::New(env, t_sync_ms_)
 		});
+
+        if (resync.ToBoolean() == true) {
+            sync(info);
+        }
 	}
 
 	return Napi::Number::New(env, 0);
