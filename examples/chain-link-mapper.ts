@@ -16,10 +16,11 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       .brightness(100)
       .fgColor(0x0000FF)
       .drawRect(0, 0, matrix.width() - 1, matrix.height() - 1)
+      .fgColor(0xFF0000)
       .drawLine(0, matrix.height() / 2, matrix.width(), matrix.height() / 2)
       .sync();
 
-    wait(9999999);
+    await wait(9999999);
   }
   catch (error) {
     console.error(`${__filename} caught: `, error);
