@@ -1,9 +1,9 @@
 import {
   GpioMapping,
   LedMatrix,
-  // LedMatrixUtils,
+  LedMatrixUtils,
   MatrixOptions,
-  // PixelMapperType,
+  PixelMapperType,
   RuntimeOptions,
 } from '../src';
 
@@ -14,6 +14,7 @@ export const matrixOptions: MatrixOptions = {
   chainLength: 2,
   hardwareMapping: GpioMapping.Regular,
   parallel: 3,
+  pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.Chainlink })
   // pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
 };
 
