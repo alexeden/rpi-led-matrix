@@ -5,6 +5,7 @@
   "watch": [
     "src/**",
     "examples/**",
+    "vendor/**",
     "package.json",
     "binding.gyp"
   ]

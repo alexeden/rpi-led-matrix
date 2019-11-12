@@ -7,14 +7,16 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions);
 
+    console.log('available pixel mappers: ', matrix.getAvailablePixelMappers());
+    console.log(`current mapper config: ${matrixOptions.pixelMapperConfig}`);
     console.log('height: ', matrix.height());
     console.log('width: ', matrix.width());
-
     matrix
       .clear()
       .brightness(100)
       .fgColor(0x0000FF)
       .drawRect(0, 0, matrix.width() - 1, matrix.height() - 1)
+      .drawLine(0, matrix.height() / 2, matrix.width(), matrix.height() / 2)
       .sync();
 
     wait(9999999);
