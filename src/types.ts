@@ -247,6 +247,8 @@ export interface LedMatrixInstance {
   font(font: FontInstance): this;
   font(): string;
 
+  getAvailablePixelMappers(): string[];
+
   height(): number;
 
   luminanceCorrect(correct: boolean): this;
