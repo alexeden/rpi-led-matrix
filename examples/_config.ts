@@ -11,8 +11,9 @@ export const matrixOptions: MatrixOptions = {
   ...LedMatrix.defaultMatrixOptions(),
   rows: 32,
   cols: 64,
-  chainLength: 5,
-  hardwareMapping: GpioMapping.AdafruitHatPwm,
+  chainLength: 2,
+  hardwareMapping: GpioMapping.Regular,
+  parallel: 3,
   // pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
 };
 
