@@ -34,6 +34,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("fgColor", &LedMatrixAddon::fg_color),
 		InstanceMethod("fill", &LedMatrixAddon::fill),
 		InstanceMethod("font", &LedMatrixAddon::font),
+		InstanceMethod("getAvailablePixelMappers", &LedMatrixAddon::get_available_pixel_mappers),
 		InstanceMethod("height", &LedMatrixAddon::height),
 		InstanceMethod("luminanceCorrect", &LedMatrixAddon::luminance_correct),
 		InstanceMethod("map", &LedMatrixAddon::map),
@@ -358,6 +359,19 @@ Napi::Value LedMatrixAddon::font(const Napi::CallbackInfo& info) {
 		return Napi::String::New(info.Env(), font_name_);
 	}
 }
+
+Napi::Value LedMatrixAddon::get_available_pixel_mappers(const Napi::CallbackInfo& info) {
+    auto env = info.Env();
+    auto mappers = GetAvailablePixelMappers();
+    Napi::Array mapper_name_array = Napi::Array::New(env, mappers.size());
+
+    for (uint8_t i = 0; i < mappers.size(); i++) {
+        mapper_name_array.Set(i, Napi::String::New(env, mappers.at(i)));
+    }
+
+    return mapper_name_array;
+}
+
 
 /**
  * Create an instance of Options from a JS object.

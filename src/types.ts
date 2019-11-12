@@ -10,12 +10,14 @@ export enum MuxType {
 }
 
 export enum PixelMapperType {
+  Chainlink = 'Chainlink',
   U = 'U-mapper',
   Rotate = 'Rotate',
 }
 
 export type PixelMapper
   = { type: PixelMapperType.Rotate; angle: number }
+  | { type: PixelMapperType.Chainlink }
   | { type: PixelMapperType.U };
 
 /**
@@ -246,6 +248,8 @@ export interface LedMatrixInstance {
 
   font(font: FontInstance): this;
   font(): string;
+
+  getAvailablePixelMappers(): string[];
 
   height(): number;
 

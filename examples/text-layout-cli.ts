@@ -172,7 +172,7 @@ const createModeSelector = () => {
       // Set some default values
       matrix
         .clear()
-        .font(fontList[0])
+        .font(fontList[18])
         .fgColor(Colors.Magenta)
         .sync();
     }

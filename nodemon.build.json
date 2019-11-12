@@ -1,6 +1,6 @@
 {
   "ext": "ts,json,cc,h,gyp",
-  "exec": "npm run quick-build && npm run example -- examples/map.ts",
+  "exec": "npm run quick-build && npm run example -- examples/text-layout-cli.ts",
   "restartable": true,
   "events": {},
   "watch": [

@@ -5,6 +5,7 @@ export class LedMatrixUtils {
     return mappers
       .map(mapper => {
         switch (mapper.type) {
+          case PixelMapperType.Chainlink: return PixelMapperType.Chainlink;
           case PixelMapperType.Rotate: return [PixelMapperType.Rotate, mapper.angle].join(':');
           case PixelMapperType.U: return PixelMapperType.U;
         }
