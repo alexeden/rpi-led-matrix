@@ -1,9 +1,12 @@
 #if __linux__
 #	include "font.addon.h"
 #	include "led-matrix.addon.h"
+#   include "chain-link-pixel-mapper.cc"
 #	include <napi.h>
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
+    rgb_matrix::RegisterPixelMapper(new ChainLinkPixelMapper());
+
 	LedMatrixAddon::Init(env, exports);
 	FontAddon::Init(env, exports);
 	return exports;

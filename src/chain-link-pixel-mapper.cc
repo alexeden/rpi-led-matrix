@@ -6,7 +6,7 @@ class ChainLinkPixelMapper : public rgb_matrix::PixelMapper {
 	}
 
 	virtual const char *GetName() const {
-		return "ChainLink";
+		return "Chainlink";
 	}
 
     virtual bool SetParameters(int chain, int parallel, const char *param) {
