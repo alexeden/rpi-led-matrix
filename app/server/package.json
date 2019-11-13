@@ -1,0 +1,32 @@
+{
+  "name": "@server/rpi-led-matrix",
+  "main": "dist/index.js",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "rimraf dist && tsc -p ./src",
+    "start": "nodemon",
+    "postinstall": "npm run build"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "rimraf": "^3.0.0",
+    "rpi-led-matrix": "file:../..",
+    "typescript": "^3.7.2",
+    "ws": "^7.2.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.2",
+    "@types/node": "^12.12.7",
+    "@types/ramda": "^0.26.33",
+    "@types/ws": "^6.0.3",
+    "nodemon": "^1.19.4"
+  },
+  "nodemonConfig": {
+    "ext": "ts,json",
+    "exec": "rimraf dist && tsc -p ./src && node dist",
+    "events": {},
+    "watch": [
+      "src/"
+    ]
+  }
+}
