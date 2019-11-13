@@ -5,8 +5,9 @@ import { SocketService } from './socket.service';
   selector: 'matrix-root',
   template: `
     <div>
-      <button (click)="socketService.connect()">Connect</button>
-      <button (click)="socketService.disconnect()">Disconnect</button>
+      <button *ngIf="!(socketService.connected | async)" (click)="socketService.connect()">Connect</button>
+      <button *ngIf="socketService.connected | async" (click)="socketService.disconnect()">Disconnect</button>
+      <h1>{{ (socketService.connected | async) ? "Connected" : "Not Connected" }}</h1>
     </div>
   `,
   styles: [],
@@ -14,5 +15,6 @@ import { SocketService } from './socket.service';
 export class AppComponent {
   constructor(
     readonly socketService: SocketService
+
   ) {}
 }

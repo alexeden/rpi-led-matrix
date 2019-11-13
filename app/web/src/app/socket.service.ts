@@ -11,17 +11,25 @@ export class SocketService {
   private readonly url$ = new Subject<string>();
   private readonly stopSocket$ = new Subject<any>();
   private readonly retrySocket$ = new Subject<any>();
+  private readonly connected$ = new BehaviorSubject<boolean>(false);
   readonly socketError = new Subject<Event>();
-  readonly connected$ = new BehaviorSubject<boolean>(false);
+  readonly connected: Observable<boolean>;
   readonly message: Observable<Message>;
 
   socket: WebSocketSubject<Message> | null = null;
 
   constructor() {
+    this.connected = this.connected$.asObservable();
+
     this.message = this.url$.pipe(
       switchMap(url => {
-        const socket = webSocket<Message>(url);
+        const socket = webSocket<Message>({
+          url,
+          binaryType: 'arraybuffer',
+        });
         this.socket = socket;
+
+        (window as any).socket = socket;
 
         return socket.multiplex(
           /* Open   */ () => this.connected$.next(true),
