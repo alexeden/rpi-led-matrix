@@ -96,12 +96,13 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 	}
 
 	auto env = info.Env();
-	auto now = get_now_ms();
-	auto now_ms = now - t_start_;
-	t_dsync_ms_ = now_ms - t_sync_ms_;
-	t_sync_ms_ = now_ms;
 
 	if (!after_sync_cb_.IsEmpty()) {
+        auto now = get_now_ms();
+        auto now_ms = now - t_start_;
+        t_dsync_ms_ = now_ms - t_sync_ms_;
+        t_sync_ms_ = now_ms;
+
 		auto resync = after_sync_cb_.Call(info.This(), {
 			info.This(),
 			Napi::Number::New(env, t_dsync_ms_),
