@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Subject, BehaviorSubject, Observable } from 'rxjs';
+import { Subject, BehaviorSubject, Observable, empty } from 'rxjs';
 import { switchMap, retryWhen, takeUntil, publishReplay } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
+import { BufferService } from './buffer.service';
 
 type Message = { };
 @Injectable({
@@ -14,16 +15,18 @@ export class SocketService {
   private readonly connected$ = new BehaviorSubject<boolean>(false);
   readonly socketError = new Subject<Event>();
   readonly connected: Observable<boolean>;
-  readonly message: Observable<Message>;
+  readonly message: Observable<ArrayBuffer>;
 
-  socket: WebSocketSubject<Message> | null = null;
+  socket: WebSocketSubject<ArrayBuffer> | null = null;
 
-  constructor() {
+  constructor(
+    readonly bufferService: BufferService
+  ) {
     this.connected = this.connected$.asObservable();
 
     this.message = this.url$.pipe(
       switchMap(url => {
-        const socket = webSocket<Message>({
+        const socket = webSocket<ArrayBuffer>({
           url,
           binaryType: 'arraybuffer',
         });
@@ -50,6 +53,19 @@ export class SocketService {
 
     (this.message as any).connect();
 
+    this.connected$.pipe(
+      switchMap(connected =>
+        !connected
+          ? empty()
+          : this.bufferService.buffer
+      )
+    )
+    .subscribe(buffer => {
+      if (this.socket) {
+        console.log(buffer);
+        this.socket.next(new Uint8Array(buffer));
+      }
+    });
   }
 
 
