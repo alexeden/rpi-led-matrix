@@ -25,7 +25,6 @@ export class BufferService {
   async init() {
     const response = await fetch('/api/config');
     const config = await response.json();
-    console.log(config);
 
     this.config$.next(config);
   }

@@ -63,7 +63,7 @@ export class SocketService {
     .subscribe(buffer => {
       if (this.socket) {
         console.log(buffer);
-        this.socket.next(new Uint8Array(buffer));
+        this.socket.next(buffer);
       }
     });
   }
