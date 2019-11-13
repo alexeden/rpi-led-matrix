@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SocketService } from './socket.service';
+import { BufferService } from './buffer.service';
 
 @Component({
   selector: 'matrix-root',
@@ -12,9 +13,13 @@ import { SocketService } from './socket.service';
   `,
   styles: [],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   constructor(
+    readonly bufferService: BufferService,
     readonly socketService: SocketService
-
   ) {}
+
+  ngOnInit() {
+    this.bufferService.init();
+  }
 }

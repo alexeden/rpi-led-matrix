@@ -6,6 +6,7 @@ import * as express from 'express';
 import * as net from 'net';
 import * as websockets from 'ws';
 
+const matrixConfig = require('../../matrix.config.json');
 
 const httpsOptions: https.ServerOptions = {
   key: fs.readFileSync(path.resolve(__dirname, '..', 'server.key')),
@@ -17,7 +18,7 @@ const server = https.createServer(httpsOptions, app).listen(4000, '0.0.0.0', () 
 const wss = new websockets.Server({ noServer: true });
 
 app.get('/api/config', (req, res, next) => {
-  next();
+  res.json(matrixConfig);
 });
 
 
