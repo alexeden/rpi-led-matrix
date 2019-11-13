@@ -5,6 +5,7 @@
     "${workspaceFolder}/**",
     "/usr/local/Cellar/gcc/8.2.0/include/c++/8.2.0",
     "/usr/local/Cellar/gcc/8.2.0/include/c++/8.2.0/x86_64-apple-darwin17.7.0",
+    "/usr/local/Cellar/graphicsmagick/1.3.33/include/GraphicsMagick",
     "${workspaceFolder}/node_modules/node-addon-api",
     "${workspaceFolder}/node_modules/node-addon-api/external-napi"
   ],

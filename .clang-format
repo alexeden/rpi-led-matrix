@@ -8,7 +8,9 @@ AlignConsecutiveDeclarations: false
 AlignEscapedNewlines: Left
 AlignTrailingComments: true
 AlignOperands: true
-AllowAllParametersOfDeclarationOnNextLine: true
+AllowAllArgumentsOnNextLine: false
+AllowAllConstructorInitializersOnNextLine: false
+AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: true
 AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: true
@@ -50,7 +52,7 @@ DerivePointerAlignment: true
 FixNamespaceComments: true
 IncludeBlocks: Merge
 IndentCaseLabels: true
-IndentPPDirectives: AfterHash
+IndentPPDirectives: BeforeHash
 IndentWidth: 4
 IndentWrappedFunctionNames: false
 KeepEmptyLinesAtTheStartOfBlocks: false
