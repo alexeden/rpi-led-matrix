@@ -44,11 +44,6 @@ export class MatrixArrayBuffer extends ArrayBuffer {
     this.rowInds = [...Array(rows).keys()];
     this.colInds = [...Array(cols).keys()];
 
-    // // Set the row marker bytes
-    // const bytesPerRow = n + MatrixArrayBuffer.rowIdBytes;
-    // this.rowInds.forEach(r => {
-    //   const
-    // });
     this.pixels = this.rowInds.flatMap(r =>
       this.colInds.map(c =>
         new Pixel(r, c, new DataView(this, 3 * (r * cols + c), 3))
