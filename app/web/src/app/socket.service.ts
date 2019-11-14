@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject, Observable, empty } from 'rxjs';
-import { switchMap, retryWhen, takeUntil, publishReplay, delay } from 'rxjs/operators';
+import { switchMap, retryWhen, takeUntil, publishReplay, delay, skipUntil, filter, throttleTime, withLatestFrom } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { BufferService } from './buffer.service';
 
@@ -12,6 +12,7 @@ export class SocketService {
   private readonly url$ = new Subject<string>();
   private readonly stopSocket$ = new Subject<any>();
   private readonly retrySocket$ = new Subject<any>();
+  private readonly canvasCtx$ = new Subject<CanvasRenderingContext2D>();
   private readonly connected$ = new BehaviorSubject<boolean>(false);
   readonly socketError = new Subject<Event>();
   readonly connected: Observable<boolean>;
@@ -22,6 +23,8 @@ export class SocketService {
   constructor(
     readonly bufferService: BufferService
   ) {
+    (window as any).socketService = this;
+
     this.connected = this.connected$.asObservable();
 
     this.message = this.url$.pipe(
@@ -53,26 +56,40 @@ export class SocketService {
 
     (this.message as any).connect();
 
-    this.connected$.pipe(
-      switchMap(connected =>
-        !connected
-          ? empty()
-          : this.bufferService.buffer
-      ),
-      delay(100)
+    this.canvasCtx$.pipe(
+      skipUntil(this.connected$.pipe(filter(connected => connected), delay(100))),
+      throttleTime(1000 / 30),
+      withLatestFrom(this.bufferService.config, (ctx, { rows, cols }) => {
+        return ctx.getImageData(0, 0, cols, rows).data.buffer;
+      })
     )
     .subscribe(buffer => {
-      console.log('socket._socket: ', (this.socket as any)._socket);
-      if (this.socket) {
-        const socket = ((this.socket as any)._socket as WebSocket);
-        console.log(`open: `, socket.OPEN);
-        // this.socket.next(buffer);
-        socket.send(buffer);
-
-      }
+      console.log('sending buffer: ', buffer);
+      const socket = ((this.socket as any)._socket as WebSocket);
+      socket.send(buffer);
     });
+
+    // this.connected$.pipe(
+    //   switchMap(connected =>
+    //     !connected
+    //       ? empty()
+    //       : this.bufferService.buffer
+    //   ),
+    //   delay(100)
+    // )
+    // .subscribe(buffer => {
+    //   console.log('socket._socket: ', (this.socket as any)._socket);
+    //   if (this.socket) {
+    //     const socket = ((this.socket as any)._socket as WebSocket);
+    //     socket.send(buffer);
+
+    //   }
+    // });
   }
 
+  pushCanvasCtx(ctx: CanvasRenderingContext2D) {
+    this.canvasCtx$.next(ctx);
+  }
 
   connect() {
     if (!this.connected$.getValue()) {
