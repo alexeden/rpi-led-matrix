@@ -30,12 +30,12 @@ const liveSockets = new Set<websockets>([]);
 
 
 wss.on('connection', async (socket, req) => {
-  socket.on('pong', liveSockets.add.bind(liveSockets, socket));
+  console.log('new socket connection');
   liveSockets.add(socket);
+  socket.on('pong', () => liveSockets.add(socket));
 
-  socket.on('message', (data: string = '{}') => {
-    if (typeof data === 'string' && data.length > 0 && data !== 'undefined') {
-    }
+  socket.on('message', data => {
+    console.log('got a message!', Object.keys(data).length);
   });
 
   socket.on('close', async (code, reason) => {
