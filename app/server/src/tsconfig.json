@@ -3,6 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "declaration": false,
-    "outDir": "../dist"
+    "outDir": "../dist",
+    "noUnusedLocals": false
   }
 }
