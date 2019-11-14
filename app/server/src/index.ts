@@ -29,21 +29,19 @@ server.on('upgrade', (request: http.IncomingMessage, socket: net.Socket, head: B
 const liveSockets = new Set<websockets>([]);
 
 
-wss.on('connection', async (socket, req) => {
+wss.on('connection', (socket, req) => {
   console.log('new socket connection');
   liveSockets.add(socket);
   socket.on('pong', () => liveSockets.add(socket));
 
-  socket.on('message', data => {
-    console.log('got a message!', Object.keys(data).length);
+  socket.on('message', (data: Buffer) => {
+    console.log('got a message!', data);
   });
 
-  socket.on('close', async (code, reason) => {
-    console.log(`Socket was closed with code ${code} and reason: `, reason);
-    console.log('live sockets left: ', liveSockets.size);
-    // Shutdown logic here
+  socket.on('close', async code => {
+    liveSockets.delete(socket);
+    console.log(`Socket closed with code ${code}, ${liveSockets.size} sockets left`);
   });
-
 });
 
 setInterval(
