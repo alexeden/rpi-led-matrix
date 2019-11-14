@@ -1,5 +1,6 @@
-import { Component, OnInit, ElementRef, Renderer2 } from '@angular/core';
+import { Component, OnInit, ElementRef, Renderer2, Input } from '@angular/core';
 import { CanvasSpace, Pt, Group } from 'pts';
+import { MatrixConfig } from '../buffer.service';
 
 @Component({
   selector: 'matrix-canvas',
@@ -7,6 +8,11 @@ import { CanvasSpace, Pt, Group } from 'pts';
   styleUrls: ['./canvas.component.scss'],
 })
 export class CanvasComponent implements OnInit {
+  @Input() config: MatrixConfig = {
+    cols: 0,
+    rows: 0,
+  };
+
   readonly space: CanvasSpace;
 
   constructor(
@@ -19,10 +25,10 @@ export class CanvasComponent implements OnInit {
     this.renderer2.appendChild(this.elRef.nativeElement, this.canvas);
 
     this.space = new CanvasSpace(this.canvas).setup({
+      bgcolor: '0x000000',
       resize: false,
       retina: true,
     });
-
   }
 
 

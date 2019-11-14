@@ -9,7 +9,10 @@ import { BufferService } from './buffer.service';
       <button *ngIf="!(socketService.connected | async)" (click)="socketService.connect()">Connect</button>
       <button *ngIf="socketService.connected | async" (click)="socketService.disconnect()">Disconnect</button>
       <h1>{{ (socketService.connected | async) ? "Connected" : "Not Connected" }}</h1>
-      <matrix-canvas></matrix-canvas>
+      <matrix-canvas
+        *ngIf="bufferService.config | async"
+        [config]="bufferService.config | async">
+      </matrix-canvas>
     </div>
   `,
   styles: [],

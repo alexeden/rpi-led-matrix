@@ -3,7 +3,7 @@ import { ReplaySubject, Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { MatrixArrayBuffer } from './lib/matrix-array-buffer';
 
-interface MatrixConfig {
+export interface MatrixConfig {
   cols: number;
   rows: number;
 }
