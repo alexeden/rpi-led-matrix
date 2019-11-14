@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject, Observable, empty } from 'rxjs';
-import { switchMap, retryWhen, takeUntil, publishReplay, delay, skipUntil, filter, throttleTime, withLatestFrom } from 'rxjs/operators';
+import { switchMap, retryWhen, takeUntil, publishReplay, delay, skipUntil, filter, throttleTime, withLatestFrom, map } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { BufferService } from './buffer.service';
 
@@ -60,8 +60,12 @@ export class SocketService {
       skipUntil(this.connected$.pipe(filter(connected => connected), delay(1000))),
       throttleTime(1000 / 10),
       withLatestFrom(this.bufferService.config, (ctx, { rows, cols }) => {
-        return ctx.getImageData(0, 0, cols, rows).data.buffer;
-      })
+        return ctx.getImageData(0, 0, cols, rows).data;
+      }),
+      // Filter out the alpha bytes
+      map(data =>
+        data.filter((_, i) => (i + 1) % 4 !== 0)
+      )
     )
     .subscribe(buffer => {
       // console.log('sending buffer: ', buffer);
