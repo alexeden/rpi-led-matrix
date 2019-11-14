@@ -64,7 +64,7 @@ export class SocketService {
       })
     )
     .subscribe(buffer => {
-      console.log('sending buffer: ', buffer);
+      // console.log('sending buffer: ', buffer);
       const socket = ((this.socket as any)._socket as WebSocket);
       socket.send(buffer);
     });

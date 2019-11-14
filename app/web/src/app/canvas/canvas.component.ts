@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, Renderer2, Input, OnDestroy } from '@angular/core';
-import { CanvasSpace, Pt, Group, CanvasForm, AnimateCallbackFn } from 'pts';
+import { CanvasSpace, Pt, Group, CanvasForm, AnimateCallbackFn, Bound } from 'pts';
 import { MatrixConfig, BufferService } from '../buffer.service';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { share, filter, switchMapTo, takeUntil, tap } from 'rxjs/operators';
@@ -52,10 +52,11 @@ export class CanvasComponent implements OnInit, OnDestroy {
     this.ready$.pipe(
       filter(ready => ready),
       switchMapTo(this.bufferService.config),
-      tap(config => {
-        console.log(`Setting canvas dimensions to ${config.rows}px by ${config.cols}px`);
-        this.renderer2.setStyle(this.canvas, 'height', `${config.rows}px`);
-        this.renderer2.setStyle(this.canvas, 'width', `${config.cols}px`);
+      tap(({ rows, cols }) => {
+        console.log(`Setting canvas dimensions to ${rows}px by ${cols}px`);
+        this.renderer2.setStyle(this.canvas, 'height', `${rows}px`);
+        this.renderer2.setStyle(this.canvas, 'width', `${cols}px`);
+        this.space.resize(new Bound(new Pt(0, 0), new Pt(rows, cols)));
       }),
       switchMapTo(this.animate),
       tap(() => this.socketService.pushCanvasCtx(this.ctx)),
@@ -65,6 +66,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
     });
 
 
+    this.space.bindMouse().play();
   }
 
 
