@@ -52,7 +52,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
         console.log(`Setting canvas dimensions to ${rows}px by ${cols}px`);
         this.renderer2.setStyle(this.canvas, 'height', `${rows}px`);
         this.renderer2.setStyle(this.canvas, 'width', `${cols}px`);
-        this.space.resize(new Bound(new Pt(0, 0), new Pt(rows, cols)));
+        this.space.resize(new Bound(new Pt(0, 0), new Pt(cols, rows)));
       }),
       switchMapTo(this.animate),
       tap(() => this.socketService.pushCanvasCtx(this.ctx)),

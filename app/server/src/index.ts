@@ -18,8 +18,7 @@ const matrixConfig = require('../../matrix.config.json');
 
 const matrixOptions: MatrixOptions = {
   ...LedMatrix.defaultMatrixOptions(),
-  rows: 32,
-  cols: 64,
+  ...matrixConfig,
   chainLength: 2,
   hardwareMapping: GpioMapping.Regular,
   parallel: 3,
@@ -51,12 +50,19 @@ server.on('upgrade', (request: http.IncomingMessage, socket: net.Socket, head: B
   wss.handleUpgrade(request, socket, head, clientSocket => wss.emit('connection', clientSocket, request));
 });
 
+const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+
 wss.on('connection', (socket, req) => {
   console.log('new socket connection');
   liveSockets.add(socket);
   socket.on('pong', () => liveSockets.add(socket));
 
   socket.on('message', (data: Buffer) => {
+    if (data.length !== 4 * matrixOptions.rows * matrixOptions.cols) {
+      console.warn(`Buffer is not the right length!`);
+
+      return;
+    }
     console.log('got a message!', data);
   });
 

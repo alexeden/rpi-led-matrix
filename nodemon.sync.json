@@ -4,6 +4,8 @@
   "events": {},
   "watch": [
     "src/**",
+    "app/server/**",
+    "app/matrix.config.json",
     "examples/**",
     "vendor/**",
     "package.json",

@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   constructor(
     readonly bufferService: BufferService,
     readonly socketService: SocketService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.bufferService.init();
