@@ -31,7 +31,7 @@ export class CanvasComponent implements OnInit, OnDestroy {
     this.ctx = this. canvas.getContext('2d')!;
 
     this.space = new CanvasSpace(this.canvas, () => this.ready$.next(true)).setup({
-      bgcolor: '0x000000',
+      bgcolor: '0xFF0000',
       resize: false,
       retina: true,
     });

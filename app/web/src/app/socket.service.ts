@@ -57,8 +57,8 @@ export class SocketService {
     (this.message as any).connect();
 
     this.canvasCtx$.pipe(
-      skipUntil(this.connected$.pipe(filter(connected => connected), delay(100))),
-      throttleTime(1000 / 30),
+      skipUntil(this.connected$.pipe(filter(connected => connected), delay(1000))),
+      throttleTime(1000 / 10),
       withLatestFrom(this.bufferService.config, (ctx, { rows, cols }) => {
         return ctx.getImageData(0, 0, cols, rows).data.buffer;
       })

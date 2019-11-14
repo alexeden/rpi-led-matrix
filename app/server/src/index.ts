@@ -50,20 +50,40 @@ server.on('upgrade', (request: http.IncomingMessage, socket: net.Socket, head: B
   wss.handleUpgrade(request, socket, head, clientSocket => wss.emit('connection', clientSocket, request));
 });
 
-const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+const matrix = new LedMatrix(matrixOptions, runtimeOptions)
+  .brightness(100)
+  .fgColor(0xFFFFFF)
+  .bgColor(0xFFFFFF)
+  .setPixel(10, 10);
+  // .fill();
+matrix.drawLine(0, 0, matrix.width(), matrix.height());
+matrix.sync();
 
+console.log(`matrix height is ${matrix.height()} and its width is ${matrix.width()}`);
 wss.on('connection', (socket, req) => {
   console.log('new socket connection');
   liveSockets.add(socket);
   socket.on('pong', () => liveSockets.add(socket));
+  const expectedBufferSize = 4 * matrix.height() * (matrix.width() / matrixConfig.chainLength / matrixConfig.parallel);
 
   socket.on('message', (data: Buffer) => {
-    if (data.length !== 4 * matrixOptions.rows * matrixOptions.cols) {
-      console.warn(`Buffer is not the right length!`);
-
-      return;
+    if (data.length !== expectedBufferSize) {
+      console.warn(`Buffer is not the right length! Got ${data.length}, expected ${expectedBufferSize}`);
     }
-    console.log('got a message!', data);
+    else {
+      for (let i = 0; i < data.length; i += 4) {
+        const x = (i / 4) % matrixOptions.cols;
+        const y = Math.floor(i / (matrixOptions.cols * 4));
+        const color = y === 0
+          ? 0xFFFFFF
+          : (data[i + 0] << 16) | (data[i + 1] << 8) | (data[i + 2]);
+
+        matrix.fgColor(color).setPixel(x, y);
+      }
+      // data.
+      matrix.sync();
+
+    }
   });
 
   socket.on('close', async code => {

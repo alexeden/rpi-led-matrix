@@ -1,4 +1,6 @@
 {
+  "chainLength": 2,
+  "parallel": 3,
   "cols": 384,
   "rows": 32
 }
