@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Subject, BehaviorSubject, Observable, empty } from 'rxjs';
-import { switchMap, retryWhen, takeUntil, publishReplay } from 'rxjs/operators';
+import { switchMap, retryWhen, takeUntil, publishReplay, delay } from 'rxjs/operators';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { BufferService } from './buffer.service';
 
@@ -58,12 +58,17 @@ export class SocketService {
         !connected
           ? empty()
           : this.bufferService.buffer
-      )
+      ),
+      delay(100)
     )
     .subscribe(buffer => {
+      console.log('socket._socket: ', (this.socket as any)._socket);
       if (this.socket) {
-        console.log(buffer);
-        this.socket.next(buffer);
+        const socket = ((this.socket as any)._socket as WebSocket);
+        console.log(`open: `, socket.OPEN);
+        // this.socket.next(buffer);
+        socket.send(buffer);
+
       }
     });
   }
