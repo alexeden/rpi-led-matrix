@@ -1,6 +1,6 @@
 {
   "/api/socket": {
-    "target": "wss://0.0.0.0:4000",
+    "target": "wss://ape-pi-3a:4000",
     "secure": false,
     "ws": true,
     "logLevel": "debug",
@@ -9,7 +9,7 @@
     }
   },
   "/api": {
-    "target": "https://0.0.0.0:4000",
+    "target": "https://ape-pi-3a:4000",
     "secure": false,
     "logLevel": "debug"
   }

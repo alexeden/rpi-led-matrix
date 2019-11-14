@@ -11,10 +11,6 @@ import { SocketService } from '../socket.service';
   styleUrls: ['./canvas.component.scss'],
 })
 export class CanvasComponent implements OnInit, OnDestroy {
-  @Input() config: MatrixConfig = {
-    cols: 0,
-    rows: 0,
-  };
   private readonly unsubscribe$ = new Subject<any>();
   private readonly ready$ = new BehaviorSubject(false);
   private readonly ctx: CanvasRenderingContext2D;
