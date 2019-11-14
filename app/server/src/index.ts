@@ -71,18 +71,7 @@ wss.on('connection', (socket, req) => {
       console.warn(`Buffer is not the right length! Got ${data.length}, expected ${expectedBufferSize}`);
     }
     else {
-      for (let i = 0; i < data.length; i += 4) {
-        const x = (i / 4) % matrixOptions.cols;
-        const y = Math.floor(i / (matrixOptions.cols * 4));
-        const color = y === 0
-          ? 0xFFFFFF
-          : (data[i + 0] << 16) | (data[i + 1] << 8) | (data[i + 2]);
-
-        matrix.fgColor(color).setPixel(x, y);
-      }
-      // data.
-      matrix.sync();
-
+      matrix.drawBuffer(data).sync();
     }
   });
 
