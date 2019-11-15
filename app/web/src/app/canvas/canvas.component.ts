@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, Renderer2, Input, OnDestroy } from '@angular/core';
-import { CanvasSpace, Pt, Group, CanvasForm, AnimateCallbackFn, Bound, Num } from 'pts';
+import { CanvasSpace, Pt, Group, CanvasForm, AnimateCallbackFn, Bound, Num, Color } from 'pts';
 import { MatrixConfig, BufferService } from '../buffer.service';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { share, filter, switchMapTo, takeUntil, tap, withLatestFrom } from 'rxjs/operators';
@@ -83,8 +83,13 @@ export class CanvasComponent implements OnInit, OnDestroy {
     this.animate.pipe(
       takeUntil(this.unsubscribe$),
       withLatestFrom(this.pointer, ({ t }, ptr) => {
-        const radius = Num.cycle((t % 1000) / 1000) * 10;
-        this.form.fill('#09f').point(ptr, radius, 'circle');
+        const radius = Math.round(Num.cycle((t % 1000) / 1000) * 10);
+        const [x, y] = ptr.map(Math.round);
+        const color = Color.hsl(x % 360, 1, 0.5);
+        this.form
+          .fill(Color.HSLtoRGB(color).toString('rgb'))
+          .point(ptr, radius, 'circle')
+          .textBox([new Pt(x, y).add(radius + 5, -20), new Pt(x, y).add(100, 20)], `${x + radius}, ${y}`, 'middle');
       })
     )
     .subscribe();
