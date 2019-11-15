@@ -1,5 +1,5 @@
 import { Component, OnInit, ElementRef, Renderer2, Input, OnDestroy } from '@angular/core';
-import { CanvasSpace, Pt, Group, CanvasForm, AnimateCallbackFn, Bound } from 'pts';
+import { CanvasSpace, Pt, Group, CanvasForm, AnimateCallbackFn, Bound, Num } from 'pts';
 import { MatrixConfig, BufferService } from '../buffer.service';
 import { Subject, BehaviorSubject, Observable } from 'rxjs';
 import { share, filter, switchMapTo, takeUntil, tap } from 'rxjs/operators';
@@ -61,7 +61,10 @@ export class CanvasComponent implements OnInit, OnDestroy {
     .subscribe(config => {
     });
 
-
+    this.space.add((time, ftime) => {
+      const radius = Num.cycle((time! % 1000) / 1000) * 100;
+      this.form.fill('#09f').point(this.space.pointer, radius, 'circle');
+    });
     this.space.bindMouse().play();
   }
 

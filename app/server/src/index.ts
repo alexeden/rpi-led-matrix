@@ -19,6 +19,7 @@ const matrixConfig = require('../../matrix.config.json');
 const matrixOptions: MatrixOptions = {
   ...LedMatrix.defaultMatrixOptions(),
   ...matrixConfig,
+  cols: 64,
   chainLength: 2,
   hardwareMapping: GpioMapping.Regular,
   parallel: 3,
@@ -50,21 +51,13 @@ server.on('upgrade', (request: http.IncomingMessage, socket: net.Socket, head: B
   wss.handleUpgrade(request, socket, head, clientSocket => wss.emit('connection', clientSocket, request));
 });
 
-const matrix = new LedMatrix(matrixOptions, runtimeOptions)
-  .brightness(100)
-  .fgColor(0xFFFFFF)
-  .bgColor(0xFFFFFF)
-  .setPixel(10, 10);
-  // .fill();
-matrix.drawLine(0, 0, matrix.width(), matrix.height());
-matrix.sync();
+const matrix = new LedMatrix(matrixOptions, runtimeOptions).brightness(100);
 
-console.log(`matrix height is ${matrix.height()} and its width is ${matrix.width()}`);
 wss.on('connection', (socket, req) => {
   console.log('new socket connection');
   liveSockets.add(socket);
   socket.on('pong', () => liveSockets.add(socket));
-  const expectedBufferSize = 4 * matrix.height() * (matrix.width() / matrixConfig.chainLength / matrixConfig.parallel);
+  const expectedBufferSize = 3 * matrix.height() * matrix.width();
 
   socket.on('message', (data: Buffer) => {
     if (data.length !== expectedBufferSize) {
