@@ -309,6 +309,7 @@ export interface Font {
 }
 
 export interface LedMatrixAddon {
+  isSupported: boolean;
   Font: Font;
   LedMatrix: LedMatrix;
 }
