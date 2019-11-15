@@ -71,6 +71,9 @@ wss.on('connection', (socket, req) => {
   socket.on('close', async code => {
     liveSockets.delete(socket);
     console.log(`Socket closed with code ${code}, ${liveSockets.size} sockets left`);
+    if (liveSockets.size === 0) {
+      matrix.clear().sync();
+    }
   });
 });
 
