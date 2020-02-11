@@ -7,6 +7,14 @@ export enum MuxType {
   Direct = 0,
   Stripe = 1,
   Checker = 2,
+  Spiral = 3,
+  ZStripe = 4,
+  ZnMirrorZStripe = 5,
+  Coreman = 6,
+  Kaler2Scan = 7,
+  ZStripeUneven = 8,
+  P10128x4Z = 9,
+  QiangLiQ8 = 10,
 }
 
 export enum PixelMapperType {
@@ -38,6 +46,14 @@ export enum RowAddressType {
    * Used for panels that only have A/B. (typically some 64x64 panels)
    */
   AB = 1,
+  /**
+   * Direct row select
+   */
+  DirectRow = 2,
+  /**
+   * ABC shift + DE direct
+   */
+  ABC = 3,
 }
 
 export enum GpioMapping {
@@ -180,6 +196,9 @@ export interface RuntimeOptions {
    * In the other cases (Off or On), the choice is already made, so the thread
    * is conveniently already started for you.
    *
+   * Not recommended unless you have a specific reason for it (e.g. you need root
+   * to access other hardware or you do the privilege dropping yourself).
+   *
    * @default RuntimeFlag.Off
    */
   daemon: RuntimeFlag;
@@ -201,12 +220,17 @@ export interface RuntimeOptions {
    */
   dropPrivileges: RuntimeFlag;
 
-
   /**
-   * The signal can be too fast for some LED panels, in particular with newer
-   * (faster) Raspberry Pi 2s - in that case, the LED matrix only shows garbage.
-   * Setting this value to > 0 slows down the GPIO for these cases.
-   * Set to 1 or more for RPi2 or RPi3, because they are typically faster than the panels can digest.
+   * The Raspberry Pi starting with Pi2 are putting out data too fast for almost
+   * all LED panels I have seen. In this case, you want to slow down writing to
+   * GPIO. Zero for this parameter means 'no slowdown'.
+   *
+   * The default 1 (one) typically works fine, but often you have to even go further
+   * by setting it to 2 (two). If you have a Raspberry Pi with a slower processor
+   * (Model A, A+, B+, Zero), then a value of 0 (zero) might work and is desirable.
+   *
+   * A Raspberry Pi 3 or Pi4 might even need higher values for the panels to be
+   * happy.
    *
    * @default 0
    */
