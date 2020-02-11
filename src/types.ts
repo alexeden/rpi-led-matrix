@@ -7,6 +7,14 @@ export enum MuxType {
   Direct = 0,
   Stripe = 1,
   Checker = 2,
+  Spiral = 3,
+  ZStripe = 4,
+  ZnMirrorZStripe = 5,
+  Coreman = 6,
+  Kaler2Scan = 7,
+  ZStripeUneven = 8,
+  P10128x4Z = 9,
+  QiangLiQ8 = 10,
 }
 
 export enum PixelMapperType {
@@ -38,6 +46,14 @@ export enum RowAddressType {
    * Used for panels that only have A/B. (typically some 64x64 panels)
    */
   AB = 1,
+  /**
+   * Direct row select
+   */
+  DirectRow = 2,
+  /**
+   * ABC shift + DE direct
+   */
+  ABC = 3,
 }
 
 export enum GpioMapping {
