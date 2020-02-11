@@ -196,6 +196,9 @@ export interface RuntimeOptions {
    * In the other cases (Off or On), the choice is already made, so the thread
    * is conveniently already started for you.
    *
+   * Not recommended unless you have a specific reason for it (e.g. you need root
+   * to access other hardware or you do the privilege dropping yourself).
+   *
    * @default RuntimeFlag.Off
    */
   daemon: RuntimeFlag;
@@ -217,12 +220,17 @@ export interface RuntimeOptions {
    */
   dropPrivileges: RuntimeFlag;
 
-
   /**
-   * The signal can be too fast for some LED panels, in particular with newer
-   * (faster) Raspberry Pi 2s - in that case, the LED matrix only shows garbage.
-   * Setting this value to > 0 slows down the GPIO for these cases.
-   * Set to 1 or more for RPi2 or RPi3, because they are typically faster than the panels can digest.
+   * The Raspberry Pi starting with Pi2 are putting out data too fast for almost
+   * all LED panels I have seen. In this case, you want to slow down writing to
+   * GPIO. Zero for this parameter means 'no slowdown'.
+   *
+   * The default 1 (one) typically works fine, but often you have to even go further
+   * by setting it to 2 (two). If you have a Raspberry Pi with a slower processor
+   * (Model A, A+, B+, Zero), then a value of 0 (zero) might work and is desirable.
+   *
+   * A Raspberry Pi 3 or Pi4 might even need higher values for the panels to be
+   * happy.
    *
    * @default 0
    */

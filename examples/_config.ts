@@ -22,5 +22,5 @@ export const matrixOptions: MatrixOptions = {
 
 export const runtimeOptions: RuntimeOptions = {
   ...LedMatrix.defaultRuntimeOptions(),
-  gpioSlowdown: 1,
+  gpioSlowdown: 4,
 };
