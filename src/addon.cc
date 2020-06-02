@@ -19,7 +19,7 @@ NODE_API_MODULE(rpi_led_matrix, Init)
 	#pragma GCC diagnostic ignored "-Wunused-variable"
 	#ifdef __GNUC__
 		#warning "Local machine is not a Raspberry Pi; skipping compilation of full addon module."
-	#elif
+	#else
 		#pragma message("Local machine is not a Raspberry Pi; skipping compilation of full addon module.")
 	#endif
 
