@@ -29,9 +29,10 @@ class Pulser {
     }
 
     matrix.afterSync((mat, dt, t) => {
-      return pulsers.map(pulser => {
+      pulsers.map(pulser => {
         matrix.fgColor(pulser.nextColor(t)).setPixel(pulser.x, pulser.y);
       });
+      setTimeout(() => matrix.sync(), 0);
     });
 
     matrix.sync();
