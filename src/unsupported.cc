@@ -10,7 +10,7 @@
 #	pragma GCC diagnostic ignored "-Wunused-variable"
 #	ifdef __GNUC__
 #		warning "Skipping link of rpi-rgb-led-matrix library."
-#	elif
+#	else
 #		pragma message("Skipping link of rpi-rgb-led-matrix library.")
 #	endif
 #endif
