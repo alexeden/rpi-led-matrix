@@ -21,12 +21,16 @@ export enum PixelMapperType {
   Chainlink = 'Chainlink',
   U = 'U-mapper',
   Rotate = 'Rotate',
+  V = 'V-mapper',
+  VZ = 'V-mapper:Z',
 }
 
 export type PixelMapper
   = { type: PixelMapperType.Rotate; angle: number }
   | { type: PixelMapperType.Chainlink }
-  | { type: PixelMapperType.U };
+  | { type: PixelMapperType.U }
+  | { type: PixelMapperType.V }
+  | { type: PixelMapperType.VZ };
 
 /**
  * If a runtime option is set to Disabled, it's command line flag will be unavailable.
@@ -51,9 +55,13 @@ export enum RowAddressType {
    */
   DirectRow = 2,
   /**
-   * ABC shift + DE direct
+   * ABC addressed panels
    */
   ABC = 3,
+  /**
+   * 4 = ABC Shift + DE direct
+   */
+  ABCShift = 4,
 }
 
 export enum GpioMapping {
