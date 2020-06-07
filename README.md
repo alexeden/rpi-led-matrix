@@ -150,6 +150,9 @@ enum MuxType {
 enum RowAddressType {
   Direct = 0,
   AB = 1,
+  DirectRow = 2,
+  ABC = 3,
+  ABCShift = 4
 }
 ```
 

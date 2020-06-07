@@ -126,7 +126,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     matrix.clear();
     for (let y = 0; y < matrix.height(); y++) {
       matrix
-        .fgColor(rainbow64[y])
+        .fgColor(rainbow64[y % 64])
         .drawLine(0, y, matrix.width(), y)
         .sync();
       await wait(22);
