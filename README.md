@@ -6,7 +6,7 @@ Control an RGB LED matrix connected to a Raspberry Pi using using Node.js. This 
 
 Click the image below (links to a video) to get a taste of what this library can empower you to create:
 
-[![full demo](./docs/demo-thumbnail.png)](https://apemedia.s3.us-east-2.amazonaws.com/matrix+3-28-19.mp4)
+[![full demo](./docs/demo-thumbnail.png)*This test is available in `examples/kitchen-sink.ts`*](https://apemedia.s3.us-east-2.amazonaws.com/matrix+3-28-19.mp4)
 
 
 ## Features
