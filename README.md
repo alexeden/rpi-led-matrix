@@ -1,6 +1,6 @@
 ![npm version](https://img.shields.io/npm/v/rpi-led-matrix/latest?style=for-the-badge)
-![npm version](https://img.shields.io/librariesio/release/npm/rpi-led-matrix?style=for-the-badge&logoColor=white)
 ![npm version](https://img.shields.io/npm/types/rpi-led-matrix?style=for-the-badge)
+![npm version](https://img.shields.io/librariesio/release/npm/rpi-led-matrix?style=for-the-badge&logoColor=white)
 ![npm version](https://img.shields.io/node/v/rpi-led-matrix?style=for-the-badge&logo=node.js&logoColor=white)
 
 # Raspberry Pi LED Matrix
