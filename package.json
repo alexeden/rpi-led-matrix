@@ -38,6 +38,7 @@
     "lint": "tslint -c ./tslint.json --project examples && tslint -c ./tslint.json --project src",
     "merge-submodule-upstream": "(cd vendor && git fetch && git merge origin/master)",
     "prepublishOnly": "npm run lint && npm run build",
+    "preversion": "npm run lint && npm run build",
     "prepare": "npm run lint && npm run build",
     "quick-build": "rimraf dist && node-gyp build && tsc -p src",
     "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json"
