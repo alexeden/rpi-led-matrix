@@ -25,18 +25,31 @@
  *
  * *narrator: he would... many times*
  */
-import { createCanvas, } from 'canvas';
-
-
+import { createCanvas, registerFont } from 'canvas';
 import { LedMatrix } from '../src';
 import { matrixOptions, runtimeOptions } from './_config';
+const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
 (async () => {
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+    registerFont('./fonts/ShareTechMono-Regular.ttf', {
+      family: 'ShareTechMono',
+    });
+    registerFont('./fonts/ShareTech-Regular.ttf', {
+      family: 'ShareTech',
+    });
     const canvas = createCanvas(matrix.width(), matrix.height());
     const ctx = canvas.getContext('2d');
     matrix.clear().brightness(100);
+    ctx.font = '11px ShareTech';
+    ctx.fillStyle = '#ffF0F0';
+    ctx.fillText('YAAAS KWEEN 😎', 5, matrix.height() - 10);
+
+    const buffer = canvas.toBuffer('raw').filter((_, i) => (i + 1) % 4 !== 0);
+    matrix.drawBuffer(buffer).sync();
+    console.log(Math.max(...buffer));
+    await wait(9999999);
 
   }
   catch (error) {
