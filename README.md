@@ -1,12 +1,35 @@
-![npm version](https://img.shields.io/npm/v/rpi-led-matrix.svg?style=for-the-badge&logo=npm&color=c41949)
+![npm version](https://img.shields.io/npm/v/rpi-led-matrix/latest?style=for-the-badge)
+![npm version](https://img.shields.io/npm/types/rpi-led-matrix?style=for-the-badge)
+![npm version](https://img.shields.io/librariesio/release/npm/rpi-led-matrix?style=for-the-badge&logoColor=white)
+![npm version](https://img.shields.io/node/v/rpi-led-matrix?style=for-the-badge&logo=node.js&logoColor=white)
 
 # Raspberry Pi LED Matrix
 
 Control an RGB LED matrix connected to a Raspberry Pi using using Node.js. This library is a Node/Typescript binding of the brilliant [hzeller/rpi-rgb-led-matrix](https://github.com/hzeller/rpi-rgb-led-matrix) library, plus some additional functionality. Builds on some of the mechanisms implemented by [easybotics/node-rpi-rgb-led-matrix](https://github.com/easybotics/node-rpi-rgb-led-matrix) for double-buffering bitframes to get silky-smooth rendering.
 
-Click the image below (links to a video) to get a taste of what this library can empower you to create:
+- [Features](#features)
+- [Installation and Usage](#installation-and-usage)
+- [Getting Started](#getting-started)
+  * [The bare minimum](#the-bare-minimum)
+- [Configuration Options](#configuration)
+  * [Matrix options](#matrix-options)
+  * [Runtime options](#runtime-options)
+- [Drawing](#drawing)
+  * [Usage Patterns](#usage-patterns)
+  * [Sync Hook](#sync-hook)
+- [Running /examples](#running--examples)
+    + [Using your own config](#using-your-own-config)
+- [API](#api)
+    + [Configuration option enums](#configuration-option-enums)
+    + [Configuration interfaces](#configuration-interfaces)
+      - [`LedMatrixUtils`](#-ledmatrixutils-)
+      - [`Font` and `LedMatrix`](#-font--and--ledmatrix-)
+      - [`LayoutUtils`](#-layoututils-)
+- [Developing Locally](#developing-locally)
 
-[![full demo](./docs/demo-thumbnail.png)](https://apemedia.s3.us-east-2.amazonaws.com/matrix+3-28-19.mp4)
+Click the image below (links to a video) to see what this library can empower you to easily create:
+
+[![full demo](./docs/demo-thumbnail.png)*This sequence is available in `examples/kitchen-sink.ts`*](https://apemedia.s3.us-east-2.amazonaws.com/matrix+3-28-19.mp4)
 
 
 ## Features
@@ -70,7 +93,9 @@ const matrix = new LedMatrix(
 
 # Configuration
 
-![extending defaults](./docs/text-layout-center-middle.jpg)
+![extending defaults](./docs/text-layout-center-middle.jpg)*There's an extensive CLI you can use for testing text rendering/alignment/manipulation in `examples/text-layout-cli.ts`*
+
+
 
 The `LedMatrix` constructor expects _all_ configuration properties to be defined. So, identify the options you want to change, and extend the default options.
 
@@ -312,11 +337,11 @@ matrix.afterSync((mat, dt, t) => {
 matrix.sync();
 ```
 
-This pattern is somewhat reflective of `requestAnimationFrame` recursion on the frontend. **NOTE:** Make sure to wrap the call to `.sync()` inside the sync hook callback function in a `setTimeout` so that the call is defered to the next event loop cycle. Otherwise, you'll quickly get a stack overflow error.
+This pattern is somewhat reflective of `requestAnimationFrame` recursion on the frontend. **NOTE:** Make sure to wrap the call to `.sync()` inside the sync hook callback function in a `setTimeout` so that the call is defered to the next turn of the event loop. Otherwise, you'll quickly get a stack overflow error.
 
 After that, we're left with this (click for video):
 
-[![full demo](./docs/sync-hook-thumbnail.png)](https://apemedia.s3.us-east-2.amazonaws.com/twinkle720.mp4)
+[![full demo](./docs/sync-hook-thumbnail.png)*You can run this yourself using `examples/sync-hooks.ts`*](https://apemedia.s3.us-east-2.amazonaws.com/twinkle720.mp4)
 
 
 # Running /examples
