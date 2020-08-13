@@ -47,7 +47,7 @@ Install the package:
 $ npm install --save rpi-led-matrix
 ```
 
-> **Note** If you're installing the package on a non-Linux (and therefore non-Raspberry Pi) machine, you'll get warnings from `node-gyp` that the compilation of the addon module is being skipped. This is to be expected. The warnings will disappear when the package is installed on an actual Raspberry Pi.
+> **Note** If you're installing the package on a machine that isn't a Raspberry Pi, you'll get warnings from `node-gyp` that the compilation of the addon module is being skipped. This is to be expected. The warnings will disappear when the package is installed on an actual Raspberry Pi.
 
 Usage:
 
