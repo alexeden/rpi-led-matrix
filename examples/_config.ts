@@ -13,10 +13,10 @@ export const matrixOptions: MatrixOptions = {
   cols: 64,
   chainLength: 2,
   hardwareMapping: GpioMapping.Regular,
-  parallel: 3,
-  pixelMapperConfig: LedMatrixUtils.encodeMappers(
-    { type: PixelMapperType.Chainlink }
-  ),
+  parallel: 1,
+  // pixelMapperConfig: LedMatrixUtils.encodeMappers(
+  //   { type: PixelMapperType.Chainlink }
+  // ),
   // pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
 };
 

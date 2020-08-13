@@ -17,6 +17,7 @@
     "skipLibCheck": true,
     "sourceMap": false,
     "strictNullChecks": true,
+    "strict": true,
     "suppressImplicitAnyIndexErrors": false,
     "strictPropertyInitialization": true,
     "types": [

@@ -1,6 +1,6 @@
-import globby from 'globby';
+import globby = require('globby');
 import { basename } from 'path';
-import ora from 'ora';
+import ora = require('ora');
 import * as prompts from 'prompts';
 import {
   Font,
