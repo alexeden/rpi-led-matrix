@@ -7,7 +7,7 @@
   "author": "Alex Eden",
   "license": "MITNFA",
   "engines": {
-    "node": ">=8.0.0"
+    "node": ">=10.0.0"
   },
   "bugs": {
     "url": "https://github.com/alexeden/rpi-led-matrix/issues"
