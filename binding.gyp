@@ -9,7 +9,6 @@
         [ 'OS=="linux"', {
           'sources': [
             "src/led-matrix.addon.cc",
-            "src/font.addon.cc",
           ],
           'include_dirs': [
             "./vendor/include",

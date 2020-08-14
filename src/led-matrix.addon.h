@@ -25,10 +25,8 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::Value draw_circle(const Napi::CallbackInfo& info);
 	Napi::Value draw_line(const Napi::CallbackInfo& info);
 	Napi::Value draw_rect(const Napi::CallbackInfo& info);
-	Napi::Value draw_text(const Napi::CallbackInfo& info);
 	Napi::Value fg_color(const Napi::CallbackInfo& info);
 	Napi::Value fill(const Napi::CallbackInfo& info);
-	Napi::Value font(const Napi::CallbackInfo& info);
     Napi::Value get_available_pixel_mappers(const Napi::CallbackInfo& info);
     Napi::Value map(const Napi::CallbackInfo& info);
 	Napi::Value height(const Napi::CallbackInfo& info);
@@ -54,13 +52,11 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::FunctionReference after_sync_cb_;
 	Color fg_color_;
 	Color bg_color_;
-	Font* font_;
-	std::string font_name_;
 	RGBMatrix* matrix_;
 	FrameCanvas* canvas_;
-	const long t_start_;
-	long t_sync_ms_;
-	long t_dsync_ms_;
+	const uint64_t t_start_;
+	uint64_t t_sync_ms_;
+	uint64_t t_dsync_ms_;
 };
 
 #endif
