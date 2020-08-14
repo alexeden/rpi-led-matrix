@@ -49,6 +49,8 @@ $ npm install --save rpi-led-matrix
 
 > **Note** If you're installing the package on a machine that isn't a Raspberry Pi, you'll get warnings from `node-gyp` that the compilation of the addon module is being skipped. This is to be expected. The warnings will disappear when the package is installed on an actual Raspberry Pi.
 
+> The package should compile on any machine, but the `LedMatrix` constructor will throw an error on non-Pis if called. If you need to, you can make instantiation conditional using the exported `isSupported` flag.
+
 Usage:
 
 ```ts
