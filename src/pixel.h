@@ -2,6 +2,7 @@
 #define MATRIXPIXEL_H
 
 #include <cstdlib>
+#include <stdint.h>
 
 typedef uint8_t byte;
 

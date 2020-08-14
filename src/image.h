@@ -3,6 +3,7 @@
 
 #include "pixel.h"
 #include <cstdlib>
+#include <stdint.h>
 
 class Image {
   public:
