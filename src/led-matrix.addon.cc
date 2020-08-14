@@ -19,7 +19,7 @@ Napi::FunctionReference LedMatrixAddon::constructor;
 Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 	Napi::Function func = DefineClass(
 	  env,
-	  "LedMatrix",
+	  "NativeLedMatrix",
 	  { StaticMethod("defaultMatrixOptions", &LedMatrixAddon::default_matrix_options),
 		StaticMethod("defaultRuntimeOptions", &LedMatrixAddon::default_runtime_options),
 		InstanceMethod("afterSync", &LedMatrixAddon::after_sync),
@@ -43,7 +43,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 
 	constructor = Napi::Persistent(func);
 	constructor.SuppressDestruct();
-	exports.Set("LedMatrix", func);
+	exports.Set("NativeLedMatrix", func);
 
 	return exports;
 }

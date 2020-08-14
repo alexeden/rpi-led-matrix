@@ -300,7 +300,7 @@ export interface LedMatrixInstance {
   width(): number;
 }
 
-export interface LedMatrix {
+export interface NativeLedMatrix {
   defaultMatrixOptions(): MatrixOptions;
   defaultRuntimeOptions(): RuntimeOptions;
   new(
@@ -311,5 +311,5 @@ export interface LedMatrix {
 
 export interface LedMatrixAddon {
   isSupported: boolean;
-  LedMatrix: LedMatrix;
+  NativeLedMatrix: NativeLedMatrix;
 }

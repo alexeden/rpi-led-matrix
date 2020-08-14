@@ -1,14 +1,9 @@
 import {
-  GpioMapping,
-  LedMatrix,
-  LedMatrixUtils,
-  MatrixOptions,
-  PixelMapperType,
-  RuntimeOptions,
+  defaultMatrixOptions, defaultRuntimeOptions, GpioMapping, MatrixOptions, RuntimeOptions,
 } from '../src';
 
 export const matrixOptions: MatrixOptions = {
-  ...LedMatrix.defaultMatrixOptions(),
+  ...defaultMatrixOptions(),
   rows: 32,
   cols: 64,
   chainLength: 2,
@@ -21,6 +16,6 @@ export const matrixOptions: MatrixOptions = {
 };
 
 export const runtimeOptions: RuntimeOptions = {
-  ...LedMatrix.defaultRuntimeOptions(),
+  ...defaultRuntimeOptions(),
   gpioSlowdown: 4,
 };

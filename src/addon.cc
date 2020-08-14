@@ -29,7 +29,7 @@ Napi::Value Throw(const Napi::CallbackInfo& info) {
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set("isSupported", Napi::Boolean::New(env, false));
-	exports.Set("LedMatrix", Napi::Function::New(env, Throw));
+	exports.Set("NativeLedMatrix", Napi::Function::New(env, Throw));
 	exports.Set("Font", Napi::Function::New(env, Throw));
 	return exports;
 }

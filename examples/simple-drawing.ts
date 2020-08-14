@@ -1,17 +1,17 @@
-import { LedMatrix } from '../src';
+import { NativeLedMatrix } from '../src';
 import { matrixOptions, runtimeOptions } from './_config';
 
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
 (async () => {
   try {
-    const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+    const matrix = new NativeLedMatrix(matrixOptions, runtimeOptions);
 
 
     matrix
       .clear()            // clear the display
       .brightness(100)    // set the panel brightness to 100%
-      .fgColor(0x0000FF)  // set the active color to blue
+      .fgColor(0x000000)  // set the active color to blue
       .fill()             // color the entire diplay blue
       .fgColor(0xFFFF00)  // set the active color to yellow
       // draw a yellow circle around the display
