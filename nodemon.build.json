@@ -1,6 +1,6 @@
 {
   "ext": "ts,json,cc,h,gyp",
-  "exec": "npm run quick-build && npm run example -- examples/canvas.ts",
+  "exec": "npm run quick-build && npm run example -- examples/simple-drawing.ts",
   "restartable": true,
   "events": {},
   "watch": [

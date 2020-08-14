@@ -278,8 +278,8 @@ export interface LedMatrixInstance {
   fill(): this;
   fill(x0: number, y0: number, x1: number, y1: number): this;
 
-  font(font: FontInstance): this;
-  font(): string;
+  // font(font: FontInstance): this;
+  // font(): string;
 
   getAvailablePixelMappers(): string[];
 
@@ -309,39 +309,7 @@ export interface LedMatrix {
   ): LedMatrixInstance;
 }
 
-export interface FontInstance {
-  /**
-   * Return the number of pixels from the font's top to its baseline.
-   */
-  baseline(): number;
-  /**
-   * Return the number of pixels from the font's top to its bottom.
-   */
-  height(): number;
-  /**
-   * Return the name of the font.
-   */
-  name(): string;
-  /**
-   * Return the path of the font source.
-   */
-  path(): string;
-  /**
-   * Return the number of pixels spanned by a string rendered with this font.
-   */
-  stringWidth(str: string, kerning?: number): number;
-}
-
-export interface Font {
-  // tslint:disable-next-line:callable-types
-  new (
-    name: string,
-    path: string
-  ): FontInstance;
-}
-
 export interface LedMatrixAddon {
   isSupported: boolean;
-  Font: Font;
   LedMatrix: LedMatrix;
 }

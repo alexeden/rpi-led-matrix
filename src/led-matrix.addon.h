@@ -1,7 +1,6 @@
 #ifndef NODELEDMATRIX_H
 #define NODELEDMATRIX_H
 
-#include "font.addon.h"
 #include "image.h"
 #include <assert.h>
 #include <graphics.h>

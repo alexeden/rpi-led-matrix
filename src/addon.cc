@@ -1,5 +1,4 @@
 #if __linux__
-	#include "font.addon.h"
 	#include "led-matrix.addon.h"
 	#include "chain-link-pixel-mapper.cc"
 	#include <napi.h>
@@ -9,7 +8,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 	rgb_matrix::RegisterPixelMapper(new ChainLinkPixelMapper());
 
 	LedMatrixAddon::Init(env, exports);
-	FontAddon::Init(env, exports);
 	return exports;
 }
 
@@ -18,9 +16,9 @@ NODE_API_MODULE(rpi_led_matrix, Init)
 	#pragma GCC diagnostic ignored "-Wunused-private-field"
 	#pragma GCC diagnostic ignored "-Wunused-variable"
 	#ifdef __GNUC__
-		#warning "Local machine is not a Raspberry Pi; skipping compilation of full addon module."
+		#warning "Local machine is not a Raspberry Pi; skipping compilation of native module."
 	#else
-		#pragma message("Local machine is not a Raspberry Pi; skipping compilation of full addon module.")
+		#pragma message("Local machine is not a Raspberry Pi; skipping compilation of native module.")
 	#endif
 
 #include <napi.h>
