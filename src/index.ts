@@ -1,8 +1,9 @@
 export {
-  NativeLedMatrix,
   defaultMatrixOptions,
   defaultRuntimeOptions,
   isSupported,
+  LedMatrix,
+  NativeLedMatrix,
 } from './led-matrix';
 export * from './types';
 export * from './utils';

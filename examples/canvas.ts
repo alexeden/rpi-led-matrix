@@ -26,30 +26,51 @@
  * *narrator: he would... many times*
  */
 import { createCanvas, registerFont } from 'canvas';
-import { LedMatrix } from '../src';
+import { NativeLedMatrix, LedMatrix } from '../src';
 import { matrixOptions, runtimeOptions } from './_config';
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
 (async () => {
   try {
-    const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+    const matrix = LedMatrix.fromOptions(matrixOptions, runtimeOptions);
     registerFont('./fonts/ShareTechMono-Regular.ttf', {
       family: 'ShareTechMono',
     });
     registerFont('./fonts/ShareTech-Regular.ttf', {
       family: 'ShareTech',
     });
-    const canvas = createCanvas(matrix.width(), matrix.height());
-    const ctx = canvas.getContext('2d');
-    matrix.clear().brightness(100);
-    ctx.font = '11px ShareTech';
-    ctx.fillStyle = '#ffF0F0';
-    ctx.fillText('YAAAS KWEEN 😎', 5, matrix.height() - 10);
+    const ctx = matrix.getContext('2d');
+    ctx.font = '15px ShareTech';
+    ctx.fillStyle = '#ff008F';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
 
-    const buffer = canvas.toBuffer('raw').filter((_, i) => (i + 1) % 4 !== 0);
-    matrix.drawBuffer(buffer).sync();
-    console.log(Math.max(...buffer));
-    await wait(9999999);
+    let lastAngle = 0;
+
+    const draw = async () => {
+      ctx.clearRect(0, 0, matrix.matrix.width(), matrix.matrix.height());
+      ctx.save();
+      ctx.translate(matrix.matrix.width() / 2, matrix.matrix.height() / 2);
+      const nextAngle = lastAngle + 10 * Math.PI / 180;
+      ctx.rotate(nextAngle);
+      lastAngle = nextAngle >= 2 * Math.PI ? 0 : nextAngle;
+      ctx.translate(-matrix.matrix.width() / 2, -matrix.matrix.height() / 2);
+      ctx.fillText('YAAAS!!!!', matrix.matrix.width() / 2, matrix.matrix.height() / 2);
+      ctx.restore();
+      ctx.font = `${Math.round(8 * lastAngle)}px ShareTech`;
+      const buffer = matrix.toBuffer('raw').filter((_, i) => (i + 1) % 4 !== 0);
+
+      matrix.matrix.drawBuffer(buffer).sync();
+      await wait(20);
+      draw();
+    };
+
+    draw();
+
+    // const buffer = matrix.toBuffer('raw').filter((_, i) => (i + 1) % 4 !== 0);
+    // matrix.matrix.drawBuffer(buffer).sync();
+
+    // await wait(9999999);
 
   }
   catch (error) {
