@@ -1,5 +1,8 @@
+.vscode
 build
 dist
 docs
+fonts
 node_modules
 vendor
+.clang-format
