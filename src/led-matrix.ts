@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { addon, } from './addon';
-import { Canvas, } from 'canvas';
+import { createCanvas, } from 'canvas';
 import { MatrixOptions, RuntimeOptions, } from './types';
 
 const {
@@ -12,7 +12,7 @@ export const matrixFromOptions = (
   runtimeOpts: RuntimeOptions
 ) => {
   const nativeMatrix = new NativeLedMatrix(matrixOpts, runtimeOpts);
-  const canvas = new Canvas(nativeMatrix.width(), nativeMatrix.height());
+  const canvas = createCanvas(nativeMatrix.width(), nativeMatrix.height());
   const ctx = canvas.getContext('2d', {
     alpha: false,
     pixelFormat: 'RGB24',
