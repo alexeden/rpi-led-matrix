@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Canvas, } from 'canvas';
+
 import { LedMatrixAddon, LedMatrixInstance, MatrixOptions, RuntimeOptions, } from './types';
 
 export const {
@@ -22,13 +23,17 @@ export class LedMatrix extends Canvas {
     );
   }
 
+  readonly center: [number, number];
 
   private constructor(
     readonly matrix: LedMatrixInstance
   ) {
     super(matrix.width(), matrix.height());
-    // const canvas = createCanvas(matrix.width(), matrix.height());
-    // super(canvas)
+    this.center = [ matrix.width() / 2, matrix.height() / 2, ];
   }
 
+  sync() {
+    const buffer = this.toBuffer('raw').filter((_, i) => (i + 1) % 4 !== 0);
+    this.matrix.drawBuffer(buffer).sync();
+  }
 }
