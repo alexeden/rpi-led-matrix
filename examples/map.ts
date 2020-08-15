@@ -1,4 +1,4 @@
-import { NativeLedMatrix, } from '../src';
+import { NativeLedMatrix, matrixFromOptions, } from '../src';
 import { matrixOptions, runtimeOptions, } from './_config';
 
 const nextColor = (f: number, t: number): number => {
@@ -9,11 +9,11 @@ const nextColor = (f: number, t: number): number => {
 
 (() => {
   try {
-    const matrix = new NativeLedMatrix(matrixOptions, runtimeOptions);
-    const freqs = [ ...Array(matrix.width() * matrix.height()).keys(), ].map(i => i / 30);
+    const matrix = matrixFromOptions(matrixOptions, runtimeOptions);
+    const freqs = [ ...Array(matrix.width * matrix.height).keys(), ].map(i => i / 30);
 
-    matrix.afterSync((mat, dt, t) =>
-      matrix.map(([ x, y, i, ]) => nextColor(freqs[i], t))
+    matrix.native.afterSync((mat, dt, t) =>
+      matrix.native.map(([ x, y, i, ]) => nextColor(freqs[i], t))
     );
 
     matrix.sync();

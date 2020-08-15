@@ -39,13 +39,13 @@ const millis = () => Number(process.hrtime.bigint() / 1000000n);
 
 (() => {
   try {
-    const matrix = matrixFromOptions(matrixOptions, runtimeOptions);
     registerFont('./fonts/ShareTechMono-Regular.ttf', {
       family: 'ShareTechMono',
     });
     registerFont('./fonts/ShareTech-Regular.ttf', {
       family: 'ShareTech',
     });
+    const matrix = matrixFromOptions(matrixOptions, runtimeOptions);
     matrix.textAlign = 'center';
     matrix.textBaseline = 'middle';
 
