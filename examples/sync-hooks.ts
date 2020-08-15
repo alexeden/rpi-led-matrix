@@ -1,5 +1,5 @@
-import { LedMatrix } from '../src';
-import { matrixOptions, runtimeOptions } from './_config';
+import { NativeLedMatrix, } from '../src';
+import { matrixOptions, runtimeOptions, } from './_config';
 
 class Pulser {
   constructor(
@@ -16,9 +16,9 @@ class Pulser {
   }
 }
 
-(async () => {
+(() => {
   try {
-    const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+    const matrix = new NativeLedMatrix(matrixOptions, runtimeOptions);
 
     const pulsers: Pulser[] = [];
 

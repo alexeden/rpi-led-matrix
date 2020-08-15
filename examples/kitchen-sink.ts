@@ -1,6 +1,6 @@
 import * as color from 'color';
-import { LedMatrix, LedMatrixInstance } from '../src';
-import { matrixOptions, runtimeOptions } from './_config';
+import { NativeLedMatrix, LedMatrixInstance, } from '../src';
+import { matrixOptions, runtimeOptions, } from './_config';
 
 enum Colors {
   black = 0x000000,
@@ -13,7 +13,7 @@ enum Colors {
 }
 
 const rainbow64 = Array.from(Array(64))
-  .map((_, i, { length }) => Math.floor(360 * i / length))
+  .map((_, i, { length, }) => Math.floor(360 * i / length))
   .map(hue => color.hsl(hue, 100, 50).rgbNumber());
 
 const rainbow = (i: number) => rainbow64[Math.min(rainbow64.length - 1, Math.max(i % 64, 0))];
@@ -36,7 +36,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
 
 (async () => {
   try {
-    const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+    const matrix = new NativeLedMatrix(matrixOptions, runtimeOptions);
 
     // RGB fills
     const interval = 200;
@@ -93,7 +93,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     // Draw rectangle
     {
       const rectHeight = Math.floor(matrix.height() / 10);
-      const rgb = [Colors.red, Colors.green, Colors.blue];
+      const rgb = [ Colors.red, Colors.green, Colors.blue, ];
       matrix.clear().sync();
       for (let i = 0; i < 10; i++) {
         matrix.fgColor(rgb[i % 3]).drawRect(0, i * rectHeight, matrix.width() - 1, rectHeight).sync();

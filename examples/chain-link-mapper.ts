@@ -1,11 +1,11 @@
-import { LedMatrix } from '../src';
-import { matrixOptions, runtimeOptions } from './_config';
+import { LedMatrix, NativeLedMatrix, } from '../src';
+import { matrixOptions, runtimeOptions, } from './_config';
 
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
 (async () => {
   try {
-    const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+    const matrix = new NativeLedMatrix(matrixOptions, runtimeOptions);
 
     console.log('available pixel mappers: ', matrix.getAvailablePixelMappers());
     console.log(`current mapper config: ${matrixOptions.pixelMapperConfig}`);

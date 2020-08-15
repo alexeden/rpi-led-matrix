@@ -1,4 +1,4 @@
-import { PixelMapper, PixelMapperType } from './types';
+import { PixelMapper, PixelMapperType, } from './types';
 
 export class LedMatrixUtils {
   static encodeMappers(...mappers: PixelMapper[]): string {
@@ -6,7 +6,7 @@ export class LedMatrixUtils {
       .map(mapper => {
         switch (mapper.type) {
           case PixelMapperType.Chainlink: return PixelMapperType.Chainlink;
-          case PixelMapperType.Rotate: return [PixelMapperType.Rotate, mapper.angle].join(':');
+          case PixelMapperType.Rotate: return [ PixelMapperType.Rotate, mapper.angle, ].join(':');
           case PixelMapperType.U: return PixelMapperType.U;
           case PixelMapperType.V: return PixelMapperType.V;
           case PixelMapperType.VZ: return PixelMapperType.VZ;

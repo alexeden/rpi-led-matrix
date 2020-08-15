@@ -1,13 +1,13 @@
-import { LedMatrix } from '../src';
-import { matrixOptions, runtimeOptions } from './_config';
+import { NativeLedMatrix, } from '../src';
+import { matrixOptions, runtimeOptions, } from './_config';
 
-(async () => {
+(() => {
   try {
-    const matrix = new LedMatrix(matrixOptions, runtimeOptions);
+    const matrix = new NativeLedMatrix(matrixOptions, runtimeOptions);
 
     matrix.clear().brightness(100);
 
-    const baseBuffer = [...Array(matrix.width() * matrix.height() * 3).keys()];
+    const baseBuffer = [ ...Array(matrix.width() * matrix.height() * 3).keys(), ];
     const buffer1 = Buffer.of(...baseBuffer.map(() => Math.random() < 0.1 ? 0xFF : 0x00));
     const buffer2 = Buffer.of(...baseBuffer.map(() => Math.random() < 0.1 ? 0xFF : 0x00));
 

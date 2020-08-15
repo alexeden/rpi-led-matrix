@@ -1,10 +1,11 @@
-import { Canvas } from 'canvas';
-import { LedMatrixAddon, LedMatrixInstance, MatrixOptions, RuntimeOptions } from './types';
+/* eslint-disable @typescript-eslint/unbound-method */
+import { Canvas, } from 'canvas';
+import { LedMatrixAddon, LedMatrixInstance, MatrixOptions, RuntimeOptions, } from './types';
 
 export const {
   isSupported,
   NativeLedMatrix,
-}: LedMatrixAddon = require('bindings')('rpi-led-matrix');
+}: LedMatrixAddon = require('bindings')('rpi-led-matrix'); // eslint-disable-line
 
 export const {
   defaultMatrixOptions,

@@ -25,12 +25,12 @@
  *
  * *narrator: he would... many times*
  */
-import { createCanvas, registerFont } from 'canvas';
-import { NativeLedMatrix, LedMatrix } from '../src';
-import { matrixOptions, runtimeOptions } from './_config';
+import { registerFont, } from 'canvas';
+import { LedMatrix, } from '../src';
+import { matrixOptions, runtimeOptions, } from './_config';
 const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
-(async () => {
+(() => {
   try {
     const matrix = LedMatrix.fromOptions(matrixOptions, runtimeOptions);
     registerFont('./fonts/ShareTechMono-Regular.ttf', {
@@ -47,22 +47,21 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
     let lastAngle = 0;
 
-    const draw = async () => {
+    const draw = () => {
       ctx.clearRect(0, 0, matrix.matrix.width(), matrix.matrix.height());
       ctx.save();
       ctx.translate(matrix.matrix.width() / 2, matrix.matrix.height() / 2);
       const nextAngle = lastAngle + 10 * Math.PI / 180;
       ctx.rotate(nextAngle);
-      lastAngle = nextAngle >= 2 * Math.PI ? 0 : nextAngle;
+      lastAngle = nextAngle >= 10 * Math.PI ? 0 : nextAngle;
       ctx.translate(-matrix.matrix.width() / 2, -matrix.matrix.height() / 2);
       ctx.fillText('YAAAS!!!!', matrix.matrix.width() / 2, matrix.matrix.height() / 2);
       ctx.restore();
-      ctx.font = `${Math.round(8 * lastAngle)}px ShareTech`;
+      ctx.font = `${Math.round(2 * lastAngle + 1)}px ShareTech`;
       const buffer = matrix.toBuffer('raw').filter((_, i) => (i + 1) % 4 !== 0);
 
       matrix.matrix.drawBuffer(buffer).sync();
-      await wait(20);
-      draw();
+      wait(20).then(draw);
     };
 
     draw();
