@@ -7,7 +7,7 @@
 /**
  * Create a JS object from the default matrix options.
  */
-Napi::Value default_matrix_options(const Napi::CallbackInfo& info) {
+inline Napi::Value default_matrix_options(const Napi::CallbackInfo& info) {
 	auto env		   = info.Env();
 	const auto options = rgb_matrix::RGBMatrix::Options();
 	auto obj		   = Napi::Object::New(env);

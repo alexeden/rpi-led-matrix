@@ -7,7 +7,7 @@
 /**
  * Create a JS object from the default runtime options.
  */
-static Napi::Value default_runtime_options(const Napi::CallbackInfo& info) {
+inline Napi::Value default_runtime_options(const Napi::CallbackInfo& info) {
 	auto env	 = info.Env();
 	auto options = rgb_matrix::RuntimeOptions();
 
