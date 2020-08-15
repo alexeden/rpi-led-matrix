@@ -26,7 +26,7 @@
  * *narrator: he would... many times*
  */
 import * as color from 'color';
-import { LedMatrix, registerFont, } from '../src';
+import { matrixFromOptions, registerFont, } from '../src';
 import { matrixOptions, runtimeOptions, } from './_config';
 
 const rainbow64 = Array.from(Array(64))
@@ -39,27 +39,26 @@ const millis = () => Number(process.hrtime.bigint() / 1000000n);
 
 (() => {
   try {
-    const matrix = LedMatrix.fromOptions(matrixOptions, runtimeOptions);
+    const matrix = matrixFromOptions(matrixOptions, runtimeOptions);
     registerFont('./fonts/ShareTechMono-Regular.ttf', {
       family: 'ShareTechMono',
     });
     registerFont('./fonts/ShareTech-Regular.ttf', {
       family: 'ShareTech',
     });
-    const ctx = matrix.getContext('2d');
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    matrix.textAlign = 'center';
+    matrix.textBaseline = 'middle';
 
     const draw = (t: number) => {
-      ctx.clearRect(-10*matrix.width, -10*matrix.height, 20*matrix.width, 20*matrix.height);
-      ctx.translate(...matrix.center);
-      ctx.rotate(Math.PI / 90);
-      // ctx.clearRect(0, 0, matrix.width, matrix.height);
-      ctx.translate(-matrix.width / 2, -matrix.height / 2);
-      // ctx.clearRect(0, 0, matrix.width, matrix.height);
-      ctx.fillStyle = rainbow64[Math.floor(32 * (Math.sin(t / 500) + 1))];
-      ctx.font = `${30 * (Math.sin(t / 100) + 1) + 10}px ShareTech`;
-      ctx.fillText('YAAAS!!!!', ...matrix.center);
+      matrix.clearRect(-10*matrix.width, -10*matrix.height, 20*matrix.width, 20*matrix.height);
+      matrix.translate(...matrix.center);
+      matrix.rotate(Math.PI / 90);
+      // matrix.clearRect(0, 0, matrix.width, matrix.height);
+      matrix.translate(-matrix.width / 2, -matrix.height / 2);
+      // matrix.clearRect(0, 0, matrix.width, matrix.height);
+      matrix.fillStyle = rainbow64[Math.floor(32 * (Math.sin(t / 500) + 1))];
+      matrix.font = `${30 * (Math.sin(t / 100) + 1) + 10}px ShareTech`;
+      matrix.fillText('YAAAS!!!!', ...matrix.center);
       matrix.sync();
       wait(20).then(() => draw(millis()));
     };

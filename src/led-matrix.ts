@@ -1,39 +1,33 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { addon, } from './addon';
 import { Canvas, } from 'canvas';
+import { MatrixOptions, RuntimeOptions, } from './types';
 
-import { LedMatrixAddon, LedMatrixInstance, MatrixOptions, RuntimeOptions, } from './types';
-
-export const {
-  isSupported,
+const {
   NativeLedMatrix,
-}: LedMatrixAddon = require('bindings')('rpi-led-matrix'); // eslint-disable-line
+} = addon;
 
-export const {
-  defaultMatrixOptions,
-  defaultRuntimeOptions,
-} = NativeLedMatrix;
+export const matrixFromOptions = (
+  matrixOpts: MatrixOptions,
+  runtimeOpts: RuntimeOptions
+) => {
+  const nativeMatrix = new NativeLedMatrix(matrixOpts, runtimeOpts);
+  const canvas = new Canvas(nativeMatrix.width(), nativeMatrix.height());
+  const ctx = canvas.getContext('2d', {
+    alpha: false,
+    pixelFormat: 'RGB24',
+  });
 
-export class LedMatrix extends Canvas {
-  static fromOptions(
-    matrixOpts: MatrixOptions,
-    runtimeOpts: RuntimeOptions
-  ) {
-    return new LedMatrix(
-      new NativeLedMatrix(matrixOpts, runtimeOpts)
-    );
-  }
+  return Object.assign(ctx, {
+    center: [ canvas.width / 2, canvas.height / 2, ] as const,
+    height: canvas.height,
+    width: canvas.width,
 
-  readonly center: [number, number];
+    native: nativeMatrix,
 
-  private constructor(
-    readonly matrix: LedMatrixInstance
-  ) {
-    super(matrix.width(), matrix.height());
-    this.center = [ matrix.width() / 2, matrix.height() / 2, ];
-  }
-
-  sync() {
-    const buffer = this.toBuffer('raw').filter((_, i) => (i + 1) % 4 !== 0);
-    this.matrix.drawBuffer(buffer).sync();
-  }
-}
+    sync() {
+      const buffer = canvas.toBuffer('raw').filter((_, i) => (i + 1) % 4 !== 0);
+      nativeMatrix.drawBuffer(buffer).sync();
+    },
+  });
+};
