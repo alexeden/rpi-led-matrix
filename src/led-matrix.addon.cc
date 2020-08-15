@@ -18,9 +18,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 	Napi::Function func = DefineClass(
 	  env,
 	  "NativeLedMatrix",
-	  { StaticMethod("defaultMatrixOptions", &LedMatrixAddon::default_matrix_options),
-		StaticMethod("defaultRuntimeOptions", &LedMatrixAddon::default_runtime_options),
-		InstanceMethod("afterSync", &LedMatrixAddon::after_sync),
+	  { InstanceMethod("afterSync", &LedMatrixAddon::after_sync),
 		InstanceMethod("bgColor", &LedMatrixAddon::bg_color),
 		InstanceMethod("brightness", &LedMatrixAddon::brightness),
 		InstanceMethod("clear", &LedMatrixAddon::clear),
@@ -65,8 +63,8 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
 	if (!info[1].IsObject()) {
 		throw Napi::Error::New(env, "Constructor expects its first parameter to be an object of runtime options!");
 	}
-	auto matrixOpts	 = create_matrix_options(env, info[0].As<Napi::Object>());
-	auto runtimeOpts = create_runtime_options(env, info[1].As<Napi::Object>());
+	auto matrixOpts	 = matrix_options_from_js_object(env, info[0].As<Napi::Object>());
+	auto runtimeOpts = runtime_options_from_js_object(env, info[1].As<Napi::Object>());
 
 	this->matrix_ = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
 	this->canvas_ = this->matrix_->CreateFrameCanvas();
