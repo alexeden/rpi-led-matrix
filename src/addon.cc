@@ -1,10 +1,12 @@
 #if __linux__
 	#include "led-matrix.addon.h"
 	#include "chain-link-pixel-mapper.cc"
+	#include "default-runtime-options.h"
 	#include <napi.h>
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
     exports.Set("isSupported", Napi::Boolean::New(env, true));
+    exports.Set("defaultRuntimeOptions", Napi::Function::New(env, &default_runtime_options));
 	rgb_matrix::RegisterPixelMapper(new ChainLinkPixelMapper());
 
 	LedMatrixAddon::Init(env, exports);
