@@ -1,6 +1,7 @@
 #ifndef NODELEDMATRIX_H
 #define NODELEDMATRIX_H
 
+#include "color.h"
 #include "image.h"
 #include "matrix-options.h"
 #include "runtime-options.h"
@@ -40,8 +41,6 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::Value sync(const Napi::CallbackInfo& info);
 
   private:
-	static Color color_from_callback_info(const Napi::CallbackInfo& info);
-	static Napi::Object obj_from_color(const Napi::Env& env, const Color&);
 	static Napi::FunctionReference constructor;
 
 	Napi::FunctionReference after_sync_cb_;

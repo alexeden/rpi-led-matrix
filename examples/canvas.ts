@@ -1,5 +1,5 @@
 /**
- * So far, install failing on PI, trying this, [suggested here](https://www.thetopsites.net/article/52748123.shtml):
+ * So far, install of canvas failing on PI, trying this, [suggested here](https://www.thetopsites.net/article/52748123.shtml):
  *
  * ```
  * sudo apt-get install libcairo2-dev libjpeg-dev libgif-dev

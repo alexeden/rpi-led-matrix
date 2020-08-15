@@ -252,10 +252,10 @@ export interface Color {
   b: number;
 }
 
-type SyncHook = (this: LedMatrixInstance, matrix: LedMatrixInstance, dt: number, t: number) => any;
+type SyncHook = (this: NativeLedMatrixInstance, matrix: NativeLedMatrixInstance, dt: number, t: number) => any;
 
-export interface LedMatrixInstance {
-  afterSync(hook: SyncHook): LedMatrixInstance;
+export interface NativeLedMatrixInstance {
+  afterSync(hook: SyncHook): NativeLedMatrixInstance;
 
   bgColor(color: Color | number): this;
   bgColor(): Color;
@@ -278,9 +278,6 @@ export interface LedMatrixInstance {
   fill(): this;
   fill(x0: number, y0: number, x1: number, y1: number): this;
 
-  // font(font: FontInstance): this;
-  // font(): string;
-
   getAvailablePixelMappers(): string[];
 
   height(): number;
@@ -301,12 +298,10 @@ export interface LedMatrixInstance {
 }
 
 export interface NativeLedMatrix {
-  defaultMatrixOptions(): MatrixOptions;
-  defaultRuntimeOptions(): RuntimeOptions;
   new(
     matrixOpts: MatrixOptions,
     runtimeOpts: RuntimeOptions
-  ): LedMatrixInstance;
+  ): NativeLedMatrixInstance;
 }
 
 export interface LedMatrixAddon {

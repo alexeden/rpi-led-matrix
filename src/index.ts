@@ -12,11 +12,10 @@ export * from './types';
 export * from './utils';
 
 /**
- * Export the default option functions individually,
- * i.e. without the `NativeLedMatrix` wrapper.
+ * Export the default option functions from the native module.
  */
 import { addon, } from './addon';
 export const {
   defaultMatrixOptions,
   defaultRuntimeOptions,
-} = addon.NativeLedMatrix;
+} = addon;
