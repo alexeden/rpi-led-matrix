@@ -25,6 +25,15 @@ export const matrixFromOptions = (
 
     native: nativeMatrix,
 
+    createTemporaryContext(width = nativeMatrix.width(), height = nativeMatrix.height()) {
+      const canvas = createCanvas(width, height);
+
+      return canvas.getContext('2d', {
+        alpha: false,
+        pixelFormat: 'RGB24',
+      });
+    },
+
     sync() {
       const buffer = canvas.toBuffer('raw').filter((_, i) => (i + 1) % 4 !== 0);
       nativeMatrix.drawBuffer(buffer).sync();
