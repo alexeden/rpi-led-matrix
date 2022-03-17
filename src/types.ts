@@ -15,6 +15,14 @@ export enum MuxType {
   ZStripeUneven = 8,
   P10128x4Z = 9,
   QiangLiQ8 = 10,
+  InversedZStripe = 11,
+  P10Outdoor1R1G1BMultiplexMapper1 = 12,
+  P10Outdoor1R1G1BMultiplexMapper2 = 13,
+  P10Outdoor1R1G1BMultiplexMapper3 = 14,
+  P10CoremanMapper = 15,
+  P8Outdoor1R1G1BMultiplexMapper = 16,
+  FlippedStripeMultiplexMapper = 17,
+  P10Outdoor32x16HalfScanMapper = 18,
 }
 
 export enum PixelMapperType {
