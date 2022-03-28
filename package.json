@@ -10,7 +10,7 @@
     "node": ">=10.0.0"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "https://registry.npmjs.org/"
   },
   "bugs": {
     "url": "https://github.com/alexeden/rpi-led-matrix/issues"
