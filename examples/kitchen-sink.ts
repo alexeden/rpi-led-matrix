@@ -1,35 +1,49 @@
-import * as color from 'color';
-import { LedMatrix, LedMatrixInstance, Font, LayoutUtils, HorizontalAlignment, VerticalAlignment } from '../src';
-import { matrixOptions, runtimeOptions } from './_config';
+import * as color from "color";
+import {
+  LedMatrix,
+  LedMatrixInstance,
+  Font,
+  LayoutUtils,
+  HorizontalAlignment,
+  VerticalAlignment,
+} from "../src";
+import { matrixOptions, runtimeOptions } from "./_config";
 
 enum Colors {
   black = 0x000000,
-  red = 0xFF0000,
-  green = 0x00FF00,
-  blue = 0x0000FF,
-  magenta = 0xFF00FF,
-  cyan = 0x00FFFF,
-  yellow = 0xFFFF00,
+  red = 0xff0000,
+  green = 0x00ff00,
+  blue = 0x0000ff,
+  magenta = 0xff00ff,
+  cyan = 0x00ffff,
+  yellow = 0xffff00,
 }
 
 const rainbow64 = Array.from(Array(64))
-  .map((_, i, { length }) => Math.floor(360 * i / length))
-  .map(hue => color.hsl(hue, 100, 50).rgbNumber());
+  .map((_, i, { length }) => Math.floor((360 * i) / length))
+  .map((hue) => color.hsl(hue, 100, 50).rgbNumber());
 
-const rainbow = (i: number) => rainbow64[Math.min(rainbow64.length - 1, Math.max(i % 64, 0))];
+const rainbow = (i: number) =>
+  rainbow64[Math.min(rainbow64.length - 1, Math.max(i % 64, 0))];
 
-const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
+const wait = (t: number) => new Promise((ok) => setTimeout(ok, t));
 
 const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
   for (let i = 0; i <= matrix.height(); i++) {
     if (clear) matrix.clear();
-    matrix.fgColor(rainbow(i)).drawLine(0, i, matrix.width(), matrix.height() - i).sync();
+    matrix
+      .fgColor(rainbow(i))
+      .drawLine(0, i, matrix.width(), matrix.height() - i)
+      .sync();
     if (speed) await wait(speed);
   }
 
   for (let i = matrix.width(); i >= 0; i--) {
     if (clear) matrix.clear();
-    matrix.fgColor(rainbow(i)).drawLine(i, 0, matrix.width() - i, matrix.height()).sync();
+    matrix
+      .fgColor(rainbow(i))
+      .drawLine(i, 0, matrix.width() - i, matrix.height())
+      .sync();
     if (speed) await wait(speed);
   }
 };
@@ -51,23 +65,40 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
 
     {
       // Text positions
-      const font = new Font('helvR12', `${process.cwd()}/fonts/helvR12.bdf`);
+      const font = new Font("helvR12", `${process.cwd()}/fonts/helvR12.bdf`);
       matrix.font(font);
-      const lines = LayoutUtils.textToLines(font, matrix.width(), 'Hello, matrix!');
+      const lines = LayoutUtils.textToLines(
+        font,
+        matrix.width(),
+        "Hello, matrix!"
+      );
 
-      for (const alignmentH of [HorizontalAlignment.Left, HorizontalAlignment.Center, HorizontalAlignment.Right]) {
-        for (const alignmentV of [VerticalAlignment.Top, VerticalAlignment.Middle, VerticalAlignment.Bottom]) {
+      for (const alignmentH of [
+        HorizontalAlignment.Left,
+        HorizontalAlignment.Center,
+        HorizontalAlignment.Right,
+      ]) {
+        for (const alignmentV of [
+          VerticalAlignment.Top,
+          VerticalAlignment.Middle,
+          VerticalAlignment.Bottom,
+        ]) {
           matrix.fgColor(rainbow(Math.floor(64 * Math.random()))).clear();
-          LayoutUtils.linesToMappedGlyphs(lines, font.height(), matrix.width(), matrix.height(), alignmentH, alignmentV)
-            .map(glyph => {
-              matrix.drawText(glyph.char, glyph.x, glyph.y);
-            });
+          LayoutUtils.linesToMappedGlyphs(
+            lines,
+            font.height(),
+            matrix.width(),
+            matrix.height(),
+            alignmentH,
+            alignmentV
+          ).map((glyph) => {
+            matrix.drawText(glyph.char, glyph.x, glyph.y);
+          });
           matrix.sync();
           await wait(400);
         }
       }
     }
-
 
     // Clear section
     {
@@ -75,17 +106,28 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
       await wait(333);
       matrix
         .clear(0, 0, matrix.width() / 2, matrix.height() / 2)
-        .clear(matrix.width() / 2, matrix.height() / 2, matrix.width(), matrix.height())
+        .clear(
+          matrix.width() / 2,
+          matrix.height() / 2,
+          matrix.width(),
+          matrix.height()
+        )
         .sync();
       await wait(500);
     }
 
     // Fill section
     {
-      matrix.clear()
+      matrix
+        .clear()
         .fgColor(Colors.green)
         .fill(0, 0, matrix.width() / 2, matrix.height() / 2)
-        .fill(matrix.width() / 2, matrix.height() / 2, matrix.width(), matrix.height())
+        .fill(
+          matrix.width() / 2,
+          matrix.height() / 2,
+          matrix.width(),
+          matrix.height()
+        )
         .sync();
       await wait(500);
     }
@@ -96,7 +138,10 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
       const rgb = [Colors.red, Colors.green, Colors.blue];
       matrix.clear().sync();
       for (let i = 0; i < 10; i++) {
-        matrix.fgColor(rgb[i % 3]).drawRect(0, i * rectHeight, matrix.width() - 1, rectHeight).sync();
+        matrix
+          .fgColor(rgb[i % 3])
+          .drawRect(0, i * rectHeight, matrix.width() - 1, rectHeight)
+          .sync();
         await wait(200);
       }
     }
@@ -115,7 +160,8 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     // Draw line
     for (let i = 0; i < matrix.width(); i++) {
       const x = i;
-      matrix.clear()
+      matrix
+        .clear()
         .fgColor(rainbow(i))
         .drawLine(x, 0, x, matrix.height())
         .sync();
@@ -135,7 +181,8 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     const centerX = Math.floor(matrix.width() / 2);
     const centerY = Math.floor(matrix.height() / 2);
     for (let r = 0; r <= matrix.width() * 1.5; r++) {
-      matrix.clear()
+      matrix
+        .clear()
         .fgColor(Colors.red)
         .drawCircle(0, r, r)
         .fgColor(Colors.magenta)
@@ -151,7 +198,10 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     }
     matrix.clear();
     for (let r = matrix.width() - 15; r >= 0; r--) {
-      matrix.fgColor(rainbow64[r % 64]).drawCircle(centerX, centerY, r).sync();
+      matrix
+        .fgColor(rainbow(r % 64))
+        .drawCircle(centerX, centerY, r)
+        .sync();
       await wait(44);
     }
     await wait(1000);
@@ -169,9 +219,7 @@ const spin = async (matrix: LedMatrixInstance, speed = 50, clear = true) => {
     await spin(matrix, 0);
     await spin(matrix, 1, false);
     await wait(15000);
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
   }
-
 })();
