@@ -12,9 +12,9 @@ jobs:
 
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: alpine-latest
 
     steps:
     - uses: actions/checkout@v3
     - name: Build for Raspberry Pi 4
-      run: docker build . --file Dockerfile --tag raspberry-pi-4:$(date +%s)
+      run: docker build . --file Dockerfile --tag raspberry-pi-4:$(date +%s) --platform=linux/arm64/v8
