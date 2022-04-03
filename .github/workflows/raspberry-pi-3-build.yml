@@ -1,6 +1,6 @@
 # Installs and builds the package (including native modules)
-# Using the image: balenalib/raspberrypi4-64-alpine-node:16
-name: Docker Install & Build - Raspberry Pi 4
+# Using the image: balenalib/raspberrypi3-alpine-node:16
+name: Docker Install & Build - Raspberry Pi 3
 
 on:
   push:
@@ -15,8 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: 'recursive'
+          submodules: "recursive"
       - name: Install ARM64 binfmt
         run: docker run --privileged --rm tonistiigi/binfmt --install arm
-      - name: Build for Raspberry Pi 4
-        run: docker build --platform linux/arm/v7 --file Dockerfile --tag raspberry-pi-4:$(date +%s) .
+      - name: Build for Raspberry Pi 3
+        run: docker build --platform linux/arm/v7 --file Dockerfile --tag raspberry-pi-3:$(date +%s) .
