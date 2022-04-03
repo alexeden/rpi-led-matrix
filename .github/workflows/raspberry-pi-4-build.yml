@@ -17,4 +17,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build for Raspberry Pi 4
-      run: docker buildx build --file Dockerfile --tag raspberry-pi-4:$(date +%s) --platform=linux/arm64/v8 .
+      run: docker buildx build --platform=linux/amd64 --file Dockerfile --tag raspberry-pi-4:$(date +%s) .
