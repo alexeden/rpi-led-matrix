@@ -3,7 +3,7 @@ FROM balenalib/raspberrypi4-64-alpine-node:16
 # Turn on devices
 # ENV UDEV=1
 
-RUN mkdir /app
+# RUN mkdir /app
 WORKDIR /app
 
 # Install python and other native module dependencies
