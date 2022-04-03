@@ -15,6 +15,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install ARM64 binfmt
-        run: docker run --privileged --rm tonistiigi/binfmt --install arm64,amd64
+        run: docker run --privileged --rm tonistiigi/binfmt --install arm
       - name: Build for Raspberry Pi 4
         run: docker build --platform linux/arm/v7 --file Dockerfile --tag raspberry-pi-4:$(date +%s) .
