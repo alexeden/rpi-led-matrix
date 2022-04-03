@@ -1,4 +1,4 @@
-FROM balenalib/raspberrypi4-64-alpine-node:16
+FROM balenalib/raspberrypi3-alpine-node:16
 
 # Turn on devices
 ENV UDEV=1
