@@ -1,7 +1,8 @@
+![build](https://img.shields.io/github/workflow/status/alexeden/rpi-led-matrix/Docker%20Install%20&%20Build%20-%20Raspberry%20Pi%203?label=RPI3%20BUILD&style=for-the-badge)
 ![npm version](https://img.shields.io/npm/v/rpi-led-matrix/latest?style=for-the-badge)
-![npm version](https://img.shields.io/npm/types/rpi-led-matrix?style=for-the-badge)
-![npm version](https://img.shields.io/librariesio/release/npm/rpi-led-matrix?style=for-the-badge&logoColor=white)
-![npm version](https://img.shields.io/node/v/rpi-led-matrix?style=for-the-badge&logo=node.js&logoColor=white)
+![types](https://img.shields.io/npm/types/rpi-led-matrix?style=for-the-badge)
+![dependencies](https://img.shields.io/librariesio/release/npm/rpi-led-matrix?style=for-the-badge&logoColor=white)
+![node version](https://img.shields.io/node/v/rpi-led-matrix?style=for-the-badge&logo=node.js&logoColor=white)
 
 # Raspberry Pi LED Matrix
 
@@ -10,27 +11,26 @@ Control an RGB LED matrix connected to a Raspberry Pi using using Node.js. This 
 - [Features](#features)
 - [Installation and Usage](#installation-and-usage)
 - [Getting Started](#getting-started)
-  * [The bare minimum](#the-bare-minimum)
+  - [The bare minimum](#the-bare-minimum)
 - [Configuration Options](#configuration)
-  * [Matrix options](#matrix-options)
-  * [Runtime options](#runtime-options)
+  - [Matrix options](#matrix-options)
+  - [Runtime options](#runtime-options)
 - [Drawing](#drawing)
-  * [Usage Patterns](#usage-patterns)
-  * [Sync Hook](#sync-hook)
+  - [Usage Patterns](#usage-patterns)
+  - [Sync Hook](#sync-hook)
 - [Running /examples](#running--examples)
-    + [Using your own config](#using-your-own-config)
+  - [Using your own config](#using-your-own-config)
 - [API](#api)
-    + [Configuration option enums](#configuration-option-enums)
-    + [Configuration interfaces](#configuration-interfaces)
-      - [`LedMatrixUtils`](#-ledmatrixutils-)
-      - [`Font` and `LedMatrix`](#-font--and--ledmatrix-)
-      - [`LayoutUtils`](#-layoututils-)
+  - [Configuration option enums](#configuration-option-enums)
+  - [Configuration interfaces](#configuration-interfaces)
+    - [`LedMatrixUtils`](#-ledmatrixutils-)
+    - [`Font` and `LedMatrix`](#-font--and--ledmatrix-)
+    - [`LayoutUtils`](#-layoututils-)
 - [Developing Locally](#developing-locally)
 
 Click the image below (links to a video) to see what this library can empower you to easily create:
 
-[![full demo](./docs/demo-thumbnail.png)*This sequence is available in `examples/kitchen-sink.ts`*](https://apemedia.s3.us-east-2.amazonaws.com/matrix+3-28-19.mp4)
-
+[![full demo](./docs/demo-thumbnail.png)_This sequence is available in `examples/kitchen-sink.ts`_](https://apemedia.s3.us-east-2.amazonaws.com/matrix+3-28-19.mp4)
 
 ## Features
 
@@ -53,10 +53,10 @@ Usage:
 
 ```ts
 // In a .ts file
-import * as matrix from 'rpi-led-matrix';
+import * as matrix from "rpi-led-matrix";
 
 // Or, in a .js file
-const matrix = require('rpi-led-matrix');
+const matrix = require("rpi-led-matrix");
 ```
 
 # Getting Started
@@ -69,7 +69,7 @@ Creating a matrix means creating an instance of the class `LedMatrix`, whose con
 
 ```ts
 interface LedMatrix {
-  new(mOpts: MatrixOptions, rOpts: RuntimeOptions): LedMatrixInstance;
+  new (mOpts: MatrixOptions, rOpts: RuntimeOptions): LedMatrixInstance;
 
   defaultMatrixOptions(): MatrixOptions;
   defaultRuntimeOptions(): RuntimeOptions;
@@ -83,7 +83,7 @@ Both `MatrixOptions` and `RuntimeOptions` are of a non-trivial size in terms of 
 With the use of those helper methods, this is all it takes to create a matrix (of types `LedMatrixInstance`) that's ready to glow:
 
 ```ts
-import { LedMatrix } from 'rpi-led-matrix';
+import { LedMatrix } from "rpi-led-matrix";
 
 const matrix = new LedMatrix(
   LedMatrix.defaultMatrixOptions(),
@@ -93,16 +93,19 @@ const matrix = new LedMatrix(
 
 # Configuration
 
-![extending defaults](./docs/text-layout-center-middle.jpg)*There's an extensive CLI you can use for testing text rendering/alignment/manipulation in `examples/text-layout-cli.ts`*
-
-
+![extending defaults](./docs/text-layout-center-middle.jpg)_There's an extensive CLI you can use for testing text rendering/alignment/manipulation in `examples/text-layout-cli.ts`_
 
 The `LedMatrix` constructor expects _all_ configuration properties to be defined. So, identify the options you want to change, and extend the default options.
 
 The image above are the panels I've been using to test, and below is how I've configured it in my code. Keep in mind that every setup is different, so you'll need to find the config that works for you.
 
 ```ts
-import { LedMatrix, GpioMapping, LedMatrixUtils, PixelMapperType } from 'rpi-led-matrix';
+import {
+  LedMatrix,
+  GpioMapping,
+  LedMatrixUtils,
+  PixelMapperType,
+} from "rpi-led-matrix";
 
 const matrix = new LedMatrix(
   {
@@ -111,7 +114,9 @@ const matrix = new LedMatrix(
     cols: 64,
     chainLength: 2,
     hardwareMapping: GpioMapping.AdafruitHatPwm,
-    pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
+    pixelMapperConfig: LedMatrixUtils.encodeMappers({
+      type: PixelMapperType.U,
+    }),
   },
   {
     ...LedMatrix.defaultRuntimeOptions(),
@@ -142,7 +147,7 @@ interface MatrixOptions {
   disableHardwarePulsing: boolean;
   hardwareMapping: GpioMapping;
   inverseColors: boolean;
-  ledRgbSequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
+  ledRgbSequence: "RGB" | "BGR" | "BRG" | "RBG" | "GRB" | "GBR";
   multiplexing: MuxType;
   parallel: 1 | 2 | 3 | 4;
   pixelMapperConfig: string;
@@ -177,18 +182,18 @@ enum RowAddressType {
   AB = 1,
   DirectRow = 2,
   ABC = 3,
-  ABCShift = 4
+  ABCShift = 4,
 }
 ```
 
 ```ts
 enum GpioMapping {
-  Regular = 'regular',
-  AdafruitHat = 'adafruit-hat',
-  AdafruitHatPwm = 'adafruit-hat-pwm',
-  RegularPi1 = 'regular-pi1',
-  Classic = 'classic',
-  ClassicPi1 = 'classic-pi1',
+  Regular = "regular",
+  AdafruitHat = "adafruit-hat",
+  AdafruitHatPwm = "adafruit-hat-pwm",
+  RegularPi1 = "regular-pi1",
+  Classic = "classic",
+  ClassicPi1 = "classic-pi1",
 }
 ```
 
@@ -259,15 +264,20 @@ So we can have something like this:
 
 ```ts
 matrix
-  .clear()            // clear the display
-  .brightness(100)    // set the panel brightness to 100%
-  .fgColor(0x0000FF)  // set the active color to blue
-  .fill()             // color the entire diplay blue
-  .fgColor(0xFFFF00)  // set the active color to yellow
+  .clear() // clear the display
+  .brightness(100) // set the panel brightness to 100%
+  .fgColor(0x0000ff) // set the active color to blue
+  .fill() // color the entire diplay blue
+  .fgColor(0xffff00) // set the active color to yellow
   // draw a yellow circle around the display
   .drawCircle(matrix.width() / 2, matrix.height() / 2, matrix.width() / 2 - 1)
   // draw a yellow rectangle
-  .drawRect(matrix.width() / 4, matrix.height() / 4, matrix.width() / 2, matrix.height() / 2)
+  .drawRect(
+    matrix.width() / 4,
+    matrix.height() / 4,
+    matrix.width() / 2,
+    matrix.height() / 2
+  )
   // sets the active color to red
   .fgColor({ r: 255, g: 0, b: 0 })
   // draw two diagonal red lines connecting the corners
@@ -294,15 +304,11 @@ If we wanted to write a program such that all of the matrix's LEDs pulsed indivi
 
 ```ts
 class Pulser {
-  constructor(
-    readonly x: number,
-    readonly y: number,
-    readonly f: number
-  ) { }
+  constructor(readonly x: number, readonly y: number, readonly f: number) {}
 
   nextColor(t: number): number {
     /** You could easily work position-dependent logic into this expression */
-    const brightness = 0xFF & Math.max(0, 255 * (Math.sin(this.f * t / 1000)));
+    const brightness = 0xff & Math.max(0, 255 * Math.sin((this.f * t) / 1000));
 
     return (brightness << 16) | (brightness << 8) | brightness;
   }
@@ -326,7 +332,7 @@ Finally, apply a sync hook that updates each pixel after each sync:
 
 ```ts
 matrix.afterSync((mat, dt, t) => {
-  pulsers.forEach(pulser => {
+  pulsers.forEach((pulser) => {
     matrix.fgColor(pulser.nextColor(t)).setPixel(pulser.x, pulser.y);
   });
 
@@ -341,8 +347,7 @@ This pattern is somewhat reflective of `requestAnimationFrame` recursion on the 
 
 After that, we're left with this (click for video):
 
-[![full demo](./docs/sync-hook-thumbnail.png)*You can run this yourself using `examples/sync-hooks.ts`*](https://apemedia.s3.us-east-2.amazonaws.com/twinkle720.mp4)
-
+[![full demo](./docs/sync-hook-thumbnail.png)_You can run this yourself using `examples/sync-hooks.ts`_](https://apemedia.s3.us-east-2.amazonaws.com/twinkle720.mp4)
 
 # Running /examples
 
@@ -363,7 +368,6 @@ $ sudo npm run example -- examples/text-layout-cli.ts
 Inside the examples directory is a file named `_config.ts`, which exports the two matrix configuration types: `MatrixOptions` and `RuntimeOptions`.
 
 You can customize this script to fit your needs. All of the examples will import the configuration objects exported by the file.
-
 
 # API
 
@@ -426,7 +430,6 @@ There is also a set of enums and types associated with the utility methods:
 
 > Make sure you have [passwordless SSH](https://www.raspberrypi.org/documentation/remote-access/ssh/passwordless.md) access to your Raspberry Pi.
 
-
 Clone/fork this repo onto both your local machine and your Raspberry Pi.
 
 ```bash
@@ -434,7 +437,6 @@ $ git clone --recurse-submodules https://github.com/alexeden/rpi-led-matrix
 ```
 
 `npm install` inside both repos.
-
 
 Create a file called `sync.config.json` on the machine on which you'll be developing, and substitute these values with your own:
 
