@@ -51,18 +51,18 @@
         }],
         [ 'OS=="linux"', {
           'sources': [
-            "./vendor/lib/thread.cc",
-            "./vendor/lib/pixel-mapper.cc",
-            "./vendor/lib/options-initialize.cc",
-            "./vendor/lib/multiplex-mappers.cc",
+            "./vendor/lib/bdf-font.cc",
+            "./vendor/lib/content-streamer.cc",
+            "./vendor/lib/framebuffer.cc",
+            "./vendor/lib/gpio.cc",
+            "./vendor/lib/graphics.cc",
+            # "./vendor/lib/hardware-mapping.c"
             "./vendor/lib/led-matrix-c.cc",
             "./vendor/lib/led-matrix.cc",
-            "./vendor/lib/graphics.cc",
-            "./vendor/lib/gpio.cc",
-            "./vendor/lib/framebuffer.cc",
-            "./vendor/lib/content-streamer.cc",
-            "./vendor/lib/bdf-font.cc",
-            "./vendor/lib/hardware-mapping.c"
+            "./vendor/lib/multiplex-mappers.cc",
+            "./vendor/lib/options-initialize.cc",
+            "./vendor/lib/pixel-mapper.cc",
+            "./vendor/lib/thread.cc",
           ],
           "libraries": ["-lrt", "-lm", "-lpthread"],
           "include_dirs": [

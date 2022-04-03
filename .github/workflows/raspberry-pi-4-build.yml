@@ -1,0 +1,20 @@
+# Installs and builds the package (including native modules)
+# Using the image: balenalib/raspberrypi4-64-alpine-node:16
+name: Docker Install & Build - Raspberry Pi 4
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build for Raspberry Pi 4
+      run: docker build . --file Dockerfile --tag raspberry-pi-4:$(date +%s)
