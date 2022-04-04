@@ -34,7 +34,7 @@
   "scripts": {
     "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",
     "build": "npm run clean && node-gyp rebuild && tsc -p src",
-    "check": "npx tsc --noEmit && npx tsc --noEmit -p examples",
+    "check": "npx tsc --noEmit",
     "clean": "rm -rf dist",
     "example": "ts-node -P examples/tsconfig.json",
     "format": "prettier --write src/ examples/",

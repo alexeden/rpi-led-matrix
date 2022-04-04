@@ -17,6 +17,7 @@ module.exports = {
     project: './tsconfig.json',
     warnOnUnsupportedTypeScriptVersion: true,
   },
+  ignorePatterns: ['./examples', '.eslintrc.js'],
   rules: {
     '@typescript-eslint/naming-convention': [
       'error',
@@ -55,15 +56,15 @@ module.exports = {
     ],
   },
   overrides: [
-    // Turn off floating promises rule for examples, which typically
-    // wrap everything in an async IIFE
     {
       files: [
         'examples/*'
       ],
+      // Turn off floating promises rule for examples, which typically
+      // wrap everything in an async IIFE
       rules: {
         '@typescript-eslint/no-floating-promises': 'off',
       }
-    }
+    },
   ]
 }

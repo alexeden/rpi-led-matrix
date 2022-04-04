@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   GpioMapping,
   LedMatrix,
-  LedMatrixUtils,
+  // LedMatrixUtils,
   MatrixOptions,
-  PixelMapperType,
+  // PixelMapperType,
   RuntimeOptions,
 } from '../src';
 
