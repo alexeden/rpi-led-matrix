@@ -7,18 +7,29 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions);
 
+    console.log('CENTER: ', matrix.center());
+
+    // console.log(
+    //   'drawing: ',
+    //   matrix.unstable_drawCircle({
+    //     ...matrix.center(),
+    //     r: 10,
+    //     strokeWidth: 1,
+    //   })
+    // );
+
     matrix
       .clear() // clear the display
       .brightness(100) // set the panel brightness to 100%
-      .fgColor(0x0000ff) // set the active color to blue
-      .fill() // color the entire diplay blue
+      // .fgColor(0x0000ff) // set the active color to blue
+      // .fill() // color the entire diplay blue
       .fgColor(0xffff00) // set the active color to yellow
       // draw a yellow circle around the display
-      .drawCircle(
-        matrix.width() / 2,
-        matrix.height() / 2,
-        matrix.width() / 2 - 1
-      )
+      .unstable_drawCircle({
+        ...matrix.center(),
+        r: matrix.width() / 2 - 2,
+        strokeWidth: 5,
+      })
       // draw a yellow rectangle
       .drawRect(
         matrix.width() / 4,

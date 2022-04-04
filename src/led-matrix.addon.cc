@@ -1,4 +1,7 @@
 #include "led-matrix.addon.h"
+#include <cmath>
+#include <math.h>
+#include <vector>
 
 #define BILLION 1000000000L;
 #define MILLION 1000000000L;
@@ -27,6 +30,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("clear", &LedMatrixAddon::clear),
 		InstanceMethod("drawBuffer", &LedMatrixAddon::draw_buffer),
 		InstanceMethod("drawCircle", &LedMatrixAddon::draw_circle),
+		InstanceMethod("unstable_drawCircle", &LedMatrixAddon::unstable_draw_circle),
 		InstanceMethod("drawLine", &LedMatrixAddon::draw_line),
 		InstanceMethod("drawRect", &LedMatrixAddon::draw_rect),
 		InstanceMethod("drawText", &LedMatrixAddon::draw_text),
@@ -237,6 +241,26 @@ Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 	const auto r = info[2].As<Napi::Number>().Uint32Value();
 	DrawCircle(this->canvas_, x, y, r, fg_color_);
 
+	return info.This();
+}
+
+Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info) {
+	const auto opts = info[0].As<Napi::Object>();
+	assert(opts.IsObject());
+	const auto x = opts.Get("x").As<Napi::Number>().Uint32Value();
+	const auto y = opts.Get("y").As<Napi::Number>().Uint32Value();
+	const auto r = opts.Get("r").As<Napi::Number>().Uint32Value();
+	const uint32_t stroke_width
+	  = opts.Get("strokeWidth").IsUndefined() ? 1 : opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
+
+	for (uint32_t i = r; i >= r - stroke_width; i--) { DrawCircle(this->canvas_, x, y, i, fg_color_); }
+
+	// const auto x = info[0].As<Napi::Number>().Uint32Value();
+	// const auto y = info[1].As<Napi::Number>().Uint32Value();
+	// const auto r = info[2].As<Napi::Number>().Uint32Value();
+	// DrawCircle(this->canvas_, x, y, r, fg_color_);
+
+	// return info.This();
 	return info.This();
 }
 

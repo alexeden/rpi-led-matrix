@@ -5,10 +5,9 @@
 #include "image.h"
 #include <assert.h>
 #include <graphics.h>
-#include <iostream>
 #include <led-matrix.h>
-#include <time.h>
 #include <napi.h>
+#include <time.h>
 
 using namespace rgb_matrix;
 
@@ -25,14 +24,15 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::Value clear(const Napi::CallbackInfo& info);
 	Napi::Value draw_buffer(const Napi::CallbackInfo& info);
 	Napi::Value draw_circle(const Napi::CallbackInfo& info);
+	Napi::Value unstable_draw_circle(const Napi::CallbackInfo& info);
 	Napi::Value draw_line(const Napi::CallbackInfo& info);
 	Napi::Value draw_rect(const Napi::CallbackInfo& info);
 	Napi::Value draw_text(const Napi::CallbackInfo& info);
 	Napi::Value fg_color(const Napi::CallbackInfo& info);
 	Napi::Value fill(const Napi::CallbackInfo& info);
 	Napi::Value font(const Napi::CallbackInfo& info);
-    Napi::Value get_available_pixel_mappers(const Napi::CallbackInfo& info);
-    Napi::Value map(const Napi::CallbackInfo& info);
+	Napi::Value get_available_pixel_mappers(const Napi::CallbackInfo& info);
+	Napi::Value map(const Napi::CallbackInfo& info);
 	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value luminance_correct(const Napi::CallbackInfo& info);
 	Napi::Value pwm_bits(const Napi::CallbackInfo& info);
