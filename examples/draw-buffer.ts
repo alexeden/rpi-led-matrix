@@ -8,8 +8,12 @@ import { matrixOptions, runtimeOptions } from './_config';
     matrix.clear().brightness(100);
 
     const baseBuffer = [...Array(matrix.width() * matrix.height() * 3).keys()];
-    const buffer1 = Buffer.of(...baseBuffer.map(() => Math.random() < 0.1 ? 0xFF : 0x00));
-    const buffer2 = Buffer.of(...baseBuffer.map(() => Math.random() < 0.1 ? 0xFF : 0x00));
+    const buffer1 = Buffer.of(
+      ...baseBuffer.map(() => (Math.random() < 0.1 ? 0xff : 0x00))
+    );
+    const buffer2 = Buffer.of(
+      ...baseBuffer.map(() => (Math.random() < 0.1 ? 0xff : 0x00))
+    );
 
     let useBuffer1 = true;
     matrix.afterSync(() => {
@@ -19,8 +23,7 @@ import { matrixOptions, runtimeOptions } from './_config';
     });
 
     matrix.sync();
-  }
-  catch (error) {
+  } catch (error) {
     console.error(`${__filename} caught: `, error);
   }
 })();

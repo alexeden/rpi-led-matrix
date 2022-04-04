@@ -2,15 +2,11 @@ import { LedMatrix } from '../src';
 import { matrixOptions, runtimeOptions } from './_config';
 
 class Pulser {
-  constructor(
-    readonly x: number,
-    readonly y: number,
-    readonly f: number
-  ) { }
+  constructor(readonly x: number, readonly y: number, readonly f: number) {}
 
   nextColor(t: number): number {
     /** You could easily work position-dependent logic into this expression */
-    const brightness = 0xFF & Math.max(0, (255 * (Math.sin(this.f * t / 1000))));
+    const brightness = 0xff & Math.max(0, 255 * Math.sin((this.f * t) / 1000));
 
     return (brightness << 16) | (brightness << 8) | brightness;
   }
@@ -36,8 +32,7 @@ class Pulser {
     });
 
     matrix.sync();
-  }
-  catch (error) {
+  } catch (error) {
     console.error(error);
   }
 })();
