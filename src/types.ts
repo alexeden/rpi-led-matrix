@@ -9,7 +9,7 @@ export type ShapeOptions = {
   /**
    * @default undefined will use the matrix's current `fillColor`.
    * - Any `Color` will override the current `fillColor` for this shape only
-   * - `false` means no stroke will be drawn at all
+   * - `false` means no fill will be drawn at all
    */
   fill?: false | Color;
   /**
