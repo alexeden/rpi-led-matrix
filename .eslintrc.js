@@ -40,10 +40,6 @@ module.exports = {
         selector: 'memberLike',
         leadingUnderscore: 'forbid',
         trailingUnderscore: 'forbid',
-        // filter: {
-        //   match: false,
-        //   regex: '(_id|__typename|__resolveType)',
-        // },
         format: null,
       },
       {
