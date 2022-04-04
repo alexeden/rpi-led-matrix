@@ -7,7 +7,9 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": false,
-    "lib": [ "esnext" ],
+    "lib": [
+      "esnext"
+    ],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
@@ -25,6 +27,9 @@
     ],
     "target": "esnext"
   },
+  "include": [
+    "src/"
+  ],
   "exclude": [
     "node_modules"
   ]
