@@ -23,6 +23,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("afterSync", &LedMatrixAddon::after_sync),
 		InstanceMethod("bgColor", &LedMatrixAddon::bg_color),
 		InstanceMethod("brightness", &LedMatrixAddon::brightness),
+		InstanceMethod("center", &LedMatrixAddon::center),
 		InstanceMethod("clear", &LedMatrixAddon::clear),
 		InstanceMethod("drawBuffer", &LedMatrixAddon::draw_buffer),
 		InstanceMethod("drawCircle", &LedMatrixAddon::draw_circle),
@@ -166,6 +167,15 @@ Napi::Value LedMatrixAddon::brightness(const Napi::CallbackInfo& info) {
 	else {
 		return Napi::Number::New(info.Env(), this->matrix_->brightness());
 	}
+}
+
+Napi::Value LedMatrixAddon::center(const Napi::CallbackInfo& info) {
+	auto obj = Napi::Object::New(info.Env());
+
+	obj.Set("x", Napi::Number::New(info.Env(), this->matrix_->width() / 2));
+	obj.Set("y", Napi::Number::New(info.Env(), this->matrix_->height() / 2));
+
+	return obj;
 }
 
 Napi::Value LedMatrixAddon::clear(const Napi::CallbackInfo& info) {
