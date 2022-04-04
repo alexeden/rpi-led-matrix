@@ -1,29 +1,28 @@
 import { MatrixOptions, RuntimeOptions } from './native-types';
 
-export type Color =
-  | number
-  | [r: number, b: number, c: number]
-  | {
-      r: number;
-      g: number;
-      b: number;
-    };
-
 export type Point = Record<'x' | 'y', number>;
 
-type SyncHook = (
-  this: LedMatrixInstance,
-  matrix: LedMatrixInstance,
-  dt: number,
-  t: number
-) => void;
+export type ColorObject = Record<'r' | 'g' | 'b', number>;
+export type Color = number | [r: number, g: number, b: number] | ColorObject;
 
 export type ShapeOptions = {
-  /** @default undefined (no fill) */
-  fill?: true | Color;
-  /** @default undefined (use foreground color) */
-  stroke?: Color;
-  /** @default 1 */
+  /**
+   * @default undefined will use the matrix's current `fillColor`.
+   * - Any `Color` will override the current `fillColor` for this shape only
+   * - `false` means no stroke will be drawn at all
+   */
+  fill?: false | Color;
+  /**
+   * @default undefined will use the matrix's current `strokeColor`.
+   * - Any `Color` will override the current `strokeColor` for this shape only
+   * - `false` means no stroke will be drawn at all, as if `strokeWidth`
+   *    had been set to zero
+   */
+  stroke?: false | Color;
+  /**
+   * @default undefined will use the matrix's current `strokeWidth`
+   * Any `number` will override the current `strokeWidth`.
+   * */
   strokeWidth?: number;
 };
 
@@ -32,8 +31,8 @@ export type CircleOptions = ShapeOptions & Point & { r: number };
 export interface LedMatrixInstance {
   afterSync(hook: SyncHook): LedMatrixInstance;
 
-  bgColor(color: Color | number): this;
-  bgColor(): Color;
+  bgColor(color: Color): this;
+  bgColor(): ColorObject;
 
   brightness(brightness: number): this;
   brightness(): number;
@@ -50,8 +49,11 @@ export interface LedMatrixInstance {
   drawRect(x0: number, y0: number, width: number, height: number): this;
   drawText(text: string, x: number, y: number, kerning?: number): this;
 
-  fgColor(color: Color | number): this;
-  fgColor(): Color;
+  fgColor(color: Color): this;
+  fgColor(): ColorObject;
+
+  fillColor(color: Color): this;
+  fillColor(): ColorObject;
 
   fill(): this;
   fill(x0: number, y0: number, x1: number, y1: number): this;
@@ -72,6 +74,12 @@ export interface LedMatrixInstance {
   pwmBits(): number;
 
   setPixel(x: number, y: number): this;
+
+  strokeColor(color: Color): this;
+  strokeColor(): ColorObject;
+
+  strokeWidth(width: number): this;
+  strokeWidth(): number;
 
   sync(): void;
 
@@ -120,3 +128,10 @@ export interface LedMatrixAddon {
   Font: Font;
   LedMatrix: LedMatrix;
 }
+
+type SyncHook = (
+  this: LedMatrixInstance,
+  matrix: LedMatrixInstance,
+  dt: number,
+  t: number
+) => void;

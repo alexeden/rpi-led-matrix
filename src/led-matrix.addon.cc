@@ -43,6 +43,9 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("map", &LedMatrixAddon::map),
 		InstanceMethod("pwmBits", &LedMatrixAddon::pwm_bits),
 		InstanceMethod("setPixel", &LedMatrixAddon::set_pixel),
+		InstanceMethod("strokeWidth", &LedMatrixAddon::stroke_width),
+		InstanceMethod("strokeColor", &LedMatrixAddon::stroke_color),
+		InstanceMethod("fillColor", &LedMatrixAddon::fill_color),
 		InstanceMethod("sync", &LedMatrixAddon::sync),
 		InstanceMethod("width", &LedMatrixAddon::width) });
 
@@ -61,8 +64,11 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   , after_sync_cb_(Napi::FunctionReference())
   , fg_color_(Color(0, 0, 0))
   , bg_color_(Color(0, 0, 0))
+  , fill_color_(Color(0, 0, 0))
   , font_(nullptr)
   , font_name_("")
+  , stroke_color_(Color(0, 0, 0))
+  , stroke_width_(1)
   , t_start_(get_now_ms())
   , t_sync_ms_(0)
   , t_dsync_ms_(0) {
@@ -247,22 +253,26 @@ Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info) {
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
-	const auto x = opts.Get("x").As<Napi::Number>().Int32Value();
-	const auto y = opts.Get("y").As<Napi::Number>().Int32Value();
-	const auto r = opts.Get("r").As<Napi::Number>().Int32Value();
-	const int32_t stroke_width
-	  = opts.Get("strokeWidth").IsUndefined() ? 1 : opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
-
-	const bool use_fill	  = !opts.Get("fill").IsUndefined();
-	const auto fill_color = use_fill ? color_from_value(opts.Get("fill")) : fg_color_;
+	const auto x			   = opts.Get("x").As<Napi::Number>().Int32Value();
+	const auto y			   = opts.Get("y").As<Napi::Number>().Int32Value();
+	const auto r			   = opts.Get("r").As<Napi::Number>().Int32Value();
+	const int32_t stroke_width = opts.Get("stroke").IsBoolean() && !opts.Get("stroke").As<Napi::Boolean>().Value() ? 0
+								 : opts.Get("strokeWidth").IsUndefined()
+								   ? int32_t(stroke_width_)
+								   : opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
+	const auto stroke_color = color_from_value_or_default(opts.Get("stroke"), fg_color_);
+	const bool use_fill		= opts.Get("fill").IsBoolean() && !opts.Get("fill").As<Napi::Boolean>().Value();
+	const auto fill_color	= color_from_value_or_default(opts.Get("fill"), fg_color_);
 
 	for (int i = 0 - r; i <= r; i++) {
 		for (int j = 0 - r; j <= r; j++) {
 			auto _r = pow(i, 2) + pow(j, 2);
 			if (_r < pow(r, 2)) {
+                // Draw the stroke pixels
 				if (_r >= pow(r - stroke_width, 2)) {
-					this->canvas_->SetPixel(i + x, y - j, fg_color_.r, fg_color_.g, fg_color_.b);
+					this->canvas_->SetPixel(i + x, y - j, stroke_color.r, stroke_color.g, stroke_color.b);
 				}
+                // Draw the fill pixels if we should
 				else if (use_fill) {
 					this->canvas_->SetPixel(i + x, y - j, fill_color.r, fill_color.g, fill_color.b);
 				}
@@ -273,7 +283,7 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 	return info.This();
 }
 
-Color LedMatrixAddon::color_from_value(const Napi::Value& value) {
+Color LedMatrixAddon::color_from_value_or_default(const Napi::Value& value, const Color& default_color) {
 	if (value.IsArray()) {
 		auto arr = value.As<Napi::Array>();
 		assert(arr.Length() == 3);
@@ -293,11 +303,8 @@ Color LedMatrixAddon::color_from_value(const Napi::Value& value) {
 		const auto hex = value.As<Napi::Number>().Uint32Value();
 		return Color(0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex);
 	}
-	else if (value.IsBoolean()) {
-		return fg_color_;
-	}
 	else {
-		throw Napi::Error::New(value.Env(), "Failed to create color from value.");
+		return default_color;
 	}
 }
 
@@ -393,6 +400,36 @@ Napi::Value LedMatrixAddon::fg_color(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0) {
 		auto color = LedMatrixAddon::color_from_callback_info(info);
 		fg_color_  = color;
+		return info.This();
+	}
+	else {
+		return LedMatrixAddon::obj_from_color(info.Env(), fg_color_);
+	}
+}
+Napi::Value LedMatrixAddon::fill_color(const Napi::CallbackInfo& info) {
+	if (info.Length() > 0) {
+		auto color	= LedMatrixAddon::color_from_callback_info(info);
+		fill_color_ = color;
+		return info.This();
+	}
+	else {
+		return LedMatrixAddon::obj_from_color(info.Env(), fg_color_);
+	}
+}
+Napi::Value LedMatrixAddon::stroke_color(const Napi::CallbackInfo& info) {
+	if (info.Length() > 0) {
+		auto color	  = LedMatrixAddon::color_from_callback_info(info);
+		stroke_color_ = color;
+		return info.This();
+	}
+	else {
+		return LedMatrixAddon::obj_from_color(info.Env(), fg_color_);
+	}
+}
+Napi::Value LedMatrixAddon::stroke_width(const Napi::CallbackInfo& info) {
+	if (info.Length() > 0) {
+		auto width	  = info[0].As<Napi::Number>().Uint32Value();
+		stroke_width_ = width;
 		return info.This();
 	}
 	else {

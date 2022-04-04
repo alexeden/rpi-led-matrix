@@ -24,19 +24,22 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::Value clear(const Napi::CallbackInfo& info);
 	Napi::Value draw_buffer(const Napi::CallbackInfo& info);
 	Napi::Value draw_circle(const Napi::CallbackInfo& info);
-	Napi::Value unstable_draw_circle(const Napi::CallbackInfo& info);
 	Napi::Value draw_line(const Napi::CallbackInfo& info);
 	Napi::Value draw_rect(const Napi::CallbackInfo& info);
 	Napi::Value draw_text(const Napi::CallbackInfo& info);
 	Napi::Value fg_color(const Napi::CallbackInfo& info);
+	Napi::Value fill_color(const Napi::CallbackInfo& info);
 	Napi::Value fill(const Napi::CallbackInfo& info);
 	Napi::Value font(const Napi::CallbackInfo& info);
 	Napi::Value get_available_pixel_mappers(const Napi::CallbackInfo& info);
-	Napi::Value map(const Napi::CallbackInfo& info);
 	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value luminance_correct(const Napi::CallbackInfo& info);
+	Napi::Value map(const Napi::CallbackInfo& info);
 	Napi::Value pwm_bits(const Napi::CallbackInfo& info);
 	Napi::Value set_pixel(const Napi::CallbackInfo& info);
+	Napi::Value stroke_color(const Napi::CallbackInfo& info);
+	Napi::Value stroke_width(const Napi::CallbackInfo& info);
+	Napi::Value unstable_draw_circle(const Napi::CallbackInfo& info);
 	Napi::Value width(const Napi::CallbackInfo& info);
 
 	Napi::Value sync(const Napi::CallbackInfo& info);
@@ -45,7 +48,7 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	static Napi::Value default_runtime_options(const Napi::CallbackInfo& info);
 
   private:
-	static Color color_from_value(const Napi::Value& value);
+	static Color color_from_value_or_default(const Napi::Value& value, const Color& default_color);
 	static Color color_from_callback_info(const Napi::CallbackInfo& info);
 	static Napi::Object obj_from_color(const Napi::Env& env, const Color&);
 	static Napi::FunctionReference constructor;
@@ -57,6 +60,9 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::FunctionReference after_sync_cb_;
 	Color fg_color_;
 	Color bg_color_;
+	Color fill_color_;
+	Color stroke_color_;
+	uint32_t stroke_width_;
 	Font* font_;
 	std::string font_name_;
 	RGBMatrix* matrix_;
