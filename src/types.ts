@@ -1,10 +1,13 @@
 import { MatrixOptions, RuntimeOptions } from './native-types';
 
-export interface Color {
-  r: number;
-  g: number;
-  b: number;
-}
+export type Color =
+  | number
+  | [r: number, b: number, c: number]
+  | {
+      r: number;
+      g: number;
+      b: number;
+    };
 
 export type Point = Record<'x' | 'y', number>;
 
@@ -16,10 +19,10 @@ type SyncHook = (
 ) => void;
 
 export type ShapeOptions = {
-  /** @default undefined */
-  fill?: Color | number;
-  /** @default matrix.fgColor() */
-  stroke?: Color | number;
+  /** @default undefined (no fill) */
+  fill?: true | Color;
+  /** @default undefined (use foreground color) */
+  stroke?: Color;
   /** @default 1 */
   strokeWidth?: number;
 };

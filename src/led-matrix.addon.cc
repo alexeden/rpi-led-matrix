@@ -253,15 +253,18 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 	const int32_t stroke_width
 	  = opts.Get("strokeWidth").IsUndefined() ? 1 : opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
 
-	for (int32_t i = r; i >= r - stroke_width; i--) { DrawCircle(this->canvas_, x, y, i, fg_color_); }
+	const bool use_fill	  = !opts.Get("fill").IsUndefined();
+	const auto fill_color = use_fill ? color_from_value(opts.Get("fill")) : fg_color_;
 
-	if (!opts.Get("fill").IsUndefined()) {
-		auto color	 = color_from_value(opts.Get("fill"));
-		auto inner_r = r - stroke_width;
-		for (int32_t i = 0 - inner_r; i <= inner_r; i++) {
-			for (int32_t j = 0 - inner_r; j <= inner_r; j++) {
-				if (pow(i, 2) + pow(j, 2) < pow(inner_r, 2)) {
-					this->canvas_->SetPixel(i + x, y - j, color.r, color.g, color.b);
+	for (int i = 0 - r; i <= r; i++) {
+		for (int j = 0 - r; j <= r; j++) {
+			auto _r = pow(i, 2) + pow(j, 2);
+			if (_r < pow(r, 2)) {
+				if (_r >= pow(r - stroke_width, 2)) {
+					this->canvas_->SetPixel(i + x, y - j, fg_color_.r, fg_color_.g, fg_color_.b);
+				}
+				else if (use_fill) {
+					this->canvas_->SetPixel(i + x, y - j, fill_color.r, fill_color.g, fill_color.b);
 				}
 			}
 		}
@@ -289,6 +292,9 @@ Color LedMatrixAddon::color_from_value(const Napi::Value& value) {
 	else if (value.IsNumber()) {
 		const auto hex = value.As<Napi::Number>().Uint32Value();
 		return Color(0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex);
+	}
+	else if (value.IsBoolean()) {
+		return fg_color_;
 	}
 	else {
 		throw Napi::Error::New(value.Env(), "Failed to create color from value.");
