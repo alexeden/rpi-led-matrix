@@ -73,11 +73,39 @@ export enum RowAddressType {
 }
 
 export enum GpioMapping {
+  /**
+   * The regular hardware mapping described in the wiring.md and used
+   * by the adapter PCBs.
+   */
   Regular = 'regular',
+
+  /**
+   * This is used if you have an Adafruit HAT in the default configuration
+   */
   AdafruitHat = 'adafruit-hat',
+
+  /**
+   * An Adafruit HAT with the PWM modification
+   */
   AdafruitHatPwm = 'adafruit-hat-pwm',
+
+  /**
+   * The regular pin-out, but for Raspberry Pi1. The very first Pi1 Rev1 uses
+   * the same pin for GPIO-21 as later Pis use GPIO-27. Make it work for both.
+   */
   RegularPi1 = 'regular-pi1',
+
+  /**
+   * Classic: Early forms of this library had this as default mapping, mostly
+   * derived from the 26 GPIO-header version so that it also can work
+   * on 40 Pin GPIO headers with more parallel chains.
+   * Not used anymore.
+   */
   Classic = 'classic',
+
+  /**
+   * Classic pin-out for Rev-A Raspberry Pi.
+   */
   ClassicPi1 = 'classic-pi1',
 }
 
@@ -131,6 +159,12 @@ export interface MatrixOptions {
    * @default 'RGB'
    */
   ledRgbSequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
+
+  /**
+   * Limit refresh rate of LED panel. This will help on a loaded system
+   * to keep a constant refresh rate. <= 0 for no limit.
+   */
+  limitRefreshRateHz: number;
 
   /**
    * @default MuxType.Direct

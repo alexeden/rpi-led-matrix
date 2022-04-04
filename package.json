@@ -1,6 +1,6 @@
 {
   "name": "rpi-led-matrix",
-  "version": "1.12.2",
+  "version": "1.13.0",
   "description": "Node.js/Typescript bindings for hzeller/rpi-rgb-led-matrix",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -36,7 +36,7 @@
     "build": "npm run clean && node-gyp rebuild && tsc -p src",
     "check": "npx tsc --noEmit",
     "clean": "rm -rf dist",
-    "example": "ts-node -P examples/tsconfig.json",
+    "example": "sudo ts-node -P examples/tsconfig.json",
     "format": "prettier --write src/ examples/",
     "lint": "eslint src/ examples/",
     "merge-submodule-upstream": "(cd vendor && git fetch && git merge origin/master)",
