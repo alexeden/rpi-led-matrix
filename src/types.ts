@@ -172,6 +172,12 @@ export interface MatrixOptions {
   multiplexing: MuxType;
 
   /**
+   * Panel type. You'll almost always just want to assign this an empty string,
+   * but certain panels (FM6126) require an initialization sequence.
+   */
+  panelType: '' | 'FM6126A' | 'FM6127';
+
+  /**
    * The number of parallel chains connected to the Pi.
    * Acts as a multiplier of the total number of rows.
    * @default 1

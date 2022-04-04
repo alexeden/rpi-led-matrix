@@ -378,6 +378,8 @@ RGBMatrix::Options LedMatrixAddon::create_matrix_options(const Napi::Env& env, c
 	auto led_rgb_sequence			 = std::string(obj.Get("ledRgbSequence").As<Napi::String>());
 	options.led_rgb_sequence		 = strcpy(new char[led_rgb_sequence.size()], led_rgb_sequence.c_str());
 	options.limit_refresh_rate_hz	 = obj.Get("limitRefreshRateHz").As<Napi::Number>();
+	auto panel_type					 = std::string(obj.Get("panelType").As<Napi::String>());
+	options.panel_type				 = strcpy(new char[panel_type.size()], panel_type.c_str());
 	auto pixel_mapper_config		 = std::string(obj.Get("pixelMapperConfig").As<Napi::String>());
 	options.pixel_mapper_config		 = strcpy(new char[pixel_mapper_config.size()], pixel_mapper_config.c_str());
 	options.multiplexing			 = obj.Get("multiplexing").As<Napi::Number>();
@@ -420,6 +422,8 @@ Napi::Object LedMatrixAddon::matrix_options_to_obj(const Napi::Env& env, const R
 
 	std::string led_rgb_sequence = options.led_rgb_sequence == NULL ? "" : std::string(options.led_rgb_sequence);
 
+	std::string panel_type = options.panel_type == NULL ? "" : std::string(options.panel_type);
+
 	std::string pixel_mapper_config
 	  = options.pixel_mapper_config == NULL ? "" : std::string(options.pixel_mapper_config);
 
@@ -432,6 +436,7 @@ Napi::Object LedMatrixAddon::matrix_options_to_obj(const Napi::Env& env, const R
 	obj.Set("ledRgbSequence", Napi::String::New(env, led_rgb_sequence));
 	obj.Set("limitRefreshRateHz", Napi::Number::New(env, options.limit_refresh_rate_hz));
 	obj.Set("multiplexing", Napi::Number::New(env, options.multiplexing));
+	obj.Set("panelType", Napi::String::New(env, panel_type));
 	obj.Set("parallel", Napi::Number::New(env, options.parallel));
 	obj.Set("pixelMapperConfig", Napi::String::New(env, pixel_mapper_config));
 	obj.Set("pwmBits", Napi::Number::New(env, options.pwm_bits));
