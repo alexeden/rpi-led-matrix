@@ -29,19 +29,20 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
         ...matrix.center(),
         r: matrix.width() / 2 - 2,
         strokeWidth: 5,
-      })
-      // draw a yellow rectangle
-      .drawRect(
-        matrix.width() / 4,
-        matrix.height() / 4,
-        matrix.width() / 2,
-        matrix.height() / 2
-      )
-      // sets the active color to red
-      .fgColor({ r: 255, g: 0, b: 0 })
-      // draw two diagonal red lines connecting the corners
-      .drawLine(0, 0, matrix.width(), matrix.height())
-      .drawLine(matrix.width() - 1, 0, 0, matrix.height() - 1);
+        fill: 0x0000ff,
+      });
+    // draw a yellow rectangle
+    // .drawRect(
+    //   matrix.width() / 4,
+    //   matrix.height() / 4,
+    //   matrix.width() / 2,
+    //   matrix.height() / 2
+    // )
+    // // sets the active color to red
+    // .fgColor({ r: 255, g: 0, b: 0 })
+    // // draw two diagonal red lines connecting the corners
+    // .drawLine(0, 0, matrix.width(), matrix.height())
+    // .drawLine(matrix.width() - 1, 0, 0, matrix.height() - 1);
 
     matrix.sync();
 

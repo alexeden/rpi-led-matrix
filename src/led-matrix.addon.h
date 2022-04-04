@@ -45,6 +45,7 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	static Napi::Value default_runtime_options(const Napi::CallbackInfo& info);
 
   private:
+	static Color color_from_value(const Napi::Value& value);
 	static Color color_from_callback_info(const Napi::CallbackInfo& info);
 	static Napi::Object obj_from_color(const Napi::Env& env, const Color&);
 	static Napi::FunctionReference constructor;

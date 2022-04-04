@@ -247,21 +247,52 @@ Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info) {
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
-	const auto x = opts.Get("x").As<Napi::Number>().Uint32Value();
-	const auto y = opts.Get("y").As<Napi::Number>().Uint32Value();
-	const auto r = opts.Get("r").As<Napi::Number>().Uint32Value();
-	const uint32_t stroke_width
+	const auto x = opts.Get("x").As<Napi::Number>().Int32Value();
+	const auto y = opts.Get("y").As<Napi::Number>().Int32Value();
+	const auto r = opts.Get("r").As<Napi::Number>().Int32Value();
+	const int32_t stroke_width
 	  = opts.Get("strokeWidth").IsUndefined() ? 1 : opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
 
-	for (uint32_t i = r; i >= r - stroke_width; i--) { DrawCircle(this->canvas_, x, y, i, fg_color_); }
+	for (int32_t i = r; i >= r - stroke_width; i--) { DrawCircle(this->canvas_, x, y, i, fg_color_); }
 
-	// const auto x = info[0].As<Napi::Number>().Uint32Value();
-	// const auto y = info[1].As<Napi::Number>().Uint32Value();
-	// const auto r = info[2].As<Napi::Number>().Uint32Value();
-	// DrawCircle(this->canvas_, x, y, r, fg_color_);
+	if (!opts.Get("fill").IsUndefined()) {
+		auto color	 = color_from_value(opts.Get("fill"));
+		auto inner_r = r - stroke_width;
+		for (int32_t i = 0 - inner_r; i <= inner_r; i++) {
+			for (int32_t j = 0 - inner_r; j <= inner_r; j++) {
+				if (pow(i, 2) + pow(j, 2) < pow(inner_r, 2)) {
+					this->canvas_->SetPixel(i + x, y - j, color.r, color.g, color.b);
+				}
+			}
+		}
+	}
 
-	// return info.This();
 	return info.This();
+}
+
+Color LedMatrixAddon::color_from_value(const Napi::Value& value) {
+	if (value.IsArray()) {
+		auto arr = value.As<Napi::Array>();
+		assert(arr.Length() == 3);
+		uint8_t r = arr.Get(uint32_t(0)).As<Napi::Number>().Uint32Value();
+		uint8_t g = arr.Get(uint32_t(1)).As<Napi::Number>().Uint32Value();
+		uint8_t b = arr.Get(uint32_t(2)).As<Napi::Number>().Uint32Value();
+		return Color(r, g, b);
+	}
+	else if (value.IsObject()) {
+		const auto obj = value.As<Napi::Object>();
+		uint8_t r	   = obj.Get("r").As<Napi::Number>().Uint32Value();
+		uint8_t g	   = obj.Get("g").As<Napi::Number>().Uint32Value();
+		uint8_t b	   = obj.Get("b").As<Napi::Number>().Uint32Value();
+		return Color(r, g, b);
+	}
+	else if (value.IsNumber()) {
+		const auto hex = value.As<Napi::Number>().Uint32Value();
+		return Color(0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex);
+	}
+	else {
+		throw Napi::Error::New(value.Env(), "Failed to create color from value.");
+	}
 }
 
 Napi::Value LedMatrixAddon::draw_line(const Napi::CallbackInfo& info) {
