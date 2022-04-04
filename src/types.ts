@@ -263,7 +263,7 @@ type SyncHook = (
   matrix: LedMatrixInstance,
   dt: number,
   t: number
-) => any;
+) => void;
 
 export interface LedMatrixInstance {
   afterSync(hook: SyncHook): LedMatrixInstance;

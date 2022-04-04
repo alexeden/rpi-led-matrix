@@ -7,15 +7,15 @@ const nextColor = (f: number, t: number): number => {
   return (brightness << 16) | (brightness << 8) | brightness;
 };
 
-(async () => {
+(() => {
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions);
     const freqs = [...Array(matrix.width() * matrix.height()).keys()].map(
       i => i / 30
     );
 
-    matrix.afterSync((mat, dt, t) =>
-      matrix.map(([x, y, i]) => nextColor(freqs[i], t))
+    matrix.afterSync((_, __, t) =>
+      matrix.map(([_, __, i]) => nextColor(freqs[i], t))
     );
 
     matrix.sync();

@@ -12,7 +12,7 @@ class Pulser {
   }
 }
 
-(async () => {
+(() => {
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions);
 

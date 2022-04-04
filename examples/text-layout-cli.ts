@@ -46,17 +46,16 @@ const prependChoiceToGoBack = (choices: prompts.Choice[]) => [
   ...choices,
 ];
 
-const createBrightnessPrompter = () => {
-  return async (currentBrightness = 100) => {
-    return prompts({
+const createBrightnessPrompter =
+  () =>
+  (currentBrightness = 100): Promise<{ brightness: number }> =>
+    prompts({
       name: 'brightness',
       type: 'number',
       max: 100,
       min: 0,
       message: `Enter a brightness value or press escape to go back (current brightness is ${currentBrightness}%)`,
     });
-  };
-};
 
 const createColorSelector = (
   colorType: string,
@@ -69,7 +68,7 @@ const createColorSelector = (
   const findColorName = ({ r, g, b }: Color) =>
     colorIndex[((r << 16) | (g << 8) | b) & 0xffffff];
 
-  return async (currentColor: Color) => {
+  return (currentColor: Color): Promise<{ color: string }> => {
     const currentColorName = findColorName(currentColor);
     const currentColorIndex =
       Object.keys(colors).indexOf(currentColorName) || 0;
@@ -92,8 +91,9 @@ const createColorSelector = (
   };
 };
 
-const createFontSelector = (fontList: FontInstance[]) => {
-  return async (currentFont = '') => {
+const createFontSelector =
+  (fontList: FontInstance[]) =>
+  (currentFont = ''): Promise<{ font: string }> => {
     const currentFontIndex =
       fontList.map(f => f.name()).indexOf(currentFont) || 0;
 
@@ -111,10 +111,12 @@ const createFontSelector = (fontList: FontInstance[]) => {
       ),
     });
   };
-};
 
-const createAlignmentSelector = (alignmentType: string, alignments: any) => {
-  return async (currentAlignment = '') => {
+function createAlignmentSelector<T extends string>(
+  alignmentType: string,
+  alignments: T[]
+) {
+  return (currentAlignment: T): Promise<{ alignment: T }> => {
     const currentIndex =
       Object.values(alignments).indexOf(currentAlignment) || 0;
 
@@ -125,61 +127,53 @@ const createAlignmentSelector = (alignmentType: string, alignments: any) => {
       initial: currentIndex + 1,
       hint: !currentAlignment
         ? ''
-        : `Current alignment is "${currentAlignment}"`,
+        : `Current alignment is "${currentAlignment as unknown as string}"`,
       choices: prependChoiceToGoBack(
         Object.entries(alignments).map(([k, v]) => ({
           title: k,
-          value: v as string,
+          value: v,
         }))
       ),
     });
   };
-};
+}
 
-const createTextPrompter = () => {
-  return async () => {
-    return prompts({
-      name: 'text',
-      type: 'text',
-      message: 'Input text to display or press escape to go back',
-    });
-  };
-};
+const createTextPrompter = () => (): Promise<{ text: string }> =>
+  prompts({
+    name: 'text',
+    type: 'text',
+    message: 'Input text to display or press escape to go back',
+  });
 
-const createModeSelector = () => {
-  return async () => {
-    const { mode } = await prompts({
-      name: 'mode',
-      type: 'select',
-      message: 'What would you like to do?',
-      hint: 'Use tab or arrow keys and press enter to select.',
-      choices: [
-        { value: CliMode.Text, title: '🔠 Render some text' },
-        { value: CliMode.Font, title: '✒️  Change the font' },
-        { value: CliMode.BgColor, title: '🎨 Pick a background color' },
-        { value: CliMode.FgColor, title: '🎨 Pick a foreground color' },
-        {
-          value: CliMode.HorizontalAlignment,
-          title: '↔️  Set the horizontal alignment',
-        },
-        {
-          value: CliMode.VerticalAlignment,
-          title: '↕️  Set the vertical alignment',
-        },
-        { value: CliMode.Brightness, title: '🌟 Set the display brightness' },
-        { value: CliMode.Exit, title: '🚪 Exit' },
-      ],
-    });
-
-    return mode as CliMode;
-  };
-};
+const createModeSelector = () => (): Promise<{ mode: CliMode }> =>
+  prompts({
+    name: 'mode',
+    type: 'select',
+    message: 'What would you like to do?',
+    hint: 'Use tab or arrow keys and press enter to select.',
+    choices: [
+      { value: CliMode.Text, title: '🔠 Render some text' },
+      { value: CliMode.Font, title: '✒️  Change the font' },
+      { value: CliMode.BgColor, title: '🎨 Pick a background color' },
+      { value: CliMode.FgColor, title: '🎨 Pick a foreground color' },
+      {
+        value: CliMode.HorizontalAlignment,
+        title: '↔️  Set the horizontal alignment',
+      },
+      {
+        value: CliMode.VerticalAlignment,
+        title: '↕️  Set the vertical alignment',
+      },
+      { value: CliMode.Brightness, title: '🌟 Set the display brightness' },
+      { value: CliMode.Exit, title: '🚪 Exit' },
+    ],
+  });
 
 // tslint:disable-next-line: cyclomatic-complexity
 (async () => {
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions).afterSync(
-      () => {}
+      () => undefined
     );
 
     const fontLoader = ora({ color: 'magenta' })
@@ -196,7 +190,6 @@ const createModeSelector = () => {
 
         return font;
       });
-
     if (fontList.length < 1) {
       throw new Error(`No fonts were loaded!`);
     } else {
@@ -213,11 +206,11 @@ const createModeSelector = () => {
     const chooseFgColor = createColorSelector('foreground', Colors);
     const chooseHorizontalAlignment = createAlignmentSelector(
       'horizontal',
-      HorizontalAlignment
+      Object.values(HorizontalAlignment)
     );
     const chooseVerticalAlignment = createAlignmentSelector(
       'vertical',
-      VerticalAlignment
+      Object.values(VerticalAlignment)
     );
     const chooseMode = createModeSelector();
     const chooseFont = createFontSelector(fontList);
@@ -229,7 +222,8 @@ const createModeSelector = () => {
     let alignmentV: VerticalAlignment = VerticalAlignment.Middle;
 
     // Maintain a thunk of the latest render operation so that it can be repeated when options change
-    let render = () => {
+    // eslint-disable-next-line
+    let render: () => any = () => {
       matrix.clear();
       const fgColor = matrix.fgColor();
       matrix.fgColor(matrix.bgColor()).fill().fgColor(fgColor);
@@ -257,7 +251,7 @@ const createModeSelector = () => {
     render();
 
     while (true) {
-      switch (await chooseMode()) {
+      switch ((await chooseMode()).mode) {
         case CliMode.BgColor: {
           while (true) {
             const { color } = await chooseBgColor(matrix.bgColor());
@@ -300,11 +294,9 @@ const createModeSelector = () => {
         }
         case CliMode.HorizontalAlignment: {
           while (true) {
-            const { alignment } = (await chooseHorizontalAlignment(
-              alignmentH
-            )) as any;
-            if (alignment) {
-              alignmentH = alignment;
+            const a = (await chooseHorizontalAlignment(alignmentH)).alignment;
+            if (a) {
+              alignmentH = a;
               render();
             } else break;
           }
@@ -312,9 +304,7 @@ const createModeSelector = () => {
         }
         case CliMode.VerticalAlignment: {
           while (true) {
-            const { alignment } = (await chooseVerticalAlignment(
-              alignmentV
-            )) as any;
+            const { alignment } = await chooseVerticalAlignment(alignmentV);
             if (alignment) {
               alignmentV = alignment;
               render();

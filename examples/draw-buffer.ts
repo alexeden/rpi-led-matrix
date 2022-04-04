@@ -1,7 +1,7 @@
 import { LedMatrix } from '../src';
 import { matrixOptions, runtimeOptions } from './_config';
 
-(async () => {
+(() => {
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions);
 
