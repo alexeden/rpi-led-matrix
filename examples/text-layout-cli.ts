@@ -294,9 +294,11 @@ const createModeSelector = () => (): Promise<{ mode: CliMode }> =>
         }
         case CliMode.HorizontalAlignment: {
           while (true) {
-            const a = (await chooseHorizontalAlignment(alignmentH)).alignment;
-            if (a) {
-              alignmentH = a;
+            const { alignment } = (await chooseHorizontalAlignment(
+              alignmentH
+            )) as { alignment: HorizontalAlignment };
+            if (alignment) {
+              alignmentH = alignment;
               render();
             } else break;
           }
@@ -304,7 +306,9 @@ const createModeSelector = () => (): Promise<{ mode: CliMode }> =>
         }
         case CliMode.VerticalAlignment: {
           while (true) {
-            const { alignment } = await chooseVerticalAlignment(alignmentV);
+            const { alignment } = (await chooseVerticalAlignment(
+              alignmentV
+            )) as { alignment: VerticalAlignment };
             if (alignment) {
               alignmentV = alignment;
               render();
