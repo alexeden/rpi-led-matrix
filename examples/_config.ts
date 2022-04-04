@@ -1,9 +1,9 @@
 import {
   GpioMapping,
   LedMatrix,
-  LedMatrixUtils,
+  // LedMatrixUtils,
   MatrixOptions,
-  PixelMapperType,
+  // PixelMapperType,
   RuntimeOptions,
 } from '../src';
 

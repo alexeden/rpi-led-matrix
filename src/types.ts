@@ -33,8 +33,8 @@ export enum PixelMapperType {
   VZ = 'V-mapper:Z',
 }
 
-export type PixelMapper
-  = { type: PixelMapperType.Rotate; angle: number }
+export type PixelMapper =
+  | { type: PixelMapperType.Rotate; angle: number }
   | { type: PixelMapperType.Chainlink }
   | { type: PixelMapperType.U }
   | { type: PixelMapperType.V }
@@ -204,7 +204,6 @@ export interface MatrixOptions {
  * dropping privileges and becoming a daemon.
  */
 export interface RuntimeOptions {
-
   /**
    * If daemon is Disabled, the user has to call StartRefresh() manually
    * once the matrix is created, to leave the decision to become a daemon
@@ -253,14 +252,18 @@ export interface RuntimeOptions {
   gpioSlowdown: 0 | 1 | 2 | 3 | 4;
 }
 
-
 export interface Color {
   r: number;
   g: number;
   b: number;
 }
 
-type SyncHook = (this: LedMatrixInstance, matrix: LedMatrixInstance, dt: number, t: number) => any;
+type SyncHook = (
+  this: LedMatrixInstance,
+  matrix: LedMatrixInstance,
+  dt: number,
+  t: number
+) => void;
 
 export interface LedMatrixInstance {
   afterSync(hook: SyncHook): LedMatrixInstance;
@@ -311,7 +314,7 @@ export interface LedMatrixInstance {
 export interface LedMatrix {
   defaultMatrixOptions(): MatrixOptions;
   defaultRuntimeOptions(): RuntimeOptions;
-  new(
+  new (
     matrixOpts: MatrixOptions,
     runtimeOpts: RuntimeOptions
   ): LedMatrixInstance;
@@ -342,10 +345,7 @@ export interface FontInstance {
 
 export interface Font {
   // tslint:disable-next-line:callable-types
-  new (
-    name: string,
-    path: string
-  ): FontInstance;
+  new (name: string, path: string): FontInstance;
 }
 
 export interface LedMatrixAddon {

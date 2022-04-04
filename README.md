@@ -1,4 +1,4 @@
-![build](https://img.shields.io/github/workflow/status/alexeden/rpi-led-matrix/Docker%20Install%20&%20Build%20-%20Raspberry%20Pi%203?label=RPI3%20BUILD&style=for-the-badge)
+![build](https://img.shields.io/github/workflow/status/alexeden/rpi-led-matrix/Build%20-%20Raspberry%20Pi%203?label=RPI3%20BUILD&style=for-the-badge)
 ![npm version](https://img.shields.io/npm/v/rpi-led-matrix/latest?style=for-the-badge)
 ![types](https://img.shields.io/npm/types/rpi-led-matrix?style=for-the-badge)
 ![dependencies](https://img.shields.io/librariesio/release/npm/rpi-led-matrix?style=for-the-badge&logoColor=white)
@@ -53,10 +53,10 @@ Usage:
 
 ```ts
 // In a .ts file
-import * as matrix from "rpi-led-matrix";
+import * as matrix from 'rpi-led-matrix';
 
 // Or, in a .js file
-const matrix = require("rpi-led-matrix");
+const matrix = require('rpi-led-matrix');
 ```
 
 # Getting Started
@@ -83,7 +83,7 @@ Both `MatrixOptions` and `RuntimeOptions` are of a non-trivial size in terms of 
 With the use of those helper methods, this is all it takes to create a matrix (of types `LedMatrixInstance`) that's ready to glow:
 
 ```ts
-import { LedMatrix } from "rpi-led-matrix";
+import { LedMatrix } from 'rpi-led-matrix';
 
 const matrix = new LedMatrix(
   LedMatrix.defaultMatrixOptions(),
@@ -105,7 +105,7 @@ import {
   GpioMapping,
   LedMatrixUtils,
   PixelMapperType,
-} from "rpi-led-matrix";
+} from 'rpi-led-matrix';
 
 const matrix = new LedMatrix(
   {
@@ -147,7 +147,7 @@ interface MatrixOptions {
   disableHardwarePulsing: boolean;
   hardwareMapping: GpioMapping;
   inverseColors: boolean;
-  ledRgbSequence: "RGB" | "BGR" | "BRG" | "RBG" | "GRB" | "GBR";
+  ledRgbSequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
   multiplexing: MuxType;
   parallel: 1 | 2 | 3 | 4;
   pixelMapperConfig: string;
@@ -188,12 +188,12 @@ enum RowAddressType {
 
 ```ts
 enum GpioMapping {
-  Regular = "regular",
-  AdafruitHat = "adafruit-hat",
-  AdafruitHatPwm = "adafruit-hat-pwm",
-  RegularPi1 = "regular-pi1",
-  Classic = "classic",
-  ClassicPi1 = "classic-pi1",
+  Regular = 'regular',
+  AdafruitHat = 'adafruit-hat',
+  AdafruitHatPwm = 'adafruit-hat-pwm',
+  RegularPi1 = 'regular-pi1',
+  Classic = 'classic',
+  ClassicPi1 = 'classic-pi1',
 }
 ```
 
@@ -332,7 +332,7 @@ Finally, apply a sync hook that updates each pixel after each sync:
 
 ```ts
 matrix.afterSync((mat, dt, t) => {
-  pulsers.forEach((pulser) => {
+  pulsers.forEach(pulser => {
     matrix.fgColor(pulser.nextColor(t)).setPixel(pulser.x, pulser.y);
   });
 

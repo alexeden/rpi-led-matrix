@@ -1,6 +1,6 @@
 # Installs and builds the package (including native modules)
 # Using the image: balenalib/raspberrypi3-alpine-node:16
-name: Docker Install & Build - Raspberry Pi 3
+name: Build - Raspberry Pi 3
 
 on:
   push:
@@ -16,6 +16,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           submodules: "recursive"
+      - name: Lint
+        run: npm run lint
+      - name: Check Types
+        run: npm run check
       - name: Install ARM64 binfmt
         run: docker run --privileged --rm tonistiigi/binfmt --install arm
       - name: Build for Raspberry Pi 3

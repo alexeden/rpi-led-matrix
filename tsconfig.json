@@ -7,14 +7,16 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": false,
-    "lib": [ "esnext" ],
+    "lib": [
+      "esnext"
+    ],
     "module": "commonjs",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "sourceMap": false,
     "strictNullChecks": true,
     "strict": true,
@@ -25,6 +27,10 @@
     ],
     "target": "esnext"
   },
+  "include": [
+    "src/",
+    "examples/"
+  ],
   "exclude": [
     "node_modules"
   ]
