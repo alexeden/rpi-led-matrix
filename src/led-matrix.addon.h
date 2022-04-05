@@ -40,6 +40,7 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::Value stroke_color(const Napi::CallbackInfo& info);
 	Napi::Value stroke_width(const Napi::CallbackInfo& info);
 	Napi::Value unstable_draw_circle(const Napi::CallbackInfo& info);
+	Napi::Value unstable_draw_rectangle(const Napi::CallbackInfo& info);
 	Napi::Value width(const Napi::CallbackInfo& info);
 
 	Napi::Value sync(const Napi::CallbackInfo& info);
@@ -58,8 +59,8 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	static RuntimeOptions create_runtime_options(const Napi::Env& env, const Napi::Object& obj);
 
 	Napi::FunctionReference after_sync_cb_;
-	Color fg_color_;
 	Color bg_color_;
+	Color fg_color_;
 	Color fill_color_;
 	Color stroke_color_;
 	uint32_t stroke_width_;

@@ -31,6 +31,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("drawBuffer", &LedMatrixAddon::draw_buffer),
 		InstanceMethod("drawCircle", &LedMatrixAddon::draw_circle),
 		InstanceMethod("unstable_drawCircle", &LedMatrixAddon::unstable_draw_circle),
+		InstanceMethod("unstable_drawRectangle", &LedMatrixAddon::unstable_draw_rectangle),
 		InstanceMethod("drawLine", &LedMatrixAddon::draw_line),
 		InstanceMethod("drawRect", &LedMatrixAddon::draw_rect),
 		InstanceMethod("drawText", &LedMatrixAddon::draw_text),
@@ -62,13 +63,13 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<LedMatrixAddon>(info)
   , after_sync_cb_(Napi::FunctionReference())
-  , fg_color_(Color(0, 0, 0))
   , bg_color_(Color(0, 0, 0))
+  , fg_color_(Color(0, 0, 0))
   , fill_color_(Color(0, 0, 0))
-  , font_(nullptr)
-  , font_name_("")
   , stroke_color_(Color(0, 0, 0))
   , stroke_width_(1)
+  , font_(nullptr)
+  , font_name_("")
   , t_start_(get_now_ms())
   , t_sync_ms_(0)
   , t_dsync_ms_(0) {
@@ -78,7 +79,7 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
 		throw Napi::Error::New(env, "Constructor expects its first parameter to be an object of matrix options!");
 	}
 	if (!info[1].IsObject()) {
-		throw Napi::Error::New(env, "Constructor expects its first parameter to be an object of runtime options!");
+		throw Napi::Error::New(env, "Constructor expects its second parameter to be an object of runtime options!");
 	}
 	auto matrixOpts	 = create_matrix_options(env, info[0].As<Napi::Object>());
 	auto runtimeOpts = create_runtime_options(env, info[1].As<Napi::Object>());
@@ -180,12 +181,10 @@ Napi::Value LedMatrixAddon::brightness(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value LedMatrixAddon::center(const Napi::CallbackInfo& info) {
-	auto obj = Napi::Object::New(info.Env());
-
-	obj.Set("x", Napi::Number::New(info.Env(), this->matrix_->width() / 2));
-	obj.Set("y", Napi::Number::New(info.Env(), this->matrix_->height() / 2));
-
-	return obj;
+	auto point = Napi::Array::New(info.Env(), 2);
+	point.Set(uint32_t(0), Napi::Number::New(info.Env(), this->matrix_->width() / 2));
+	point.Set(uint32_t(1), Napi::Number::New(info.Env(), this->matrix_->height() / 2));
+	return point;
 }
 
 Napi::Value LedMatrixAddon::clear(const Napi::CallbackInfo& info) {
@@ -241,6 +240,42 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 	return info.This();
 }
 
+struct Point {
+	// Convert a [number, number] into a Point
+	static Point from_tuple_value(const Napi::Value& value) {
+		assert(value.IsArray() && value.As<Napi::Array>().Length() == 2);
+		const auto arr = value.As<Napi::Array>();
+		int32_t x	   = arr.Get(uint32_t(0)).As<Napi::Number>().Int32Value();
+		int32_t y	   = arr.Get(uint32_t(1)).As<Napi::Number>().Int32Value();
+
+		return Point(x, y);
+	}
+
+	Point()
+	  : x(0)
+	  , y(0) {
+	}
+	Point(int32_t x_, int32_t y_)
+	  : x(x_)
+	  , y(y_) {
+	}
+	const int32_t x;
+	const int32_t y;
+
+	friend bool operator<(const Point& lhs, const Point& rhs) {
+		return lhs.x < rhs.x && lhs.y < rhs.y;
+	}
+	friend bool operator>(const Point& lhs, const Point& rhs) {
+		return rhs < lhs;
+	}
+	friend bool operator<=(const Point& lhs, const Point& rhs) {
+		return !(lhs > rhs);
+	}
+	friend bool operator>=(const Point& lhs, const Point& rhs) {
+		return !(lhs < rhs);
+	}
+};
+
 Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
@@ -253,32 +288,86 @@ Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info) {
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
-	const auto x			   = opts.Get("x").As<Napi::Number>().Int32Value();
-	const auto y			   = opts.Get("y").As<Napi::Number>().Int32Value();
-	const auto r			   = opts.Get("r").As<Napi::Number>().Int32Value();
-	const int32_t stroke_width = opts.Get("stroke").IsBoolean() && !opts.Get("stroke").As<Napi::Boolean>().Value() ? 0
-								 : opts.Get("strokeWidth").IsUndefined()
-								   ? int32_t(stroke_width_)
-								   : opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
-	const auto stroke_color = color_from_value_or_default(opts.Get("stroke"), fg_color_);
-	const bool use_fill		= opts.Get("fill").IsBoolean() && !opts.Get("fill").As<Napi::Boolean>().Value();
-	const auto fill_color	= color_from_value_or_default(opts.Get("fill"), fg_color_);
+	const auto center = Point::from_tuple_value(opts.Get("center"));
+	const auto x	  = center.x;
+	const auto y	  = center.y;
+	const int32_t r	  = opts.Get("r").As<Napi::Number>().Int32Value();
+	assert(r >= 0);
+	const uint32_t stroke_width = opts.Get("stroke").IsBoolean() && !opts.Get("stroke").As<Napi::Boolean>().Value() ? 0
+								  : opts.Get("strokeWidth").IsUndefined()
+									? stroke_width_
+									: opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
+	const auto stroke_color		= color_from_value_or_default(opts.Get("stroke"), stroke_color_);
+	const bool disable_fill		= opts.Get("fill").IsBoolean() && opts.Get("fill").As<Napi::Boolean>().Value() == false;
+	const auto fill_color		= color_from_value_or_default(opts.Get("fill"), fill_color_);
+
+	std::cerr << "Draw circle..." << std::endl;
+	std::cerr << "Stroke width: " << stroke_width << std::endl;
+	std::cerr << "Fill enabled: " << !disable_fill << std::endl;
 
 	for (int i = 0 - r; i <= r; i++) {
 		for (int j = 0 - r; j <= r; j++) {
 			auto _r = pow(i, 2) + pow(j, 2);
 			if (_r < pow(r, 2)) {
-                // Draw the stroke pixels
+				// Draw the stroke pixels
 				if (_r >= pow(r - stroke_width, 2)) {
 					this->canvas_->SetPixel(i + x, y - j, stroke_color.r, stroke_color.g, stroke_color.b);
 				}
-                // Draw the fill pixels if we should
-				else if (use_fill) {
+				// Draw the fill pixels if we should
+				else if (!disable_fill) {
 					this->canvas_->SetPixel(i + x, y - j, fill_color.r, fill_color.g, fill_color.b);
 				}
 			}
 		}
 	}
+
+	return info.This();
+}
+
+Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& info) {
+	const auto opts = info[0].As<Napi::Object>();
+	assert(opts.IsObject());
+	const auto p0 = Point::from_tuple_value(opts.Get("p0"));
+	const auto p1
+	  = opts.Has("p1")
+		  ? Point::from_tuple_value(opts.Get("p1"))
+		  : Point(p0.x + opts.Get("w").As<Napi::Number>().Int32Value(), p0.y + opts.Get("h").As<Napi::Number>().Int32Value());
+	assert(p1 >= p0);
+	const uint32_t stroke_width
+	  = opts.Get("stroke").IsBoolean() && opts.Get("stroke").As<Napi::Boolean>().Value() == false ? 0
+		: opts.Get("strokeWidth").IsUndefined()													  ? stroke_width_
+												: opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
+	const auto stroke_color = color_from_value_or_default(opts.Get("stroke"), stroke_color_);
+	const bool disable_fill = opts.Get("fill").IsBoolean() && opts.Get("fill").As<Napi::Boolean>().Value() == false;
+	const auto fill_color	= color_from_value_or_default(opts.Get("fill"), fill_color_);
+
+	std::cerr << "Draw rectangle..." << std::endl;
+	std::cerr << "Stroke width: " << stroke_width << std::endl;
+	std::cerr << "Fill enabled: " << !disable_fill << std::endl;
+
+	// If stroke width is 1 and there's no fill, just draw the lines and be done
+	if (stroke_width == 1 && disable_fill) {
+		DrawLine(this->canvas_, p0.x, p0.y, p1.x, p0.y, stroke_color);
+		DrawLine(this->canvas_, p1.x, p0.y, p1.x, p1.y, stroke_color);
+		DrawLine(this->canvas_, p1.x, p1.y, p0.x, p1.y, stroke_color);
+		DrawLine(this->canvas_, p0.x, p1.y, p0.x, p0.y, stroke_color);
+		return info.This();
+	}
+	// for (int i = 0 - r; i <= r; i++) {
+	// 	for (int j = 0 - r; j <= r; j++) {
+	// 		auto _r = pow(i, 2) + pow(j, 2);
+	// 		if (_r < pow(r, 2)) {
+	// 			// Draw the stroke pixels
+	// 			if (_r >= pow(r - stroke_width, 2)) {
+	// 				this->canvas_->SetPixel(i + x, y - j, stroke_color.r, stroke_color.g, stroke_color.b);
+	// 			}
+	// 			// Draw the fill pixels if we should
+	// 			else if (!disable_fill) {
+	// 				this->canvas_->SetPixel(i + x, y - j, fill_color.r, fill_color.g, fill_color.b);
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	return info.This();
 }

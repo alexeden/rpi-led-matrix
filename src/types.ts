@@ -1,6 +1,6 @@
 import { MatrixOptions, RuntimeOptions } from './native-types';
 
-export type Point = Record<'x' | 'y', number>;
+export type Point = [x: number, y: number];
 
 export type ColorObject = Record<'r' | 'g' | 'b', number>;
 export type Color = number | [r: number, g: number, b: number] | ColorObject;
@@ -26,7 +26,16 @@ export type ShapeOptions = {
   strokeWidth?: number;
 };
 
-export type CircleOptions = ShapeOptions & Point & { r: number };
+// A spec represents the minimum information needed to draw a shape;
+// some shapes, like a rectangle, can have more than one spec
+export type CircleSpec = { r: number; center: Point };
+export type RectangleSpec = { p0: Point } & (
+  | { p1: Point }
+  | { w: number; h: number }
+);
+
+export type CircleOptions = ShapeOptions & CircleSpec;
+export type RectangleOptions = ShapeOptions & RectangleSpec;
 
 export interface LedMatrixInstance {
   afterSync(hook: SyncHook): LedMatrixInstance;
@@ -47,6 +56,7 @@ export interface LedMatrixInstance {
   unstable_drawCircle(opts: CircleOptions): this;
   drawLine(x0: number, y0: number, x1: number, y1: number): this;
   drawRect(x0: number, y0: number, width: number, height: number): this;
+  unstable_drawRectangle(opts: RectangleOptions): this;
   drawText(text: string, x: number, y: number, kerning?: number): this;
 
   fgColor(color: Color): this;
@@ -68,7 +78,9 @@ export interface LedMatrixInstance {
   luminanceCorrect(correct: boolean): this;
   luminanceCorrect(): boolean;
 
-  map(cb: (coords: [number, number, number], t: number) => number): this;
+  map(
+    cb: (coords: [x: number, y: number, i: number], t: number) => number
+  ): this;
 
   pwmBits(pwmBits: number): this;
   pwmBits(): number;
