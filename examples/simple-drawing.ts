@@ -28,8 +28,25 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       // .strokeWidth(matrix.width() / 6)
       .fillColor(0x0000ff)
       // draw a yellow circle around the display
-      .unstable_drawRectangle({ p0: [10, 10], w: 50, h: 50, fill: false })
-      .unstable_drawRectangle({ p0: [20, 20], p1: [40, 40], fill: false });
+      .unstable_drawRectangle({
+        p0: [matrix.width() / 2 + 10, 10],
+        w: 50,
+        h: 5,
+        // fill: false,
+        strokeWidth: 0,
+      })
+      .unstable_drawRectangle({
+        p0: [20, 20],
+        p1: [40, 60],
+        // fill: false,
+        strokeWidth: 3,
+      })
+      .fillColor(0x0000ff)
+      .strokeWidth(5)
+      .unstable_drawCircle({
+        center: [matrix.center()[0] + 10, matrix.center()[1] + 10],
+        r: matrix.width() / 5,
+      });
     // matrix
     //   .clear() // clear the display
     //   .brightness(30) // set the panel brightness to 100%
@@ -38,9 +55,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
     //   // .fgColor(0xffff00) // set the active color to yellow
     //   .strokeColor(0xff0000)
     //   .strokeWidth(matrix.width() / 6)
-    //   .fillColor(0x0000ff)
     //   // draw a yellow circle around the display
-    //   .unstable_drawCircle({ center: matrix.center(), r: matrix.width() / 2 });
     // draw a yellow rectangle
     // .drawRect(
     //   matrix.width() / 4,

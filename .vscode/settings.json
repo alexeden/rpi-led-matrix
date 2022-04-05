@@ -20,6 +20,11 @@
   "files.associations": {
     "*.config": "yaml",
     "*.cc": "cpp",
+    ".clang-format": "yaml",
+    "*.theme": "php",
+    "*.install": "php",
+    "*.module": "php",
+    "config": "properties",
     "initializer_list": "cpp",
     "iostream": "cpp",
     "__bit_reference": "cpp",
@@ -106,6 +111,17 @@
     "cuchar": "cpp",
     "__errc": "cpp",
     "__node_handle": "cpp",
-    "optional": "cpp"
+    "optional": "cpp",
+    "__bits": "cpp",
+    "any": "cpp",
+    "bit": "cpp",
+    "compare": "cpp",
+    "complex": "cpp",
+    "concepts": "cpp",
+    "coroutine": "cpp",
+    "numbers": "cpp",
+    "semaphore": "cpp",
+    "span": "cpp",
+    "variant": "cpp"
   }
 }

@@ -255,15 +255,28 @@ struct Point {
 	  : x(0)
 	  , y(0) {
 	}
+
 	Point(int32_t x_, int32_t y_)
 	  : x(x_)
 	  , y(y_) {
 	}
-	const int32_t x;
-	const int32_t y;
+	int32_t x;
+	int32_t y;
 
+	friend Point operator+(const Point& lhs, const Point& rhs) {
+		return Point(lhs.x + rhs.x, lhs.y + rhs.y);
+	}
+	friend Point operator-(const Point& lhs, const Point& rhs) {
+		return Point(lhs.x - rhs.x, lhs.y - rhs.y);
+	}
+	friend Point operator+(const Point& lhs, const int32_t rhs) {
+		return Point(lhs.x + rhs, lhs.y + rhs);
+	}
+	friend Point operator-(const Point& lhs, const int32_t rhs) {
+		return Point(lhs.x - rhs, lhs.y - rhs);
+	}
 	friend bool operator<(const Point& lhs, const Point& rhs) {
-		return lhs.x < rhs.x && lhs.y < rhs.y;
+		return lhs.x < rhs.x || lhs.y < rhs.y;
 	}
 	friend bool operator>(const Point& lhs, const Point& rhs) {
 		return rhs < lhs;
@@ -274,7 +287,21 @@ struct Point {
 	friend bool operator>=(const Point& lhs, const Point& rhs) {
 		return !(lhs < rhs);
 	}
+	Point& operator++() {
+		this->x++;
+		this->y++;
+		return *this;
+	}
+	Point& operator--() {
+		this->x--;
+		this->y--;
+		return *this;
+	}
 };
+
+std::ostream& operator<<(std::ostream& os, const Point& p) {
+	return os << "Point(" << p.x << ", " << p.y << ")";
+}
 
 Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
@@ -327,8 +354,8 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& info) {
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
-	const auto p0 = Point::from_tuple_value(opts.Get("p0"));
-	const auto p1
+	auto p0 = Point::from_tuple_value(opts.Get("p0"));
+	auto p1
 	  = opts.Has("p1")
 		  ? Point::from_tuple_value(opts.Get("p1"))
 		  : Point(p0.x + opts.Get("w").As<Napi::Number>().Int32Value(), p0.y + opts.Get("h").As<Napi::Number>().Int32Value());
@@ -344,14 +371,26 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 	std::cerr << "Draw rectangle..." << std::endl;
 	std::cerr << "Stroke width: " << stroke_width << std::endl;
 	std::cerr << "Fill enabled: " << !disable_fill << std::endl;
+	std::cerr << "P0: " << p0 << std::endl;
+	std::cerr << "P1: " << p1 << std::endl;
 
 	// If stroke width is 1 and there's no fill, just draw the lines and be done
-	if (stroke_width == 1 && disable_fill) {
+	for (uint32_t i = 0; i < stroke_width; i++) {
+		if (p0 >= p1) break;
+		// if (disable_fill) {
 		DrawLine(this->canvas_, p0.x, p0.y, p1.x, p0.y, stroke_color);
 		DrawLine(this->canvas_, p1.x, p0.y, p1.x, p1.y, stroke_color);
 		DrawLine(this->canvas_, p1.x, p1.y, p0.x, p1.y, stroke_color);
 		DrawLine(this->canvas_, p0.x, p1.y, p0.x, p0.y, stroke_color);
-		return info.This();
+		// 	return info.This();
+		// }
+		++p0;
+		--p1;
+	}
+
+	// If fill is enabled, use the now-shrunken p0 and p1 to draw horizontal lines
+	if (!disable_fill) {
+		for (auto y = p0.y; y < p1.y; y++) { DrawLine(this->canvas_, p0.x, y, p1.x, y, fill_color); }
 	}
 	// for (int i = 0 - r; i <= r; i++) {
 	// 	for (int j = 0 - r; j <= r; j++) {
