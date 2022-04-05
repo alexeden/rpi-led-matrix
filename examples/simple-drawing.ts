@@ -70,7 +70,14 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
         r: 9,
         strokeWidth: 6,
         stroke: 0x0000ff,
-        fill: false,
+        fill: 0xff0000,
+      })
+      .unstable_drawCircle({
+        center: [30, 50],
+        r: 19,
+        strokeWidth: 6,
+        stroke: 0x0000ff,
+        fill: 0xff0000,
       })
       .drawCircle(20, 25, 3);
     // .unstable_drawCircle({
