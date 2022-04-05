@@ -333,20 +333,22 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 	int radiusError = 1 - x; // -3
 
 	while (y <= x) {
-		if (!disable_fill && y != -x + y0)
-			DrawLine(this->canvas_, -y + x0, -x + y0, y + x0, -x + y0, fill_color);				   // (4, 0), (4, 0)
+		if (!disable_fill && y != radius) {
+			// DrawLine(this->canvas_, -y + x0, -x + y0, y + x0, -x + y0, fill_color); // (4, 0), (4, 0)
+			// DrawLine(this->canvas_, y + x0, x + y0, -y + x0, x + y0, fill_color);
+			DrawLine(this->canvas_, -x + x0, -y + y0, x + x0, -y + y0, fill_color);
+			DrawLine(this->canvas_, x + x0, y + y0, -x + x0, y + y0, fill_color);
+		}
+
 		this->canvas_->SetPixel(-y + x0, -x + y0, stroke_color.r, stroke_color.g, stroke_color.b); // 4, 0
 		this->canvas_->SetPixel(y + x0, -x + y0, stroke_color.r, stroke_color.g, stroke_color.b);  // 4, 0
 
-		if (!disable_fill) DrawLine(this->canvas_, y + x0, x + y0, -y + x0, x + y0, fill_color);
 		this->canvas_->SetPixel(y + x0, x + y0, stroke_color.r, stroke_color.g, stroke_color.b);  // 0, 8
 		this->canvas_->SetPixel(-y + x0, x + y0, stroke_color.r, stroke_color.g, stroke_color.b); // 4, 8
 
-		if (!disable_fill) DrawLine(this->canvas_, -x + x0, -y + y0, x + x0, -y + y0, fill_color);
 		this->canvas_->SetPixel(-x + x0, -y + y0, stroke_color.r, stroke_color.g, stroke_color.b); // 0, 4
 		this->canvas_->SetPixel(x + x0, -y + y0, stroke_color.r, stroke_color.g, stroke_color.b);  // 8, 4
 
-		if (!disable_fill) DrawLine(this->canvas_, x + x0, y + y0, -x + x0, y + y0, fill_color);
 		this->canvas_->SetPixel(x + x0, y + y0, stroke_color.r, stroke_color.g, stroke_color.b);  // 8, 4
 		this->canvas_->SetPixel(-x + x0, y + y0, stroke_color.r, stroke_color.g, stroke_color.b); // 0, 4
 
@@ -358,23 +360,6 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 			radiusError += 2 * (y - x + 1);
 		}
 	}
-	// auto r2 = pow(r, 2);
-	// for (int i = 0 - r; i <= r; i++) {
-	// 	auto i2 = pow(i, 2);
-	// 	for (int j = 0 - r; j <= r; j++) {
-	// 		auto i2j2 = i2 + pow(j, 2);
-	// 		if (i2j2 <= r2 + 1) {
-	// 			// Draw the stroke pixels
-	// 			if (i2j2 > pow(r - stroke_width + 1, 2)) {
-	// 				this->canvas_->SetPixel(i + x, y - j, stroke_color.r, stroke_color.g, stroke_color.b);
-	// 			}
-	// 			// Draw the fill pixels if we should
-	// 			else if (!disable_fill) {
-	// 				this->canvas_->SetPixel(i + x, y - j, fill_color.r, fill_color.g, fill_color.b);
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	return info.This();
 }

@@ -20,7 +20,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
     matrix
       .clear() // clear the display
-      .brightness(30) // set the panel brightness to 100%
+      // .brightness(30) // set the panel brightness to 100%
       .fgColor(0x0000ff) // set the active color to blue
       // .fill() // color the entire diplay blue
       // .fgColor(0xffff00) // set the active color to yellow
