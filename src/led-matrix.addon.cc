@@ -328,30 +328,34 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 	const bool disable_fill		= opts.Get("fill").IsBoolean() && opts.Get("fill").As<Napi::Boolean>().Value() == false;
 	const auto fill_color		= color_from_value_or_default(opts.Get("fill"), fill_color_);
 
-	std::cerr << "Draw circle..." << std::endl;
-	std::cerr << "Stroke width: " << stroke_width << std::endl;
-	std::cerr << "Fill enabled: " << !disable_fill << std::endl;
+	int x			= radius;
+	int y			= 0;
+	int radiusError = 1 - x; // -3
 
-	for (int r = radius; r >= radius - int(stroke_width); r--) {
-		int x			= r;
-		int y			= 0;
-		int radiusError = 1 - x;
+	while (y <= x) {
+		if (!disable_fill && y != -x + y0)
+			DrawLine(this->canvas_, -y + x0, -x + y0, y + x0, -x + y0, fill_color);				   // (4, 0), (4, 0)
+		this->canvas_->SetPixel(-y + x0, -x + y0, stroke_color.r, stroke_color.g, stroke_color.b); // 4, 0
+		this->canvas_->SetPixel(y + x0, -x + y0, stroke_color.r, stroke_color.g, stroke_color.b);  // 4, 0
 
-		while (y <= x) {
-			this->canvas_->SetPixel(x + x0, y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-			this->canvas_->SetPixel(y + x0, x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-			this->canvas_->SetPixel(-x + x0, y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-			this->canvas_->SetPixel(-y + x0, x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-			this->canvas_->SetPixel(-x + x0, -y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-			this->canvas_->SetPixel(-y + x0, -x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-			this->canvas_->SetPixel(x + x0, -y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-			this->canvas_->SetPixel(y + x0, -x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-			y++;
-			if (radiusError < 0) { radiusError += 2 * y + 1; }
-			else {
-				x--;
-				radiusError += 2 * (y - x + 1);
-			}
+		if (!disable_fill) DrawLine(this->canvas_, y + x0, x + y0, -y + x0, x + y0, fill_color);
+		this->canvas_->SetPixel(y + x0, x + y0, stroke_color.r, stroke_color.g, stroke_color.b);  // 0, 8
+		this->canvas_->SetPixel(-y + x0, x + y0, stroke_color.r, stroke_color.g, stroke_color.b); // 4, 8
+
+		if (!disable_fill) DrawLine(this->canvas_, -x + x0, -y + y0, x + x0, -y + y0, fill_color);
+		this->canvas_->SetPixel(-x + x0, -y + y0, stroke_color.r, stroke_color.g, stroke_color.b); // 0, 4
+		this->canvas_->SetPixel(x + x0, -y + y0, stroke_color.r, stroke_color.g, stroke_color.b);  // 8, 4
+
+		if (!disable_fill) DrawLine(this->canvas_, x + x0, y + y0, -x + x0, y + y0, fill_color);
+		this->canvas_->SetPixel(x + x0, y + y0, stroke_color.r, stroke_color.g, stroke_color.b);  // 8, 4
+		this->canvas_->SetPixel(-x + x0, y + y0, stroke_color.r, stroke_color.g, stroke_color.b); // 0, 4
+
+		y++;
+
+		if (radiusError < 0) { radiusError += 2 * y + 1; }
+		else {
+			x--;
+			radiusError += 2 * (y - x + 1);
 		}
 	}
 	// auto r2 = pow(r, 2);

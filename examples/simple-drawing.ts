@@ -39,6 +39,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       .unstable_drawRectangle({ p0: [85, 35], p1: [95, 40], strokeWidth: 3 })
       .unstable_drawRectangle({ p0: [85, 45], p1: [95, 50], strokeWidth: 4 })
       .unstable_drawRectangle({ p0: [85, 55], p1: [95, 60], strokeWidth: 5 })
+      // .fillColor(0)
       .unstable_drawCircle({ center: [110, 5], r: 3, strokeWidth: 0 })
       .unstable_drawCircle({ center: [110, 15], r: 3, strokeWidth: 1 })
       .unstable_drawCircle({ center: [110, 25], r: 3, strokeWidth: 2 })
