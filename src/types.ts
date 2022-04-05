@@ -7,23 +7,21 @@ export type Color = number | [r: number, g: number, b: number] | ColorObject;
 
 export type ShapeOptions = {
   /**
-   * @default undefined will use the matrix's current `fillColor`.
-   * - Any `Color` will override the current `fillColor` for this shape only
-   * - `false` means no fill will be drawn at all
+   * @default undefined shape will not be filled.
+   * - Any `Color` will override the current `bgColor` for this shape only
+   * - `true` means the current `bgColor` will be used
    */
-  fill?: false | Color;
+  fill?: true | Color;
   /**
-   * @default undefined will use the matrix's current `strokeColor`.
-   * - Any `Color` will override the current `strokeColor` for this shape only
-   * - `false` means no stroke will be drawn at all, as if `strokeWidth`
-   *    had been set to zero
+   * @default undefined will use the matrix's current `fgColor`.
+   * - Any `Color` will override the current `fgColor` for this shape only
    */
-  stroke?: false | Color;
-  /**
-   * @default undefined will use the matrix's current `strokeWidth`
-   * Any `number` will override the current `strokeWidth`.
-   * */
-  strokeWidth?: number;
+  stroke?: Color;
+  // /**
+  //  * @default undefined will use the matrix's current `strokeWidth`
+  //  * Any `number` will override the current `strokeWidth`.
+  //  * */
+  // strokeWidth?: number;
 };
 
 // A spec represents the minimum information needed to draw a shape;
@@ -35,7 +33,12 @@ export type RectangleSpec = { p0: Point } & (
 );
 
 export type CircleOptions = ShapeOptions & CircleSpec;
-export type RectangleOptions = ShapeOptions & RectangleSpec;
+export type RectangleOptions = ShapeOptions &
+  RectangleSpec & {
+    // The stroke width of a rectangle can be set
+    // @default 1
+    strokeWidth?: number;
+  };
 
 export interface LedMatrixInstance {
   afterSync(hook: SyncHook): LedMatrixInstance;
@@ -62,9 +65,6 @@ export interface LedMatrixInstance {
   fgColor(color: Color): this;
   fgColor(): ColorObject;
 
-  fillColor(color: Color): this;
-  fillColor(): ColorObject;
-
   fill(): this;
   fill(x0: number, y0: number, x1: number, y1: number): this;
 
@@ -86,12 +86,6 @@ export interface LedMatrixInstance {
   pwmBits(): number;
 
   setPixel(x: number, y: number): this;
-
-  strokeColor(color: Color): this;
-  strokeColor(): ColorObject;
-
-  strokeWidth(width: number): this;
-  strokeWidth(): number;
 
   sync(): void;
 

@@ -61,9 +61,6 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::FunctionReference after_sync_cb_;
 	Color bg_color_;
 	Color fg_color_;
-	Color fill_color_;
-	Color stroke_color_;
-	uint32_t stroke_width_;
 	Font* font_;
 	std::string font_name_;
 	RGBMatrix* matrix_;

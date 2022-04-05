@@ -44,9 +44,6 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("map", &LedMatrixAddon::map),
 		InstanceMethod("pwmBits", &LedMatrixAddon::pwm_bits),
 		InstanceMethod("setPixel", &LedMatrixAddon::set_pixel),
-		InstanceMethod("strokeWidth", &LedMatrixAddon::stroke_width),
-		InstanceMethod("strokeColor", &LedMatrixAddon::stroke_color),
-		InstanceMethod("fillColor", &LedMatrixAddon::fill_color),
 		InstanceMethod("sync", &LedMatrixAddon::sync),
 		InstanceMethod("width", &LedMatrixAddon::width) });
 
@@ -65,9 +62,6 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   , after_sync_cb_(Napi::FunctionReference())
   , bg_color_(Color(0, 0, 0))
   , fg_color_(Color(0, 0, 0))
-  , fill_color_(Color(0, 0, 0))
-  , stroke_color_(Color(0, 0, 0))
-  , stroke_width_(1)
   , font_(nullptr)
   , font_name_("")
   , t_start_(get_now_ms())
@@ -320,13 +314,9 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 	const auto y0		 = center.y;
 	const int32_t radius = opts.Get("r").As<Napi::Number>().Int32Value();
 	assert(radius >= 0);
-	const uint32_t stroke_width = opts.Get("stroke").IsBoolean() && !opts.Get("stroke").As<Napi::Boolean>().Value() ? 0
-								  : opts.Get("strokeWidth").IsUndefined()
-									? stroke_width_
-									: opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
-	const auto stroke_color		= color_from_value_or_default(opts.Get("stroke"), stroke_color_);
-	const bool disable_fill		= opts.Get("fill").IsBoolean() && opts.Get("fill").As<Napi::Boolean>().Value() == false;
-	const auto fill_color		= color_from_value_or_default(opts.Get("fill"), fill_color_);
+	const auto stroke_color = color_from_value_or_default(opts.Get("stroke"), fg_color_);
+	const bool disable_fill = opts.Get("fill").IsUndefined();
+	const auto fill_color	= color_from_value_or_default(opts.Get("fill"), bg_color_);
 
 	int x			= radius;
 	int y			= 0;
@@ -373,21 +363,13 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 	  = opts.Has("p1")
 		  ? Point::from_tuple_value(opts.Get("p1"))
 		  : Point(p0.x + opts.Get("w").As<Napi::Number>().Int32Value(), p0.y + opts.Get("h").As<Napi::Number>().Int32Value());
-	--p1;
 	assert(p1 >= p0);
-	const uint32_t stroke_width
-	  = opts.Get("stroke").IsBoolean() && opts.Get("stroke").As<Napi::Boolean>().Value() == false ? 0
-		: opts.Get("strokeWidth").IsUndefined()													  ? stroke_width_
-												: opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
-	const auto stroke_color = color_from_value_or_default(opts.Get("stroke"), stroke_color_);
-	const bool disable_fill = opts.Get("fill").IsBoolean() && opts.Get("fill").As<Napi::Boolean>().Value() == false;
-	const auto fill_color	= color_from_value_or_default(opts.Get("fill"), fill_color_);
 
-	std::cerr << "Draw rectangle..." << std::endl;
-	std::cerr << "Stroke width: " << stroke_width << std::endl;
-	std::cerr << "Fill enabled: " << !disable_fill << std::endl;
-	std::cerr << "P0: " << p0 << std::endl;
-	std::cerr << "P1: " << p1 << std::endl;
+	const uint32_t stroke_width
+	  = opts.Get("strokeWidth").IsUndefined() ? 1 : opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
+	const auto stroke_color = color_from_value_or_default(opts.Get("stroke"), fg_color_);
+	const bool disable_fill = opts.Get("fill").IsUndefined();
+	const auto fill_color	= color_from_value_or_default(opts.Get("fill"), bg_color_);
 
 	// If stroke width is 1 and there's no fill, just draw the lines and be done
 	for (uint32_t i = 0; i < stroke_width; i++) {
@@ -404,21 +386,6 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 	if (!disable_fill) {
 		for (auto y = p0.y; y <= p1.y; y++) { DrawLine(this->canvas_, p0.x, y, p1.x, y, fill_color); }
 	}
-	// for (int i = 0 - r; i <= r; i++) {
-	// 	for (int j = 0 - r; j <= r; j++) {
-	// 		auto _r = pow(i, 2) + pow(j, 2);
-	// 		if (_r < pow(r, 2)) {
-	// 			// Draw the stroke pixels
-	// 			if (_r >= pow(r - stroke_width, 2)) {
-	// 				this->canvas_->SetPixel(i + x, y - j, stroke_color.r, stroke_color.g, stroke_color.b);
-	// 			}
-	// 			// Draw the fill pixels if we should
-	// 			else if (!disable_fill) {
-	// 				this->canvas_->SetPixel(i + x, y - j, fill_color.r, fill_color.g, fill_color.b);
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	return info.This();
 }
@@ -540,36 +507,6 @@ Napi::Value LedMatrixAddon::fg_color(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0) {
 		auto color = LedMatrixAddon::color_from_callback_info(info);
 		fg_color_  = color;
-		return info.This();
-	}
-	else {
-		return LedMatrixAddon::obj_from_color(info.Env(), fg_color_);
-	}
-}
-Napi::Value LedMatrixAddon::fill_color(const Napi::CallbackInfo& info) {
-	if (info.Length() > 0) {
-		auto color	= LedMatrixAddon::color_from_callback_info(info);
-		fill_color_ = color;
-		return info.This();
-	}
-	else {
-		return LedMatrixAddon::obj_from_color(info.Env(), fg_color_);
-	}
-}
-Napi::Value LedMatrixAddon::stroke_color(const Napi::CallbackInfo& info) {
-	if (info.Length() > 0) {
-		auto color	  = LedMatrixAddon::color_from_callback_info(info);
-		stroke_color_ = color;
-		return info.This();
-	}
-	else {
-		return LedMatrixAddon::obj_from_color(info.Env(), fg_color_);
-	}
-}
-Napi::Value LedMatrixAddon::stroke_width(const Napi::CallbackInfo& info) {
-	if (info.Length() > 0) {
-		auto width	  = info[0].As<Napi::Number>().Uint32Value();
-		stroke_width_ = width;
 		return info.This();
 	}
 	else {
