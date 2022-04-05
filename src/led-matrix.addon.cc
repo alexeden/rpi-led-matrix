@@ -315,11 +315,11 @@ Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info) {
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
-	const auto center = Point::from_tuple_value(opts.Get("center"));
-	const auto x	  = center.x;
-	const auto y	  = center.y;
-	const int32_t r	  = opts.Get("r").As<Napi::Number>().Int32Value();
-	assert(r >= 0);
+	const auto center	 = Point::from_tuple_value(opts.Get("center"));
+	const auto x0		 = center.x;
+	const auto y0		 = center.y;
+	const int32_t radius = opts.Get("r").As<Napi::Number>().Int32Value();
+	assert(radius >= 0);
 	const uint32_t stroke_width = opts.Get("stroke").IsBoolean() && !opts.Get("stroke").As<Napi::Boolean>().Value() ? 0
 								  : opts.Get("strokeWidth").IsUndefined()
 									? stroke_width_
@@ -332,21 +332,45 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 	std::cerr << "Stroke width: " << stroke_width << std::endl;
 	std::cerr << "Fill enabled: " << !disable_fill << std::endl;
 
-	for (int i = 0 - r; i <= r; i++) {
-		for (int j = 0 - r; j <= r; j++) {
-			auto _r = pow(i, 2) + pow(j, 2);
-			if (_r < pow(r, 2)) {
-				// Draw the stroke pixels
-				if (_r >= pow(r - stroke_width, 2)) {
-					this->canvas_->SetPixel(i + x, y - j, stroke_color.r, stroke_color.g, stroke_color.b);
-				}
-				// Draw the fill pixels if we should
-				else if (!disable_fill) {
-					this->canvas_->SetPixel(i + x, y - j, fill_color.r, fill_color.g, fill_color.b);
-				}
+	for (int r = radius; r >= radius - int(stroke_width); r--) {
+		int x			= r;
+		int y			= 0;
+		int radiusError = 1 - x;
+
+		while (y <= x) {
+			this->canvas_->SetPixel(x + x0, y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+			this->canvas_->SetPixel(y + x0, x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+			this->canvas_->SetPixel(-x + x0, y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+			this->canvas_->SetPixel(-y + x0, x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+			this->canvas_->SetPixel(-x + x0, -y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+			this->canvas_->SetPixel(-y + x0, -x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+			this->canvas_->SetPixel(x + x0, -y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+			this->canvas_->SetPixel(y + x0, -x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+			y++;
+			if (radiusError < 0) { radiusError += 2 * y + 1; }
+			else {
+				x--;
+				radiusError += 2 * (y - x + 1);
 			}
 		}
 	}
+	// auto r2 = pow(r, 2);
+	// for (int i = 0 - r; i <= r; i++) {
+	// 	auto i2 = pow(i, 2);
+	// 	for (int j = 0 - r; j <= r; j++) {
+	// 		auto i2j2 = i2 + pow(j, 2);
+	// 		if (i2j2 <= r2 + 1) {
+	// 			// Draw the stroke pixels
+	// 			if (i2j2 > pow(r - stroke_width + 1, 2)) {
+	// 				this->canvas_->SetPixel(i + x, y - j, stroke_color.r, stroke_color.g, stroke_color.b);
+	// 			}
+	// 			// Draw the fill pixels if we should
+	// 			else if (!disable_fill) {
+	// 				this->canvas_->SetPixel(i + x, y - j, fill_color.r, fill_color.g, fill_color.b);
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	return info.This();
 }
@@ -359,6 +383,7 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 	  = opts.Has("p1")
 		  ? Point::from_tuple_value(opts.Get("p1"))
 		  : Point(p0.x + opts.Get("w").As<Napi::Number>().Int32Value(), p0.y + opts.Get("h").As<Napi::Number>().Int32Value());
+	--p1;
 	assert(p1 >= p0);
 	const uint32_t stroke_width
 	  = opts.Get("stroke").IsBoolean() && opts.Get("stroke").As<Napi::Boolean>().Value() == false ? 0
@@ -377,20 +402,17 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 	// If stroke width is 1 and there's no fill, just draw the lines and be done
 	for (uint32_t i = 0; i < stroke_width; i++) {
 		if (p0 >= p1) break;
-		// if (disable_fill) {
 		DrawLine(this->canvas_, p0.x, p0.y, p1.x, p0.y, stroke_color);
 		DrawLine(this->canvas_, p1.x, p0.y, p1.x, p1.y, stroke_color);
 		DrawLine(this->canvas_, p1.x, p1.y, p0.x, p1.y, stroke_color);
 		DrawLine(this->canvas_, p0.x, p1.y, p0.x, p0.y, stroke_color);
-		// 	return info.This();
-		// }
 		++p0;
 		--p1;
 	}
 
 	// If fill is enabled, use the now-shrunken p0 and p1 to draw horizontal lines
 	if (!disable_fill) {
-		for (auto y = p0.y; y < p1.y; y++) { DrawLine(this->canvas_, p0.x, y, p1.x, y, fill_color); }
+		for (auto y = p0.y; y <= p1.y; y++) { DrawLine(this->canvas_, p0.x, y, p1.x, y, fill_color); }
 	}
 	// for (int i = 0 - r; i <= r; i++) {
 	// 	for (int j = 0 - r; j <= r; j++) {
