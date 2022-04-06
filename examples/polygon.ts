@@ -13,8 +13,8 @@ import { matrixOptions, runtimeOptions } from './_config';
 
     matrix.afterSync((mat, dt, t) => {
       const secs = t / 1000;
-      const evenR = r * ((Math.sin(2 * secs) + 1) / 2);
-      const oddR = r * (1 - (Math.sin(2 * secs) + 1) / 2);
+      const evenR = r * ((Math.sin(2 * secs) + 1) / 2) + 4;
+      const oddR = r * (1 - (Math.sin(2 * secs) + 1) / 2) + 4;
       const ps: Point[] = [...Array(n).keys()]
         .map(i => i * spacing + (Math.sin(5 * secs) + 2) + secs)
         .map((theta, i) => {
