@@ -40,6 +40,7 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::Value stroke_color(const Napi::CallbackInfo& info);
 	Napi::Value stroke_width(const Napi::CallbackInfo& info);
 	Napi::Value unstable_draw_circle(const Napi::CallbackInfo& info);
+	Napi::Value unstable_draw_polygon(const Napi::CallbackInfo& info);
 	Napi::Value unstable_draw_rectangle(const Napi::CallbackInfo& info);
 	Napi::Value width(const Napi::CallbackInfo& info);
 

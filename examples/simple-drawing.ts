@@ -6,18 +6,6 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 (async () => {
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions);
-
-    console.log('CENTER: ', matrix.center());
-
-    // console.log(
-    //   'drawing: ',
-    //   matrix.unstable_drawCircle({
-    //     ...matrix.center(),
-    //     r: 10,
-    //     strokeWidth: 1,
-    //   })
-    // );
-
     matrix
       .clear() // clear the display
       // .brightness(30) // set the panel brightness to 100%

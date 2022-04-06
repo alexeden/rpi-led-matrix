@@ -17,7 +17,7 @@ export const matrixOptions: MatrixOptions = {
   parallel: 2,
   // panelType: 'FM6127',
   // limitRefreshRateHz: 1,
-  // showRefreshRate: true,
+  showRefreshRate: true,
   // pixelMapperConfig: LedMatrixUtils.encodeMappers(
   //   { type: PixelMapperType.Chainlink }
   // ),
