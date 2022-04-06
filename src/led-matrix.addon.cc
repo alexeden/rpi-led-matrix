@@ -264,8 +264,19 @@ struct Point {
 	  : x(x_)
 	  , y(y_) {
 	}
+
 	int32_t x;
 	int32_t y;
+
+	void maximize(const Point& p) {
+		this->x = p.x > x ? p.x : x;
+		this->y = p.y > y ? p.y : y;
+	}
+
+	void minimize(const Point& p) {
+		this->x = p.x < x ? p.x : x;
+		this->y = p.y < y ? p.y : y;
+	}
 
 	friend Point operator+(const Point& lhs, const Point& rhs) {
 		return Point(lhs.x + rhs.x, lhs.y + rhs.y);
@@ -424,14 +435,23 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 	assert(pointValues.IsArray());
 	const auto length = pointValues.Length();
 	assert(length > 1);
+
 	Point points[length];
 	points[0] = Point::from_tuple_value(pointValues[uint32_t(0)]);
+
+	auto p0 = points[0];
+	auto p1 = points[0];
+
 	for (auto i = 1; i < length; i++) {
 		points[i] = Point::from_tuple_value(pointValues[i]);
+		p0.minimize(points[i]);
+		p1.maximize(points[i]);
 		DrawLine(this->canvas_, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, fg_color_);
 	}
+
 	DrawLine(this->canvas_, points[length - 1].x, points[length - 1].y, points[0].x, points[0].y, fg_color_);
 
+	// std::cout << "P0: " << p0 << std::endl << "P1: " << p1 << std::endl;
 	// auto p_max
 	// const auto p0 = points[0];
 	// auto prev	  = points[1];
