@@ -1,5 +1,6 @@
 #include "led-matrix.addon.h"
 #include <cmath>
+#include <iterator>
 #include <math.h>
 #include <vector>
 
@@ -8,7 +9,9 @@
 
 inline double get_now_ms() {
 	struct timespec t;
-	if (clock_gettime(CLOCK_MONOTONIC_RAW, &t) < 0) { throw "Failed to get the current time."; }
+	if (clock_gettime(CLOCK_MONOTONIC_RAW, &t) < 0) {
+		throw "Failed to get the current time.";
+	}
 
 	return (t.tv_sec * 1000) + (t.tv_nsec / 1000000);
 }
@@ -82,7 +85,9 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
 	this->matrix_ = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
 	this->canvas_ = this->matrix_->CreateFrameCanvas();
 
-	if (this->matrix_ == NULL) { throw Napi::Error::New(env, "Failed to create matrix."); }
+	if (this->matrix_ == NULL) {
+		throw Napi::Error::New(env, "Failed to create matrix.");
+	}
 }
 
 LedMatrixAddon::~LedMatrixAddon(void) {
@@ -112,7 +117,9 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 		  = after_sync_cb_
 			  .Call(info.This(), { info.This(), Napi::Number::New(env, t_dsync_ms_), Napi::Number::New(env, t_sync_ms_) });
 
-		if (resync.ToBoolean() == true) { sync(info); }
+		if (resync.ToBoolean() == true) {
+			sync(info);
+		}
 	}
 
 	return Napi::Number::New(env, 0);
@@ -189,7 +196,9 @@ Napi::Value LedMatrixAddon::clear(const Napi::CallbackInfo& info) {
 		const auto x1	 = info[2].As<Napi::Number>().Uint32Value();
 		const auto y1	 = info[3].As<Napi::Number>().Uint32Value();
 		const auto black = Color(0, 0, 0);
-		for (auto y = y0; y <= y1; y++) { DrawLine(this->canvas_, x0, y, x1, y, black); }
+		for (auto y = y0; y <= y1; y++) {
+			DrawLine(this->canvas_, x0, y, x1, y, black);
+		}
 	}
 	else {
 		this->canvas_->Clear();
@@ -198,7 +207,7 @@ Napi::Value LedMatrixAddon::clear(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
-	const auto buffer = info[0].As<Napi::Buffer<uint8_t> >();
+	const auto buffer = info[0].As<Napi::Buffer<uint8_t>>();
 	const auto w	  = info[1].IsNumber() ? info[1].As<Napi::Number>().Uint32Value() : this->matrix_->width();
 	const auto h	  = info[2].IsNumber() ? info[2].As<Napi::Number>().Uint32Value() : this->matrix_->height();
 	const auto data	  = buffer.Data();
@@ -385,32 +394,56 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 
 	// If fill is enabled, use the now-shrunken p0 and p1 to draw horizontal lines
 	if (!disable_fill) {
-		for (auto y = p0.y; y <= p1.y; y++) { DrawLine(this->canvas_, p0.x, y, p1.x, y, fill_color); }
+		for (auto y = p0.y; y <= p1.y; y++) {
+			DrawLine(this->canvas_, p0.x, y, p1.x, y, fill_color);
+		}
 	}
 
 	return info.This();
 }
 
 Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info) {
+	// Two rules dictate whether or not a point qualifies as being in the interior of a polygon:
+	// 1. Even-Odd Parity - Draw a horizonal line (scan line) through a complex
+	//    polygon and label each point at which the scan line intersects/cross an
+	//    edge 1, 2, ... N, counting from left to right.
+	//    If the intersection label is even, pixels to the left are polygon interior.
+	//    If the intersection label is odd, pixels to the right are polygon interior.
+	// 2. Nonzero Rule - For this rule, the direction of the scanline intersection
+	//    with a polygon's edge classifies the intersection as positive or negative.
+	//    If, from the perspective of the scanline as it moves from left to right,
+	//    the edge it crosses goes from left to right, the intersection label is positve
+	//    and increased by 1. Otherwise it's negative and decreased by 1. A region
+	//    is interior if the signed crossing number is not zero.
+	//
+	// The even-odd parity rule seems to be the most common.
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
+
 	const auto pointValues = opts.Get("ps").As<Napi::Array>();
 	assert(pointValues.IsArray());
 	const auto length = pointValues.Length();
 	assert(length > 1);
-	const auto stroke_color = color_from_value_or_default(opts.Get("stroke"), fg_color_);
-	const bool disable_fill = opts.Get("fill").IsUndefined();
-	const auto fill_color	= color_from_value_or_default(opts.Get("fill"), bg_color_);
-
-	const auto p0 = Point::from_tuple_value(pointValues[uint32_t(0)]);
-	auto prev	  = Point::from_tuple_value(pointValues[uint32_t(0)]);
-
-	for (uint32_t i = 1; i <= length; i++) {
-		// Connect back to p0 if we're on the last point
-		auto p1 = i == length ? p0 : Point::from_tuple_value(pointValues[i]);
-		DrawLine(this->canvas_, prev.x, prev.y, p1.x, p1.y, fg_color_);
-		prev = p1;
+	Point points[length];
+	points[0] = Point::from_tuple_value(pointValues[uint32_t(0)]);
+	for (auto i = 1; i < length; i++) {
+		points[i] = Point::from_tuple_value(pointValues[i]);
+		DrawLine(this->canvas_, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, fg_color_);
 	}
+	DrawLine(this->canvas_, points[length - 1].x, points[length - 1].y, points[0].x, points[0].y, fg_color_);
+
+	// auto p_max
+	// const auto p0 = points[0];
+	// auto prev	  = points[1];
+
+	// for (uint32_t i = 1; i <= length; ++i) {
+	// 	// Connect back to p0 if we're on the last point
+	// 	auto p1 = i == length ? p0 : points[i];
+	// 	// Point::from_tuple_value(pointValues[i]);
+	// 	DrawLine(this->canvas_, prev.x, prev.y, p1.x, p1.y, fg_color_);
+	// 	prev = p1;
+	// }
+	// DrawLine(this->canvas_, prev.x, prev.y, p0.x, p0.y, fg_color_);
 
 	return info.This();
 }
@@ -482,7 +515,9 @@ Napi::Value LedMatrixAddon::fill(const Napi::CallbackInfo& info) {
 		const auto y0 = info[1].As<Napi::Number>().Uint32Value();
 		const auto x1 = info[2].As<Napi::Number>().Uint32Value();
 		const auto y1 = info[3].As<Napi::Number>().Uint32Value();
-		for (auto y = y0; y <= y1; y++) { DrawLine(this->canvas_, x0, y, x1, y, fg_color_); }
+		for (auto y = y0; y <= y1; y++) {
+			DrawLine(this->canvas_, x0, y, x1, y, fg_color_);
+		}
 	}
 	else {
 		this->canvas_->Fill(fg_color_.r, fg_color_.g, fg_color_.b);
