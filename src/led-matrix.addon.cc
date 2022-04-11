@@ -318,6 +318,35 @@ std::ostream& operator<<(std::ostream& os, const Point& p) {
 	return os << "Point(" << p.x << ", " << p.y << ")";
 }
 
+struct Edge {
+	Edge(Point& p0_, Point& p1_)
+	  : p_low(p0_.y < p1_.y ? p0_ : p1_)
+	  , p_high(p0_.y < p1_.y ? p1_ : p0_)
+	  , min_y(p_low.y)
+	  , max_y(p_high.y)
+	  , min_y_x(p_low.x)
+	  , m(((float) p_high.x - (float) p_low.x) / ((float) p_high.y - (float) p_low.y))
+	  , b((float) p_low.y - (m * (float) p_low.x)) {
+	}
+
+	const Point p_low;
+	const Point p_high;
+	int32_t min_y;
+	/**
+	 * The x-coordinate of point with the minimum y.
+	 */
+	int32_t min_y_x;
+	int32_t max_y;
+	const float m;
+	const float b;
+};
+
+std::ostream& operator<<(std::ostream& os, const Edge& e) {
+	return os << "Edge " << e.p_low << " to " << e.p_high << std::endl
+			  << "Slope: " << e.m << std::endl
+			  << "Y-Int: " << e.b << std::endl;
+}
+
 Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
@@ -442,16 +471,28 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 	auto p0 = points[0];
 	auto p1 = points[0];
 
+	std::vector<Edge> edges; // x0, y0, x1, y1, m, b
+
 	for (auto i = 1; i < length; i++) {
 		points[i] = Point::from_tuple_value(pointValues[i]);
 		p0.minimize(points[i]);
 		p1.maximize(points[i]);
+		edges.push_back(Edge(points[i], points[i - 1]));
 		DrawLine(this->canvas_, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, fg_color_);
 	}
 
+	edges.push_back(Edge(points[length - 1], points[0]));
 	DrawLine(this->canvas_, points[length - 1].x, points[length - 1].y, points[0].x, points[0].y, fg_color_);
 
+	for (auto it = edges.begin(); it != edges.end(); ++it) {
+		std::cout << it->min_y << '\t' << it->max_y << '\t' << it->min_y_x << '\t' << (1 / it->m) << std::endl;
+	}
+
+	uint32_t width	= p1.x - p0.x;
+	uint32_t height = p1.y - p0.y;
+
 	// std::cout << "P0: " << p0 << std::endl << "P1: " << p1 << std::endl;
+	// std::cout << "Height: " << height << std::endl << "Width: " << width << std::endl;
 	// auto p_max
 	// const auto p0 = points[0];
 	// auto prev	  = points[1];
