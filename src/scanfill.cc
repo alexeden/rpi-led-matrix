@@ -3,7 +3,7 @@
 typedef struct tEdge {
 	int yUpper;
 	float x_intersect;
-	float dxPerScan;
+	float w;
 	struct tEdge* next;
 } TEdge;
 
@@ -26,14 +26,14 @@ void fill_scan(int scan_i, TEdge* active) {
 	}
 }
 
-void scan_fill(int cnt, uint32_t height, dcPt* pts) {
+void scan_fill(int count, uint32_t height, dcPt* pts) {
 	TEdge* edges[height];
 	TEdge* active;
 	for (auto i = 0; i < height; i++) {
 		edges[i]	   = (TEdge*) malloc(sizeof(TEdge));
 		edges[i]->next = NULL;
 	}
-	build_edge_list(cnt, pts, edges);
+	build_edge_list(count, pts, edges);
 	active		 = (TEdge*) malloc(sizeof(TEdge));
 	active->next = NULL;
 	for (auto scan_i = 0; scan_i < height; scan_i++) {
@@ -47,53 +47,47 @@ void scan_fill(int cnt, uint32_t height, dcPt* pts) {
 	// free
 }
 
-void build_edge_list(int cnt, dcPt* pts, TEdge* edges[]) {
+void build_edge_list(int count, dcPt* pts, TEdge* edges[]) {
 	TEdge* edge;
-	dcPt v1;
-	dcPt v2;
-	int i;
-	int yPrev = pts[cnt - 2].y;
-	v1.x	  = pts[cnt - 1].x;
-	v1.y	  = pts[cnt - 1].y;
-	for (i = 0; i < cnt; i++) {
-		v2 = pts[i];
+	dcPt p0;
+	p0.x = pts[count - 1].x;
+	p0.y = pts[count - 1].y;
+	dcPt p1;
+	int yPrev	 = pts[count - 2].y;
+	for (int i = 0; i < count; i++) {
+		p1 = pts[i];
 		// non-horizontal line
-		if (v1.y != v2.y) {
+		if (p0.y != p1.y) {
 			edge = (TEdge*) malloc(sizeof(TEdge));
 			// edge going up
-			if (v1.y < v2.y) {
-				make_edge_rec(v1, v2, y_next(i, cnt, pts), edge, edges);
+			if (p0.y < p1.y) {
+				make_edge_rec(p0, p1, y_next(i, count, pts), edge, edges);
 			}
 			// edge going down
 			else {
-				make_edge_rec(v1, v2, yPrev, edge, edges);
+				make_edge_rec(p0, p1, yPrev, edge, edges);
 			}
 		}
-		yPrev = v1.y;
-		v1	  = v2;
+		yPrev	   = p0.y;
+		p0 = p1;
 	}
 }
 
-int y_next(int k, int cnt, dcPt* pts) {
+int y_next(int k, int count, dcPt* pts) {
 	int j;
 
-	if ((k + 1) > (cnt - 1))
+	if ((k + 1) > (count - 1))
 		j = 0;
 	else
 		j = k + 1;
 
 	while (pts[k].y == pts[j].y)
-		if ((j + 1) > (cnt - 1))
+		if ((j + 1) > (count - 1))
 			j = 0;
 		else
 			j++;
 
 	return pts[j].y;
-}
-void delete_after(TEdge* q) {
-	TEdge* p = q->next;
-	q->next	 = p->next;
-	free(p);
 }
 
 /**
@@ -102,7 +96,7 @@ void delete_after(TEdge* q) {
  * increassing or decreasing pair of edges.
  */
 void make_edge_rec(dcPt lower, dcPt upper, int yComp, TEdge* edge, TEdge* edges[]) {
-	edge->dxPerScan	  = (float) (upper.x - lower.x) / (upper.y - lower.y);
+	edge->w	  = (float) (upper.x - lower.x) / (upper.y - lower.y);
 	edge->x_intersect = lower.x;
 	if (upper.y < yComp)
 		edge->yUpper = upper.y - 1;
@@ -162,10 +156,13 @@ void update_active_list(int scan, TEdge* active) {
 	while (p) {
 		if (scan >= p->yUpper) {
 			p = p->next;
-			delete_after(q);
+			// Delete after
+			TEdge* d = q->next;
+			q->next	 = d->next;
+			free(d);
 		}
 		else {
-			p->x_intersect = p->x_intersect + p->dxPerScan;
+			p->x_intersect = p->x_intersect + p->w;
 			q			   = p;
 			p			   = p->next;
 		}

@@ -414,60 +414,6 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 	return info.This();
 }
 
-// struct Edge {
-// 	Edge(int32_t y_upper_, float x_intersect_, float w_)
-// 	  : y_upper(y_upper_)
-// 	  , x_intersect(x_intersect_)
-// 	  , w(w_)
-// 	  , next(NULL) {
-// 	}
-// 	Edge* next;
-
-// 	/** The y-coordinate of the upper vertex */
-// 	int32_t y_upper;
-// 	/** The active x-intersection of the lower vertex */
-// 	float x_intersect;
-// 	/** The reciprocal of the slope of the edge */
-// 	float w;
-// 	// const float m;
-// };
-
-// std::ostream& operator<<(std::ostream& os, const Edge& e) {
-// 	return os << "Edge y-upper: " << e.y_upper << "\tx-lower: " << e.x_intersect << "\tw: " << e.w << std::endl;
-// }
-
-// Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info) {
-// 	const auto opts		   = info[0].As<Napi::Object>();
-// 	const auto tuple_array = opts.Get("ps").As<Napi::Array>();
-// 	const auto count	   = tuple_array.Length();
-
-// 	// Edge* edges;
-// 	// Edge* edge;
-// 	// Point p0	   = Point::from_tuple_value(tuple_array[count - 1]);
-// 	// Point p1	   = Point::from_tuple_value(tuple_array[count - 2]);
-// 	// int32_t y_prev = p1.y;
-
-// 	// for (auto i = 0; i < count; i++) {
-// 	// 	p1 = Point::from_tuple_value(tuple_array[i]);
-// 	// 	DrawLine(this->canvas_, p0.x, p0.y, p1.x, p1.y, fg_color_);
-// 	// 	// Non-horizontal line
-// 	// 	if (p0.y != p1.y) {
-// 	// 		edge = (Edge*) malloc(sizeof(Edge));
-// 	// 		// Edge going up
-// 	// 		if (p0.y < p1.y) {
-// 	// 			make_edge_rec(p0, p1, y_next())
-// 	// 		}
-// 	// 		// Edge going down
-// 	// 		else {
-// 	// 		}
-// 	// 	}
-// 	// 	y_prev = p0.y;
-// 	// 	p0	   = p1;
-// 	// }
-
-// 	return info.This();
-// }
-
 struct Edge {
 	Edge(Point& p0_, Point& p1_)
 	  : p0(p0_)
@@ -495,11 +441,13 @@ bool compareDoublesEqual(double a, double b) {
 }
 
 Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info) {
-	const auto opts			= info[0].As<Napi::Object>();
+	const auto opts = info[0].As<Napi::Object>();
+	assert(opts.IsObject());
 	const auto stroke_color = color_from_value_or_default(opts.Get("stroke"), fg_color_);
 	const bool disable_fill = opts.Get("fill").IsUndefined();
 	const auto fill_color	= color_from_value_or_default(opts.Get("fill"), bg_color_);
 
+	assert(opts.Get("ps").IsArray());
 	const auto tuple_array = opts.Get("ps").As<Napi::Array>();
 	const auto count	   = tuple_array.Length();
 	assert(count > 1);
@@ -517,8 +465,11 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 		mins.minimize(p_curr);
 		maxs.maximize(p_curr);
 		edges.push_back(Edge(p_curr, p_prev));
+		DrawLine(this->canvas_, p_prev.x, p_prev.y, p_curr.x, p_curr.y, stroke_color);
+
 		if (i == count - 1) {
 			edges.push_back(Edge(p_curr, p0));
+			DrawLine(this->canvas_, p_curr.x, p_curr.y, p0.x, p0.y, stroke_color);
 		}
 
 		p_prev = p_curr;
@@ -541,7 +492,7 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 		}
 
 		std::vector<int> line_indexes_at_p; // Vector of index of line within "edges" vector.
-		int lines_at_p = 0;					// Like The Rentals' song.  :)
+		int edges_at_p = 0;					// Like The Rentals' song.  :)
 
 		// Loop through all edges at this point, p.
 		for (int i = 0; i < edges.size(); i++) {
@@ -550,44 +501,42 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 			   || (x == (int) round((y - edges[i].b) / edges[i].m)) || isinf(edges[i].m))
 			  && (((x >= edges[i].x0 && x <= edges[i].x1) || (x >= edges[i].x1 && x <= edges[i].x0)) && ((y >= edges[i].y0 && y <= edges[i].y1) || (y >= edges[i].y1 && y <= edges[i].y0)))) {
 				line_indexes_at_p.push_back(i);
-				lines_at_p++;
+				edges_at_p++;
 			}
 		}
 		// Fill logic start
+		auto e0 = edges[line_indexes_at_p[0]];
 
 		// At a vertex vs. a line.
-		if (lines_at_p > 1) {
+		if (edges_at_p > 1) {
+			auto e1 = edges[line_indexes_at_p[1]];
+
 			// Here's where it gets nuts.
 			// How many edges does the imaginary ray (y += 0.001) cross and if more than one, are the points on each
 			// line on same side of the imaginary line. Calculate the imaginary x on each line of imaginary y.
 			double imaginary_y	= y + 0.001;
-			double imaginary_x0 = (imaginary_y - edges[line_indexes_at_p[0]].b)
-								  / edges[line_indexes_at_p[0]].m; // Division by zero is happening.TODO
-			double imaginary_x1 = (imaginary_y - edges[line_indexes_at_p[1]].b) / edges[line_indexes_at_p[1]].m;
+			double imaginary_x0 = (imaginary_y - e0.b) / e0.m; // Division by zero is happening.TODO
+			double imaginary_x1 = (imaginary_y - e1.b) / e1.m;
 
 			// We have our imaginary y and our imaginary xes.  Are these valid points on each line?
 			bool imaginary_0_valid_point
-			  = ((compareDoublesEqual(imaginary_y, (edges[line_indexes_at_p[0]].m * imaginary_x0) + edges[line_indexes_at_p[0]].b)) && ((imaginary_x0 >= edges[line_indexes_at_p[0]].x0 && imaginary_x0 <= edges[line_indexes_at_p[0]].x1) || (imaginary_x0 <= edges[line_indexes_at_p[0]].x0 && imaginary_x0 >= edges[line_indexes_at_p[0]].x1)));
+			  = ((compareDoublesEqual(imaginary_y, (e0.m * imaginary_x0) + e0.b)) && ((imaginary_x0 >= e0.x0 && imaginary_x0 <= e0.x1) || (imaginary_x0 <= e0.x0 && imaginary_x0 >= e0.x1)));
 			bool imaginary_1_valid_point
-			  = ((compareDoublesEqual(imaginary_y, (edges[line_indexes_at_p[1]].m * imaginary_x1) + edges[line_indexes_at_p[1]].b)) && ((imaginary_x1 >= edges[line_indexes_at_p[1]].x0 && imaginary_x1 <= edges[line_indexes_at_p[1]].x1) || (imaginary_x1 <= edges[line_indexes_at_p[1]].x0 && imaginary_x1 >= edges[line_indexes_at_p[1]].x1)));
+			  = ((compareDoublesEqual(imaginary_y, (e1.m * imaginary_x1) + e1.b)) && ((imaginary_x1 >= e1.x0 && imaginary_x1 <= e1.x1) || (imaginary_x1 <= e1.x0 && imaginary_x1 >= e1.x1)));
 
 			// If an imaginary point exists on each of the edges, toggle on and then off. (2 in my old thinking)
 			if (imaginary_0_valid_point & imaginary_1_valid_point) {
 				this->canvas_->SetPixel(x, y, fill_color.r, fill_color.g, fill_color.b);
 			}
 			// If an imaginary point exists on only one line (because of a cusp, for example), we've only crossed one
-			// line, effectively treating this as a side instead of a vertex.  Toggle fill on or off. (1 in my old
-			// thinking)
+			// line, effectively treating this as a side instead of a vertex.  Toggle fill on or off.
 			if (imaginary_0_valid_point ^ imaginary_1_valid_point) {
 				fill_flag = !fill_flag;
 			}
-			// If an imaginary point exists on no line, do not toggle.  (0 in my old thinking)
-			// if(!imaginary_0_valid_point & !imaginary_1_valid_point){
-			// }
 		}
 
 		// At a line vs. a vertex.
-		if (lines_at_p == 1 && edges[line_indexes_at_p[0]].m != 0) { // And slope != 0
+		if (edges_at_p == 1 && e0.m != 0) { // And slope != 0
 			fill_flag = !fill_flag;
 		}
 
