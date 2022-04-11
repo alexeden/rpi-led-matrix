@@ -442,6 +442,7 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 	return info.This();
 }
 
+
 Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info) {
 	// Two rules dictate whether or not a point qualifies as being in the interior of a polygon:
 	// 1. Even-Odd Parity - Draw a horizonal line (scan line) through a complex
