@@ -505,10 +505,10 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 			}
 		}
 		// Fill logic start
-		auto e0 = edges[line_indexes_at_p[0]];
 
 		// At a vertex vs. a line.
 		if (edges_at_p > 1) {
+			auto e0 = edges[line_indexes_at_p[0]];
 			auto e1 = edges[line_indexes_at_p[1]];
 
 			// Here's where it gets nuts.
@@ -536,7 +536,7 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 		}
 
 		// At a line vs. a vertex.
-		if (edges_at_p == 1 && e0.m != 0) { // And slope != 0
+		if (edges_at_p == 1 && edges[line_indexes_at_p[0]].m != 0) { // And slope != 0
 			fill_flag = !fill_flag;
 		}
 

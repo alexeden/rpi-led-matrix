@@ -33,10 +33,15 @@ const rainbow = (i: number) =>
         })
         .map(([x, y]) => [x + 64, y + 96]);
 
+      const color = rainbow(Math.floor(64 * ((t % 1000) / 1000)));
+
       matrix
         .clear() // clear the display
-        .fgColor(rainbow(Math.floor(64 * ((t % 1000) / 1000))))
-        .unstable_drawPolygon({ ps });
+        .fgColor(color)
+        .unstable_drawPolygon({
+          ps,
+          fill: color,
+        });
 
       setTimeout(() => matrix.sync(), 0);
     });
