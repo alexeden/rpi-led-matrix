@@ -247,10 +247,11 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 struct Point {
 	// Convert a [number, number] into a Point
 	static Point from_tuple_value(const Napi::Value& value) {
-		assert(value.IsArray() && value.As<Napi::Array>().Length() == 2);
+		assert(value.IsArray());
 		const auto arr = value.As<Napi::Array>();
-		int32_t x	   = arr.Get(uint32_t(0)).As<Napi::Number>().Int32Value();
-		int32_t y	   = arr.Get(uint32_t(1)).As<Napi::Number>().Int32Value();
+		assert(arr.Length() == 2);
+		int32_t x = arr.Get(uint32_t(0)).As<Napi::Number>().Int32Value();
+		int32_t y = arr.Get(uint32_t(1)).As<Napi::Number>().Int32Value();
 
 		return Point(x, y);
 	}
@@ -316,35 +317,6 @@ struct Point {
 
 std::ostream& operator<<(std::ostream& os, const Point& p) {
 	return os << "Point(" << p.x << ", " << p.y << ")";
-}
-
-struct Edge {
-	Edge(Point& p0_, Point& p1_)
-	  : p_low(p0_.y < p1_.y ? p0_ : p1_)
-	  , p_high(p0_.y < p1_.y ? p1_ : p0_)
-	  , min_y(p_low.y)
-	  , max_y(p_high.y)
-	  , min_y_x(p_low.x)
-	  , m(((float) p_high.x - (float) p_low.x) / ((float) p_high.y - (float) p_low.y))
-	  , b((float) p_low.y - (m * (float) p_low.x)) {
-	}
-
-	const Point p_low;
-	const Point p_high;
-	int32_t min_y;
-	/**
-	 * The x-coordinate of point with the minimum y.
-	 */
-	int32_t min_y_x;
-	int32_t max_y;
-	const float m;
-	const float b;
-};
-
-std::ostream& operator<<(std::ostream& os, const Edge& e) {
-	return os << "Edge " << e.p_low << " to " << e.p_high << std::endl
-			  << "Slope: " << e.m << std::endl
-			  << "Y-Int: " << e.b << std::endl;
 }
 
 Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
@@ -442,73 +414,198 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 	return info.This();
 }
 
+// struct Edge {
+// 	Edge(Point& p0_, Point& p1_)
+// 	  : p_low(p0_.y < p1_.y ? p0_ : p1_)
+// 	  , p_high(p0_.y < p1_.y ? p1_ : p0_)
+// 	  , min_y(p_low.y)
+// 	  , max_y(p_high.y)
+// 	  , min_y_x(p_low.x)
+// 	  , m(((float) p_high.x - (float) p_low.x) / ((float) p_high.y - (float) p_low.y))
+// 	  , b((float) p_low.y - (m * (float) p_low.x)) {
+// 	}
+
+// 	const Point p_low;
+// 	const Point p_high;
+// 	int32_t min_y;
+// 	/**
+// 	 * The x-coordinate of point with the minimum y.
+// 	 */
+// 	int32_t min_y_x;
+// 	int32_t max_y;
+// 	const float m;
+// 	const float b;
+// };
+struct Edge {
+	Edge(int32_t y_upper_, float x_intersect_, float w_)
+	  : y_upper(y_upper_)
+	  , x_intersect(x_intersect_)
+	  , w(w_)
+	  , next(NULL) {
+	}
+	Edge* next;
+
+	/** The y-coordinate of the upper vertex */
+	int32_t y_upper;
+	/** The active x-intersection of the lower vertex */
+	float x_intersect;
+	/** The reciprocal of the slope of the edge */
+	float w;
+	// const float m;
+};
+
+std::ostream& operator<<(std::ostream& os, const Edge& e) {
+	return os << "Edge y-upper: " << e.y_upper << "\tx-lower: " << e.x_intersect << "\tw: " << e.w << std::endl;
+}
 
 Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info) {
-	// Two rules dictate whether or not a point qualifies as being in the interior of a polygon:
-	// 1. Even-Odd Parity - Draw a horizonal line (scan line) through a complex
-	//    polygon and label each point at which the scan line intersects/cross an
-	//    edge 1, 2, ... N, counting from left to right.
-	//    If the intersection label is even, pixels to the left are polygon interior.
-	//    If the intersection label is odd, pixels to the right are polygon interior.
-	// 2. Nonzero Rule - For this rule, the direction of the scanline intersection
-	//    with a polygon's edge classifies the intersection as positive or negative.
-	//    If, from the perspective of the scanline as it moves from left to right,
-	//    the edge it crosses goes from left to right, the intersection label is positve
-	//    and increased by 1. Otherwise it's negative and decreased by 1. A region
-	//    is interior if the signed crossing number is not zero.
-	//
-	// The even-odd parity rule seems to be the most common.
-	const auto opts = info[0].As<Napi::Object>();
-	assert(opts.IsObject());
+	const auto opts		   = info[0].As<Napi::Object>();
+	const auto tuple_array = opts.Get("ps").As<Napi::Array>();
+	const auto count	   = tuple_array.Length();
 
-	const auto pointValues = opts.Get("ps").As<Napi::Array>();
-	assert(pointValues.IsArray());
-	const auto length = pointValues.Length();
-	assert(length > 1);
+	// Edge* edges;
+	// Edge* edge;
+	// Point p0	   = Point::from_tuple_value(tuple_array[count - 1]);
+	// Point p1	   = Point::from_tuple_value(tuple_array[count - 2]);
+	// int32_t y_prev = p1.y;
 
-	Point points[length];
-	points[0] = Point::from_tuple_value(pointValues[uint32_t(0)]);
-
-	auto p0 = points[0];
-	auto p1 = points[0];
-
-	std::vector<Edge> edges; // x0, y0, x1, y1, m, b
-
-	for (auto i = 1; i < length; i++) {
-		points[i] = Point::from_tuple_value(pointValues[i]);
-		p0.minimize(points[i]);
-		p1.maximize(points[i]);
-		edges.push_back(Edge(points[i], points[i - 1]));
-		DrawLine(this->canvas_, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, fg_color_);
-	}
-
-	edges.push_back(Edge(points[length - 1], points[0]));
-	DrawLine(this->canvas_, points[length - 1].x, points[length - 1].y, points[0].x, points[0].y, fg_color_);
-
-	for (auto it = edges.begin(); it != edges.end(); ++it) {
-		std::cout << it->min_y << '\t' << it->max_y << '\t' << it->min_y_x << '\t' << (1 / it->m) << std::endl;
-	}
-
-	uint32_t width	= p1.x - p0.x;
-	uint32_t height = p1.y - p0.y;
-
-	// std::cout << "P0: " << p0 << std::endl << "P1: " << p1 << std::endl;
-	// std::cout << "Height: " << height << std::endl << "Width: " << width << std::endl;
-	// auto p_max
-	// const auto p0 = points[0];
-	// auto prev	  = points[1];
-
-	// for (uint32_t i = 1; i <= length; ++i) {
-	// 	// Connect back to p0 if we're on the last point
-	// 	auto p1 = i == length ? p0 : points[i];
-	// 	// Point::from_tuple_value(pointValues[i]);
-	// 	DrawLine(this->canvas_, prev.x, prev.y, p1.x, p1.y, fg_color_);
-	// 	prev = p1;
+	// for (auto i = 0; i < count; i++) {
+	// 	p1 = Point::from_tuple_value(tuple_array[i]);
+	// 	DrawLine(this->canvas_, p0.x, p0.y, p1.x, p1.y, fg_color_);
+	// 	// Non-horizontal line
+	// 	if (p0.y != p1.y) {
+	// 		edge = (Edge*) malloc(sizeof(Edge));
+	// 		// Edge going up
+	// 		if (p0.y < p1.y) {
+	// 			make_edge_rec(p0, p1, y_next())
+	// 		}
+	// 		// Edge going down
+	// 		else {
+	// 		}
+	// 	}
+	// 	y_prev = p0.y;
+	// 	p0	   = p1;
 	// }
-	// DrawLine(this->canvas_, prev.x, prev.y, p0.x, p0.y, fg_color_);
 
 	return info.This();
 }
+
+int y_next(int k, int count, Point* pts) {
+	int j;
+
+	if ((k + 1) > (count - 1))
+		j = 0;
+	else
+		j = k + 1;
+
+	while (pts[k].y == pts[j].y)
+		if ((j + 1) > (count - 1))
+			j = 0;
+		else
+			j++;
+
+	return pts[j].y;
+}
+/**
+ * Store lower-y coordinate and inverse slope for each edge. Adjust and store
+ * upper-y coordinate for edges that are the lower member of a monotonically
+ * increassing or decreasing pair of edges.
+ */
+void make_edge_rec(Point lower, Point upper, int yComp, Edge* edge, Edge* edges[]) {
+	edge->w			  = (float) (upper.x - lower.x) / (upper.y - lower.y);
+	edge->x_intersect = lower.x;
+	if (upper.y < yComp)
+		edge->y_upper = upper.y - 1;
+	else
+		edge->y_upper = upper.y;
+
+	insert_edge(edges[lower.y], edge);
+}
+
+/**
+ * Inserts edge into a list of edges in order of increasing x_intersect.
+ */
+void insert_edge(Edge* list, Edge* edge) {
+	Edge* p;
+	Edge* q = list;
+	p		= q->next;
+	while (p != NULL)
+		if (edge->x_intersect < p->x_intersect)
+			p = NULL;
+		else {
+			q = p;
+			p = p->next;
+		}
+
+	edge->next = q->next;
+	q->next	   = edge;
+}
+// Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info) {
+// 	// Two rules dictate whether or not a point qualifies as being in the interior of a polygon:
+// 	// 1. Even-Odd Parity - Draw a horizonal line (scan line) through a complex
+// 	//    polygon and label each point at which the scan line intersects/cross an
+// 	//    edge 1, 2, ... N, counting from left to right.
+// 	//    If the intersection label is even, pixels to the left are polygon interior.
+// 	//    If the intersection label is odd, pixels to the right are polygon interior.
+// 	// 2. Nonzero Rule - For this rule, the direction of the scanline intersection
+// 	//    with a polygon's edge classifies the intersection as positive or negative.
+// 	//    If, from the perspective of the scanline as it moves from left to right,
+// 	//    the edge it crosses goes from left to right, the intersection label is positve
+// 	//    and increased by 1. Otherwise it's negative and decreased by 1. A region
+// 	//    is interior if the signed crossing number is not zero.
+// 	//
+// 	// The even-odd parity rule seems to be the most common.
+// 	const auto opts = info[0].As<Napi::Object>();
+// 	assert(opts.IsObject());
+
+// 	const auto pointValues = opts.Get("ps").As<Napi::Array>();
+// 	assert(pointValues.IsArray());
+// 	const auto length = pointValues.Length();
+// 	assert(length > 1);
+
+// 	Point points[length];
+// 	points[0] = Point::from_tuple_value(pointValues[uint32_t(0)]);
+
+// 	auto p0 = points[0];
+// 	auto p1 = points[0];
+
+// 	std::vector<Edge> edges; // x0, y0, x1, y1, m, b
+
+// 	for (auto i = 1; i < length; i++) {
+// 		points[i] = Point::from_tuple_value(pointValues[i]);
+// 		p0.minimize(points[i]);
+// 		p1.maximize(points[i]);
+// 		edges.push_back(Edge(points[i], points[i - 1]));
+// 		DrawLine(this->canvas_, points[i - 1].x, points[i - 1].y, points[i].x, points[i].y, fg_color_);
+// 	}
+
+// 	edges.push_back(Edge(points[length - 1], points[0]));
+// 	DrawLine(this->canvas_, points[length - 1].x, points[length - 1].y, points[0].x, points[0].y, fg_color_);
+
+// 	for (auto it = edges.begin(); it != edges.end(); ++it) {
+// 		std::cout << it->min_y << '\t' << it->max_y << '\t' << it->min_y_x << '\t' << (1 / it->m) << std::endl;
+// 	}
+
+// 	uint32_t width	= p1.x - p0.x;
+// 	uint32_t height = p1.y - p0.y;
+
+// 	// std::cout << "P0: " << p0 << std::endl << "P1: " << p1 << std::endl;
+// 	// std::cout << "Height: " << height << std::endl << "Width: " << width << std::endl;
+// 	// auto p_max
+// 	// const auto p0 = points[0];
+// 	// auto prev	  = points[1];
+
+// 	// for (uint32_t i = 1; i <= length; ++i) {
+// 	// 	// Connect back to p0 if we're on the last point
+// 	// 	auto p1 = i == length ? p0 : points[i];
+// 	// 	// Point::from_tuple_value(pointValues[i]);
+// 	// 	DrawLine(this->canvas_, prev.x, prev.y, p1.x, p1.y, fg_color_);
+// 	// 	prev = p1;
+// 	// }
+// 	// DrawLine(this->canvas_, prev.x, prev.y, p0.x, p0.y, fg_color_);
+
+// 	return info.This();
+// }
 
 Color LedMatrixAddon::color_from_value_or_default(const Napi::Value& value, const Color& default_color) {
 	if (value.IsArray()) {
