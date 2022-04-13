@@ -344,7 +344,7 @@ bool compareDoublesEqual(double a, double b) {
 Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info) {
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
-	const auto shape_options = default_shape_options_.apply_napi_value(info[0].As<Napi::Object>());
+	const auto shape_options = default_shape_options_.apply_napi_value(opts);
 	assert(opts.Get("ps").IsArray());
 	const auto tuple_array = opts.Get("ps").As<Napi::Array>();
 	const auto count	   = tuple_array.Length();

@@ -10,6 +10,8 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       .fgColor(0x0000ff) // set the active color to blue
       .bgColor(0xff0000);
 
+    console.log('shape options: ', matrix.shapeOptions());
+
     const n = 10;
     const spacing = (Math.PI * 2) / n;
     const r = 30;

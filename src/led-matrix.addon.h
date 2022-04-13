@@ -22,7 +22,7 @@ struct ShapeOptions {
 	  , fill(false) {
 	}
 
-    // NOTE - This function is immutable and creates a copy of `ShapeOptions`
+	// NOTE - This function is immutable and creates a copy of `ShapeOptions`
 	const ShapeOptions apply_napi_value(const Napi::Object& partial_opts) {
 		auto opts = ShapeOptions();
 
@@ -30,11 +30,17 @@ struct ShapeOptions {
 			auto color_value = partial_opts.Get("color");
 			opts.color		 = color_from_napi_value_or_default(color_value, color);
 		}
+		else {
+			opts.color = color;
+		}
 
 		if (partial_opts.Has("fill")) {
 			auto fill_value = partial_opts.Get("fill");
 			assert(fill_value.IsBoolean());
 			opts.fill = fill_value.As<Napi::Boolean>();
+		}
+		else {
+			opts.fill = fill;
 		}
 
 		return opts;
