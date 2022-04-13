@@ -1,9 +1,9 @@
+#ifndef POINT_H
+#define POINT_H
+
 #include <assert.h>
 #include <cmath>
 #include <napi.h>
-
-#ifndef POINT_H
-	#define POINT_H
 
 struct Point {
 	// Convert a [number, number] into a Point
