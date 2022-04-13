@@ -49,20 +49,18 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       .unstable_drawCircle({ center: [120, 25], r: 4, fill: true })
       .unstable_drawCircle({ center: [120, 35], r: 4, fill: true })
       .unstable_drawCircle({ center: [120, 45], r: 4, fill: true })
-      .unstable_drawCircle({ center: [4, 4], r: 4, stroke: 0x0000ff })
+      .unstable_drawCircle({ center: [4, 4], r: 4 })
       .drawCircle(4, 25, 4)
-      .unstable_drawCircle({ center: [20, 5], r: 3, stroke: 0x0000ff })
+      .unstable_drawCircle({ center: [20, 5], r: 3 })
       .unstable_drawCircle({
         center: [30, 20],
         r: 9,
-        stroke: 0x0000ff,
-        fill: 0xff0000,
+        fill: true,
       })
       .unstable_drawCircle({
         center: [30, 50],
         r: 19,
-        stroke: 0x0000ff,
-        fill: 0xff0000,
+        fill: true,
       })
       .drawCircle(20, 25, 3);
     // .unstable_drawCircle({

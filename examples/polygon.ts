@@ -15,6 +15,10 @@ const rainbow = (i: number) =>
       .fgColor(0x0000ff) // set the active color to blue
       .bgColor(0xff0000);
 
+    console.log('default shape options: ', matrix.shapeOptions());
+    matrix.shapeOptions({ color: 0x0000ff, fill: true });
+    console.log('updated shape options: ', matrix.shapeOptions());
+
     const n = 30;
     const spacing = (Math.PI * 2) / n;
     const r = 32;
@@ -40,7 +44,7 @@ const rainbow = (i: number) =>
         .fgColor(color)
         .unstable_drawPolygon({
           ps,
-          fill: color,
+          fill: true,
         });
 
       setTimeout(() => matrix.sync(), 0);

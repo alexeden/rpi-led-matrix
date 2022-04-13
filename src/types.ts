@@ -5,23 +5,17 @@ export type Point = [x: number, y: number];
 export type ColorObject = Record<'r' | 'g' | 'b', number>;
 export type Color = number | [r: number, g: number, b: number] | ColorObject;
 
-export type ShapeOptions = {
+export type ShapeOptions<C = Color> = {
   /**
-   * @default undefined shape will not be filled.
-   * - Any `Color` will override the current `bgColor` for this shape only
-   * - `true` means the current `bgColor` will be used
+   * @default undefined - Shape will be drawn using the current default color.
    */
-  fill?: true | Color;
+  color?: C;
   /**
-   * @default undefined will use the matrix's current `fgColor`.
-   * - Any `Color` will override the current `fgColor` for this shape only
+   * @default undefined  - Shape will not be filled.
+   * If `true`, the shape will be filled using the color specified by the
+   * `ShapeOptions.color` prop if defined, default color otherwise.
    */
-  stroke?: Color;
-  // /**
-  //  * @default undefined will use the matrix's current `strokeWidth`
-  //  * Any `number` will override the current `strokeWidth`.
-  //  * */
-  // strokeWidth?: number;
+  fill?: boolean;
 };
 
 // A spec represents the minimum information needed to draw a shape;
@@ -35,12 +29,7 @@ export type RectangleSpec = { p0: Point } & (
 
 export type CircleOptions = ShapeOptions & CircleSpec;
 export type PolygonOptions = ShapeOptions & PolygonSpec;
-export type RectangleOptions = ShapeOptions &
-  RectangleSpec & {
-    // The stroke width of a rectangle can be set
-    // @default 1
-    strokeWidth?: number;
-  };
+export type RectangleOptions = ShapeOptions & RectangleSpec;
 
 export interface LedMatrixInstance {
   afterSync(hook: SyncHook): LedMatrixInstance;
@@ -58,12 +47,15 @@ export interface LedMatrixInstance {
 
   drawBuffer(buffer: Buffer | Uint8Array, w?: number, h?: number): this;
   drawCircle(x: number, y: number, r: number): this;
-  unstable_drawCircle(opts: CircleOptions): this;
   drawLine(x0: number, y0: number, x1: number, y1: number): this;
   drawRect(x0: number, y0: number, width: number, height: number): this;
-  unstable_drawRectangle(opts: RectangleOptions): this;
-  unstable_drawPolygon(opts: PolygonOptions): this;
   drawText(text: string, x: number, y: number, kerning?: number): this;
+  unstable_drawCircle(opts: CircleOptions): this;
+  unstable_drawPolygon(opts: PolygonOptions): this;
+  unstable_drawRectangle(opts: RectangleOptions): this;
+
+  shapeOptions(opts: Partial<ShapeOptions>): this;
+  shapeOptions(): ShapeOptions<ColorObject>;
 
   fgColor(color: Color): this;
   fgColor(): ColorObject;
@@ -128,7 +120,6 @@ export interface FontInstance {
 }
 
 export interface Font {
-  // tslint:disable-next-line:callable-types
   new (name: string, path: string): FontInstance;
 }
 

@@ -1,8 +1,4 @@
 #include "led-matrix.addon.h"
-#include <cmath>
-#include <iterator>
-#include <math.h>
-#include <vector>
 
 #define BILLION 1000000000L;
 #define MILLION 1000000000L;
@@ -48,6 +44,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("map", &LedMatrixAddon::map),
 		InstanceMethod("pwmBits", &LedMatrixAddon::pwm_bits),
 		InstanceMethod("setPixel", &LedMatrixAddon::set_pixel),
+		InstanceMethod("shapeOptions", &LedMatrixAddon::shape_options),
 		InstanceMethod("sync", &LedMatrixAddon::sync),
 		InstanceMethod("width", &LedMatrixAddon::width) });
 
@@ -70,7 +67,8 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   , font_name_("")
   , t_start_(get_now_ms())
   , t_sync_ms_(0)
-  , t_dsync_ms_(0) {
+  , t_dsync_ms_(0)
+  , shape_options_(ShapeOptions()) {
 	auto env = info.Env();
 
 	if (!info[0].IsObject()) {
@@ -244,81 +242,6 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 	return info.This();
 }
 
-struct Point {
-	// Convert a [number, number] into a Point
-	static Point from_tuple_value(const Napi::Value& value) {
-		assert(value.IsArray());
-		const auto arr = value.As<Napi::Array>();
-		assert(arr.Length() == 2);
-		int32_t x = arr.Get(uint32_t(0)).As<Napi::Number>().Int32Value();
-		int32_t y = arr.Get(uint32_t(1)).As<Napi::Number>().Int32Value();
-
-		return Point(x, y);
-	}
-
-	Point()
-	  : x(0)
-	  , y(0) {
-	}
-
-	Point(int32_t x_, int32_t y_)
-	  : x(x_)
-	  , y(y_) {
-	}
-
-	int32_t x;
-	int32_t y;
-
-	void maximize(const Point& p) {
-		this->x = p.x > x ? p.x : x;
-		this->y = p.y > y ? p.y : y;
-	}
-
-	void minimize(const Point& p) {
-		this->x = p.x < x ? p.x : x;
-		this->y = p.y < y ? p.y : y;
-	}
-
-	friend Point operator+(const Point& lhs, const Point& rhs) {
-		return Point(lhs.x + rhs.x, lhs.y + rhs.y);
-	}
-	friend Point operator-(const Point& lhs, const Point& rhs) {
-		return Point(lhs.x - rhs.x, lhs.y - rhs.y);
-	}
-	friend Point operator+(const Point& lhs, const int32_t rhs) {
-		return Point(lhs.x + rhs, lhs.y + rhs);
-	}
-	friend Point operator-(const Point& lhs, const int32_t rhs) {
-		return Point(lhs.x - rhs, lhs.y - rhs);
-	}
-	friend bool operator<(const Point& lhs, const Point& rhs) {
-		return lhs.x < rhs.x || lhs.y < rhs.y;
-	}
-	friend bool operator>(const Point& lhs, const Point& rhs) {
-		return rhs < lhs;
-	}
-	friend bool operator<=(const Point& lhs, const Point& rhs) {
-		return !(lhs > rhs);
-	}
-	friend bool operator>=(const Point& lhs, const Point& rhs) {
-		return !(lhs < rhs);
-	}
-	Point& operator++() {
-		this->x++;
-		this->y++;
-		return *this;
-	}
-	Point& operator--() {
-		this->x--;
-		this->y--;
-		return *this;
-	}
-};
-
-std::ostream& operator<<(std::ostream& os, const Point& p) {
-	return os << "Point(" << p.x << ", " << p.y << ")";
-}
-
 Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
@@ -336,9 +259,9 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 	const auto y0		 = center.y;
 	const int32_t radius = opts.Get("r").As<Napi::Number>().Int32Value();
 	assert(radius >= 0);
-	const auto stroke_color = color_from_value_or_default(opts.Get("stroke"), fg_color_);
+	const auto stroke_color = color_from_napi_value_or_default(opts.Get("stroke"), fg_color_);
 	const bool disable_fill = opts.Get("fill").IsUndefined();
-	const auto fill_color	= color_from_value_or_default(opts.Get("fill"), bg_color_);
+	const auto fill_color	= color_from_napi_value_or_default(opts.Get("fill"), bg_color_);
 
 	int x			= radius;
 	int y			= 0;
@@ -389,9 +312,9 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 
 	const uint32_t stroke_width
 	  = opts.Get("strokeWidth").IsUndefined() ? 1 : opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
-	const auto stroke_color = color_from_value_or_default(opts.Get("stroke"), fg_color_);
+	const auto stroke_color = color_from_napi_value_or_default(opts.Get("stroke"), fg_color_);
 	const bool disable_fill = opts.Get("fill").IsUndefined();
-	const auto fill_color	= color_from_value_or_default(opts.Get("fill"), bg_color_);
+	const auto fill_color	= color_from_napi_value_or_default(opts.Get("fill"), bg_color_);
 
 	// If stroke width is 1 and there's no fill, just draw the edges and be done
 	for (uint32_t i = 0; i < stroke_width; i++) {
@@ -414,28 +337,6 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 	return info.This();
 }
 
-struct Edge {
-	Edge(Point& p0_, Point& p1_)
-	  : p0(p0_)
-	  , x0(p0.x)
-	  , y0(p0.y)
-	  , x1(p1.x)
-	  , y1(p1.y)
-	  , p1(p1_)
-	  , m(((float) p1.y - (float) p0.y) / ((float) p1.x - (float) p0.x))
-	  , b((float) p0.y - (m * (float) p0.x)) {
-	}
-
-	const Point p0;
-	const Point p1;
-	const int32_t x0;
-	const int32_t y0;
-	const int32_t x1;
-	const int32_t y1;
-	const float m;
-	const float b;
-};
-
 bool compareDoublesEqual(double a, double b) {
 	return std::abs(a - b) < (double) 0.000001;
 }
@@ -443,9 +344,9 @@ bool compareDoublesEqual(double a, double b) {
 Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info) {
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
-	const auto stroke_color = color_from_value_or_default(opts.Get("stroke"), fg_color_);
+	const auto stroke_color = color_from_napi_value_or_default(opts.Get("stroke"), fg_color_);
 	const bool disable_fill = opts.Get("fill").IsUndefined();
-	const auto fill_color	= color_from_value_or_default(opts.Get("fill"), bg_color_);
+	const auto fill_color	= color_from_napi_value_or_default(opts.Get("fill"), bg_color_);
 
 	assert(opts.Get("ps").IsArray());
 	const auto tuple_array = opts.Get("ps").As<Napi::Array>();
@@ -495,7 +396,7 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 		int edges_at_p = 0;					// Like The Rentals' song.  :)
 
 		// Loop through all edges at this point, p.
-		for (int i = 0; i < edges.size(); i++) {
+		for (uint32_t i = 0; i < edges.size(); i++) {
 			if (
 			  ((y == (int) round((edges[i].m * x) + edges[i].b) && edges[i].m == 0)
 			   || (x == (int) round((y - edges[i].b) / edges[i].m)) || isinf(edges[i].m))
@@ -546,37 +447,33 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 		// Fill logic end
 	}
 
-	for (size_t i = 0; i < edges.size(); i++) {
-		DrawLine(this->canvas_, edges[i].x0, edges[i].y0, edges[i].x1, edges[i].y1, stroke_color);
-	}
-
 	return info.This();
 }
 
-Color LedMatrixAddon::color_from_value_or_default(const Napi::Value& value, const Color& default_color) {
-	if (value.IsArray()) {
-		auto arr = value.As<Napi::Array>();
-		assert(arr.Length() == 3);
-		uint8_t r = arr.Get(uint32_t(0)).As<Napi::Number>().Uint32Value();
-		uint8_t g = arr.Get(uint32_t(1)).As<Napi::Number>().Uint32Value();
-		uint8_t b = arr.Get(uint32_t(2)).As<Napi::Number>().Uint32Value();
-		return Color(r, g, b);
-	}
-	else if (value.IsObject()) {
-		const auto obj = value.As<Napi::Object>();
-		uint8_t r	   = obj.Get("r").As<Napi::Number>().Uint32Value();
-		uint8_t g	   = obj.Get("g").As<Napi::Number>().Uint32Value();
-		uint8_t b	   = obj.Get("b").As<Napi::Number>().Uint32Value();
-		return Color(r, g, b);
-	}
-	else if (value.IsNumber()) {
-		const auto hex = value.As<Napi::Number>().Uint32Value();
-		return Color(0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex);
-	}
-	else {
-		return default_color;
-	}
-}
+// Color LedMatrixAddon::color_from_napi_value_or_default(const Napi::Value& value, const Color& default_color) {
+// 	if (value.IsArray()) {
+// 		auto arr = value.As<Napi::Array>();
+// 		assert(arr.Length() == 3);
+// 		uint8_t r = arr.Get(uint32_t(0)).As<Napi::Number>().Uint32Value();
+// 		uint8_t g = arr.Get(uint32_t(1)).As<Napi::Number>().Uint32Value();
+// 		uint8_t b = arr.Get(uint32_t(2)).As<Napi::Number>().Uint32Value();
+// 		return Color(r, g, b);
+// 	}
+// 	else if (value.IsObject()) {
+// 		const auto obj = value.As<Napi::Object>();
+// 		uint8_t r	   = obj.Get("r").As<Napi::Number>().Uint32Value();
+// 		uint8_t g	   = obj.Get("g").As<Napi::Number>().Uint32Value();
+// 		uint8_t b	   = obj.Get("b").As<Napi::Number>().Uint32Value();
+// 		return Color(r, g, b);
+// 	}
+// 	else if (value.IsNumber()) {
+// 		const auto hex = value.As<Napi::Number>().Uint32Value();
+// 		return Color(0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex);
+// 	}
+// 	else {
+// 		return default_color;
+// 	}
+// }
 
 Napi::Value LedMatrixAddon::draw_line(const Napi::CallbackInfo& info) {
 	const auto x0 = info[0].As<Napi::Number>().Uint32Value();
@@ -675,7 +572,7 @@ Napi::Value LedMatrixAddon::fg_color(const Napi::CallbackInfo& info) {
 		return info.This();
 	}
 	else {
-		return LedMatrixAddon::obj_from_color(info.Env(), fg_color_);
+		return color_into_napi_object(info.Env(), fg_color_);
 	}
 }
 
@@ -686,7 +583,21 @@ Napi::Value LedMatrixAddon::bg_color(const Napi::CallbackInfo& info) {
 		return info.This();
 	}
 	else {
-		return LedMatrixAddon::obj_from_color(info.Env(), bg_color_);
+		return color_into_napi_object(info.Env(), bg_color_);
+	}
+}
+
+Napi::Value LedMatrixAddon::shape_options(const Napi::CallbackInfo& info) {
+	if (info.Length() > 0) {
+		assert(info[0].IsObject());
+		const auto opts = info[0].As<Napi::Object>();
+		shape_options_.apply_napi_value(opts);
+		auto color = LedMatrixAddon::color_from_callback_info(info);
+		bg_color_  = color;
+		return info.This();
+	}
+	else {
+		return shape_options_.into_napi_value(info.Env());
 	}
 }
 
@@ -841,15 +752,4 @@ Color LedMatrixAddon::color_from_callback_info(const Napi::CallbackInfo& info) {
 	else {
 		throw Napi::Error::New(info.Env(), "Failed to create color from parameters.");
 	}
-}
-
-/**
- * Create an Object from a Color.
- */
-Napi::Object LedMatrixAddon::obj_from_color(const Napi::Env& env, const Color& color) {
-	Napi::Object obj = Napi::Object::New(env);
-	obj["r"]		 = color.r;
-	obj["g"]		 = color.g;
-	obj["b"]		 = color.b;
-	return obj;
 }

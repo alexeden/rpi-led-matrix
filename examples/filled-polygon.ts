@@ -26,8 +26,8 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
     matrix
       .clear() // clear the display
-      .unstable_drawPolygon({ ps: left, stroke: 0xff0000, fill: 0x000099 })
-      .unstable_drawPolygon({ ps: right, stroke: 0xff0000 })
+      .unstable_drawPolygon({ ps: left, fill: true })
+      .unstable_drawPolygon({ ps: right })
       .sync();
     await wait(999999999);
   } catch (error) {
