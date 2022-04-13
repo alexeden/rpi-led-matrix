@@ -254,38 +254,36 @@ Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info) {
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
-	const auto center	 = Point::from_tuple_value(opts.Get("center"));
-	const auto x0		 = center.x;
-	const auto y0		 = center.y;
-	const int32_t radius = opts.Get("r").As<Napi::Number>().Int32Value();
+	const auto shape_options = default_shape_options_.apply_napi_value(opts);
+	const auto center		 = Point::from_tuple_value(opts.Get("center"));
+	const auto x0			 = center.x;
+	const auto y0			 = center.y;
+	const int32_t radius	 = opts.Get("r").As<Napi::Number>().Int32Value();
 	assert(radius >= 0);
-	const auto stroke_color = color_from_napi_value_or_default(opts.Get("stroke"), fg_color_);
-	const bool disable_fill = opts.Get("fill").IsUndefined();
-	const auto fill_color	= color_from_napi_value_or_default(opts.Get("fill"), bg_color_);
 
 	int x			= radius;
 	int y			= 0;
 	int radiusError = 1 - x;
 
 	while (y <= x) {
-		if (!disable_fill && y != radius) {
-			DrawLine(this->canvas_, -y + x0, -x + y0 + 1, y + x0, -x + y0 + 1, fill_color);
-			DrawLine(this->canvas_, y + x0, x + y0 - 1, -y + x0, x + y0 - 1, fill_color);
-			DrawLine(this->canvas_, x + x0 - 1, y + y0, -x + x0 + 1, y + y0, fill_color);
-			DrawLine(this->canvas_, -x + x0 + 1, -y + y0, x + x0 - 1, -y + y0, fill_color);
+		if (shape_options.fill && y != radius) {
+			DrawLine(this->canvas_, -y + x0, -x + y0 + 1, y + x0, -x + y0 + 1, shape_options.color);
+			DrawLine(this->canvas_, y + x0, x + y0 - 1, -y + x0, x + y0 - 1, shape_options.color);
+			DrawLine(this->canvas_, x + x0 - 1, y + y0, -x + x0 + 1, y + y0, shape_options.color);
+			DrawLine(this->canvas_, -x + x0 + 1, -y + y0, x + x0 - 1, -y + y0, shape_options.color);
 		}
 
-		this->canvas_->SetPixel(-y + x0, -x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-		this->canvas_->SetPixel(y + x0, -x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+		this->canvas_->SetPixel(-y + x0, -x + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
+		this->canvas_->SetPixel(y + x0, -x + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
 
-		this->canvas_->SetPixel(y + x0, x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-		this->canvas_->SetPixel(-y + x0, x + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+		this->canvas_->SetPixel(y + x0, x + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
+		this->canvas_->SetPixel(-y + x0, x + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
 
-		this->canvas_->SetPixel(-x + x0, -y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-		this->canvas_->SetPixel(x + x0, -y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+		this->canvas_->SetPixel(-x + x0, -y + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
+		this->canvas_->SetPixel(x + x0, -y + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
 
-		this->canvas_->SetPixel(x + x0, y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
-		this->canvas_->SetPixel(-x + x0, y + y0, stroke_color.r, stroke_color.g, stroke_color.b);
+		this->canvas_->SetPixel(x + x0, y + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
+		this->canvas_->SetPixel(-x + x0, y + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
 
 		y++;
 
@@ -303,34 +301,22 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& info) {
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
-	auto p0 = Point::from_tuple_value(opts.Get("p0"));
+	const auto shape_options = default_shape_options_.apply_napi_value(opts);
+	auto p0					 = Point::from_tuple_value(opts.Get("p0"));
 	auto p1
 	  = opts.Has("p1")
 		  ? Point::from_tuple_value(opts.Get("p1"))
 		  : Point(p0.x + opts.Get("w").As<Napi::Number>().Int32Value(), p0.y + opts.Get("h").As<Napi::Number>().Int32Value());
-	assert(p1 >= p0);
 
-	const uint32_t stroke_width
-	  = opts.Get("strokeWidth").IsUndefined() ? 1 : opts.Get("strokeWidth").As<Napi::Number>().Uint32Value();
-	const auto stroke_color = color_from_napi_value_or_default(opts.Get("stroke"), fg_color_);
-	const bool disable_fill = opts.Get("fill").IsUndefined();
-	const auto fill_color	= color_from_napi_value_or_default(opts.Get("fill"), bg_color_);
-
-	// If stroke width is 1 and there's no fill, just draw the edges and be done
-	for (uint32_t i = 0; i < stroke_width; i++) {
-		if (p0 >= p1) break;
-		DrawLine(this->canvas_, p0.x, p0.y, p1.x, p0.y, stroke_color);
-		DrawLine(this->canvas_, p1.x, p0.y, p1.x, p1.y, stroke_color);
-		DrawLine(this->canvas_, p1.x, p1.y, p0.x, p1.y, stroke_color);
-		DrawLine(this->canvas_, p0.x, p1.y, p0.x, p0.y, stroke_color);
-		++p0;
-		--p1;
+	if (!shape_options.fill) {
+		DrawLine(this->canvas_, p0.x, p0.y, p1.x, p0.y, shape_options.color);
+		DrawLine(this->canvas_, p1.x, p0.y, p1.x, p1.y, shape_options.color);
+		DrawLine(this->canvas_, p1.x, p1.y, p0.x, p1.y, shape_options.color);
+		DrawLine(this->canvas_, p0.x, p1.y, p0.x, p0.y, shape_options.color);
 	}
-
-	// If fill is enabled, use the now-shrunken p0 and p1 to draw horizontal edges
-	if (!disable_fill) {
+	else {
 		for (auto y = p0.y; y <= p1.y; y++) {
-			DrawLine(this->canvas_, p0.x, y, p1.x, y, fill_color);
+			DrawLine(this->canvas_, p0.x, y, p1.x, y, shape_options.color);
 		}
 	}
 
