@@ -22,17 +22,22 @@ struct ShapeOptions {
 	  , fill(false) {
 	}
 
-	void apply_napi_value(const Napi::Object& partial_opts) {
+    // NOTE - This function is immutable and creates a copy of `ShapeOptions`
+	const ShapeOptions apply_napi_value(const Napi::Object& partial_opts) {
+		auto opts = ShapeOptions();
+
 		if (partial_opts.Has("color")) {
 			auto color_value = partial_opts.Get("color");
-			color			 = color_from_napi_value_or_default(color_value, color);
+			opts.color		 = color_from_napi_value_or_default(color_value, color);
 		}
 
 		if (partial_opts.Has("fill")) {
 			auto fill_value = partial_opts.Get("fill");
 			assert(fill_value.IsBoolean());
-			fill = fill_value.As<Napi::Boolean>();
+			opts.fill = fill_value.As<Napi::Boolean>();
 		}
+
+		return opts;
 	}
 
 	Napi::Value into_napi_value(const Napi::Env& env) {
@@ -73,8 +78,6 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::Value pwm_bits(const Napi::CallbackInfo& info);
 	Napi::Value set_pixel(const Napi::CallbackInfo& info);
 	Napi::Value shape_options(const Napi::CallbackInfo& info);
-	Napi::Value stroke_color(const Napi::CallbackInfo& info);
-	Napi::Value stroke_width(const Napi::CallbackInfo& info);
 	Napi::Value unstable_draw_circle(const Napi::CallbackInfo& info);
 	Napi::Value unstable_draw_polygon(const Napi::CallbackInfo& info);
 	Napi::Value unstable_draw_rectangle(const Napi::CallbackInfo& info);
@@ -106,7 +109,7 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	long t_dsync_ms_;
 
 	// Default shape drawing options
-	ShapeOptions shape_options_;
+	ShapeOptions default_shape_options_;
 };
 
 #endif

@@ -6,6 +6,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 (async () => {
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions)
+      .shapeOptions({ color: 0x0000ff })
       .fgColor(0x0000ff) // set the active color to blue
       .bgColor(0xff0000);
 

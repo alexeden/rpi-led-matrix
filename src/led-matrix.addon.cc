@@ -68,7 +68,7 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   , t_start_(get_now_ms())
   , t_sync_ms_(0)
   , t_dsync_ms_(0)
-  , shape_options_(ShapeOptions()) {
+  , default_shape_options_(ShapeOptions()) {
 	auto env = info.Env();
 
 	if (!info[0].IsObject()) {
@@ -344,10 +344,7 @@ bool compareDoublesEqual(double a, double b) {
 Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info) {
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
-	const auto stroke_color = color_from_napi_value_or_default(opts.Get("stroke"), fg_color_);
-	const bool disable_fill = opts.Get("fill").IsUndefined();
-	const auto fill_color	= color_from_napi_value_or_default(opts.Get("fill"), bg_color_);
-
+	const auto shape_options = default_shape_options_.apply_napi_value(info[0].As<Napi::Object>());
 	assert(opts.Get("ps").IsArray());
 	const auto tuple_array = opts.Get("ps").As<Napi::Array>();
 	const auto count	   = tuple_array.Length();
@@ -366,17 +363,17 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 		mins.minimize(p_curr);
 		maxs.maximize(p_curr);
 		edges.push_back(Edge(p_curr, p_prev));
-		DrawLine(this->canvas_, p_prev.x, p_prev.y, p_curr.x, p_curr.y, stroke_color);
+		DrawLine(this->canvas_, p_prev.x, p_prev.y, p_curr.x, p_curr.y, shape_options.color);
 
 		if (i == count - 1) {
 			edges.push_back(Edge(p_curr, p0));
-			DrawLine(this->canvas_, p_curr.x, p_curr.y, p0.x, p0.y, stroke_color);
+			DrawLine(this->canvas_, p_curr.x, p_curr.y, p0.x, p0.y, shape_options.color);
 		}
 
 		p_prev = p_curr;
 	}
 
-	if (disable_fill) return info.This();
+	if (shape_options.fill) return info.This();
 
 	uint32_t width	= maxs.x - mins.x + 1;
 	uint32_t height = maxs.y - mins.y + 1;
@@ -427,7 +424,7 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 
 			// If an imaginary point exists on each of the edges, toggle on and then off. (2 in my old thinking)
 			if (imaginary_0_valid_point & imaginary_1_valid_point) {
-				this->canvas_->SetPixel(x, y, fill_color.r, fill_color.g, fill_color.b);
+				this->canvas_->SetPixel(x, y, shape_options.color.r, shape_options.color.g, shape_options.color.b);
 			}
 			// If an imaginary point exists on only one line (because of a cusp, for example), we've only crossed one
 			// line, effectively treating this as a side instead of a vertex.  Toggle fill on or off.
@@ -442,7 +439,7 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 		}
 
 		if (fill_flag) {
-			this->canvas_->SetPixel(x, y, fill_color.r, fill_color.g, fill_color.b);
+			this->canvas_->SetPixel(x, y, shape_options.color.r, shape_options.color.g, shape_options.color.b);
 		}
 		// Fill logic end
 	}
@@ -590,14 +587,12 @@ Napi::Value LedMatrixAddon::bg_color(const Napi::CallbackInfo& info) {
 Napi::Value LedMatrixAddon::shape_options(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0) {
 		assert(info[0].IsObject());
-		const auto opts = info[0].As<Napi::Object>();
-		shape_options_.apply_napi_value(opts);
-		auto color = LedMatrixAddon::color_from_callback_info(info);
-		bg_color_  = color;
+		const auto opts		   = info[0].As<Napi::Object>();
+		default_shape_options_ = default_shape_options_.apply_napi_value(opts);
 		return info.This();
 	}
 	else {
-		return shape_options_.into_napi_value(info.Env());
+		return default_shape_options_.into_napi_value(info.Env());
 	}
 }
 
