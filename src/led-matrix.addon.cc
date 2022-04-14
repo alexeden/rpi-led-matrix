@@ -20,7 +20,8 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 	Napi::Function func = DefineClass(
 	  env,
 	  "LedMatrix",
-	  { StaticMethod("defaultMatrixOptions", &LedMatrixAddon::default_matrix_options),
+	  { StaticMethod("availablePixelMappers", &LedMatrixAddon::available_pixel_mappers),
+		StaticMethod("defaultMatrixOptions", &LedMatrixAddon::default_matrix_options),
 		StaticMethod("defaultRuntimeOptions", &LedMatrixAddon::default_runtime_options),
 		InstanceMethod("afterSync", &LedMatrixAddon::after_sync),
 		InstanceMethod("bgColor", &LedMatrixAddon::bg_color),
@@ -38,7 +39,6 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("fgColor", &LedMatrixAddon::fg_color),
 		InstanceMethod("fill", &LedMatrixAddon::fill),
 		InstanceMethod("font", &LedMatrixAddon::font),
-		InstanceMethod("getAvailablePixelMappers", &LedMatrixAddon::get_available_pixel_mappers),
 		InstanceMethod("height", &LedMatrixAddon::height),
 		InstanceMethod("luminanceCorrect", &LedMatrixAddon::luminance_correct),
 		InstanceMethod("map", &LedMatrixAddon::map),

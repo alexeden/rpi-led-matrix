@@ -146,17 +146,20 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 
 	Napi::Value sync(const Napi::CallbackInfo& info);
 
-	static Napi::Value default_matrix_options(const Napi::CallbackInfo& info);
-	static Napi::Value default_runtime_options(const Napi::CallbackInfo& info);
+	static Napi::Value available_pixel_mappers(const Napi::CallbackInfo& info) {
+		return NapiAdapter<std::vector<std::string>>::into_value(info.Env(), GetAvailablePixelMappers());
+	}
+
+	static Napi::Value default_matrix_options(const Napi::CallbackInfo& info) {
+		return NapiAdapter<RGBMatrix::Options>::into_value(info.Env(), RGBMatrix::Options());
+	}
+
+	static Napi::Value default_runtime_options(const Napi::CallbackInfo& info) {
+		return NapiAdapter<RuntimeOptions>::into_value(info.Env(), RuntimeOptions());
+	}
 
   private:
-	// static Color color_from_value_or_default(const Napi::Value& value, const Color& default_color);
-	// static Color color_from_callback_info(const Napi::CallbackInfo& info);
 	static Napi::FunctionReference constructor;
-	static Napi::Object matrix_options_to_obj(const Napi::Env& env, const RGBMatrix::Options& options);
-	static Napi::Object runtime_options_to_obj(const Napi::Env& env, const RuntimeOptions& options);
-	// static RGBMatrix::Options create_matrix_options(const Napi::Env& env, const Napi::Object& obj);
-	// static RuntimeOptions create_runtime_options(const Napi::Env& env, const Napi::Object& obj);
 
 	Napi::FunctionReference after_sync_cb_;
 	Color bg_color_;
