@@ -16,8 +16,8 @@ export const matrixOptions: MatrixOptions = {
   // hardwareMapping: GpioMapping.Regular,
   parallel: 2,
   // panelType: 'FM6127',
-  // limitRefreshRateHz: 1,
-  // showRefreshRate: true,
+  limitRefreshRateHz: 60,
+  showRefreshRate: true,
   // pixelMapperConfig: LedMatrixUtils.encodeMappers(
   //   { type: PixelMapperType.Chainlink }
   // ),

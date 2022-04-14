@@ -37,7 +37,8 @@ const rainbow = (i: number) =>
           .unstable_drawPolygon({ ps: left, fill: true })
           .unstable_drawPolygon({ ps: right });
 
-        setTimeout(() => mat.sync(), 0);
+        // setTimeout(() => mat.sync(), 0);
+        return true;
       })
       .sync();
 
