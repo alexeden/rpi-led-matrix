@@ -2,8 +2,7 @@ import { MatrixOptions, RuntimeOptions } from './native-types';
 
 export type Point = [x: number, y: number];
 
-export type ColorObject = Record<'r' | 'g' | 'b', number>;
-export type Color = number | [r: number, g: number, b: number] | ColorObject;
+export type Color = number;
 
 export type ShapeOptions<C = Color> = {
   /**
@@ -37,7 +36,7 @@ export interface LedMatrixInstance {
   afterSync(hook: SyncHook): this;
 
   bgColor(color: Color): this;
-  bgColor(): ColorObject;
+  bgColor(): Color;
 
   brightness(brightness: number): this;
   brightness(): number;
@@ -58,10 +57,10 @@ export interface LedMatrixInstance {
   unstable_drawRectangle(opts: RectangleOptions): this;
 
   shapeOptions(opts: Partial<ShapeOptions>): this;
-  shapeOptions(): ShapeOptions<ColorObject>;
+  shapeOptions(): ShapeOptions<Color>;
 
   fgColor(color: Color): this;
-  fgColor(): ColorObject;
+  fgColor(): Color;
 
   fill(): this;
   fill(x0: number, y0: number, x1: number, y1: number): this;

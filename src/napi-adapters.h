@@ -35,29 +35,9 @@ class NapiAdapter {
  */
 template<>
 inline Color NapiAdapter<Color>::from_value(const Napi::Value& value) {
-	// [r, g, b]
-	if (value.IsArray()) {
-		auto arr = value.As<Napi::Array>();
-		assert(arr.Length() == 3);
-		uint8_t r = arr.Get(uint32_t(0)).As<Napi::Number>().Uint32Value();
-		uint8_t g = arr.Get(uint32_t(1)).As<Napi::Number>().Uint32Value();
-		uint8_t b = arr.Get(uint32_t(2)).As<Napi::Number>().Uint32Value();
-		return Color(r, g, b);
-	}
-	// { r: number; g: number; b: number }
-	else if (value.IsObject()) {
-		const auto obj = value.As<Napi::Object>();
-		uint8_t r	   = obj.Get("r").As<Napi::Number>().Uint32Value();
-		uint8_t g	   = obj.Get("g").As<Napi::Number>().Uint32Value();
-		uint8_t b	   = obj.Get("b").As<Napi::Number>().Uint32Value();
-		return Color(r, g, b);
-	}
-	// number
-	else {
-		assert(value.IsNumber());
-		const auto hex = value.As<Napi::Number>().Uint32Value();
-		return Color(0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex);
-	}
+	assert(value.IsNumber());
+	const auto hex = value.As<Napi::Number>().Uint32Value();
+	return Color(0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex);
 }
 
 template<>
@@ -66,7 +46,7 @@ inline Napi::Value NapiAdapter<Color>::into_value(const Napi::Env& env, const Co
 	obj["r"] = arg.r;
 	obj["g"] = arg.g;
 	obj["b"] = arg.b;
-	return obj;
+	return Napi::Number::From(env, (arg.r << 16) | (arg.g << 8) | arg.b);
 }
 
 /**
