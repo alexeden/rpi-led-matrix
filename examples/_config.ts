@@ -25,6 +25,7 @@ export const matrixOptions: MatrixOptions = {
 };
 
 console.log('matrix options: ', JSON.stringify(matrixOptions, null, 2));
+console.log('pixel mappers: ', LedMatrix.availablePixelMappers());
 
 export const runtimeOptions: RuntimeOptions = {
   ...LedMatrix.defaultRuntimeOptions(),
