@@ -214,13 +214,13 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 	assert(len == w * h * 3);
 
 	Image* img	  = new Image();
-	Pixel* pixels = (Pixel*) malloc(sizeof(Pixel) * w * h);
+	Color* pixels = (Color*) malloc(sizeof(Color) * w * h);
 	for (unsigned int i = 0; i < w * h; i++) {
 		auto j = i * 3;
-		Pixel p;
-		p.r(data[j]);
-		p.g(data[j + 1]);
-		p.b(data[j + 2]);
+		Color p;
+		p.r		  = data[j];
+		p.g		  = data[j + 1];
+		p.b		  = data[j + 2];
 		pixels[i] = p;
 	}
 
@@ -233,7 +233,7 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 		for (unsigned int x = 0; x < w; x++) {
 			if (x > w) break;
 			auto pixel = img->getPixel(x, y);
-			this->canvas_->SetPixel(x, y, pixel.r(), pixel.g(), pixel.b());
+			this->canvas_->SetPixel(x, y, pixel.r, pixel.g, pixel.b);
 		}
 	}
 
@@ -566,7 +566,3 @@ Napi::Value LedMatrixAddon::font(const Napi::CallbackInfo& info) {
 		return Napi::String::New(info.Env(), font_name_);
 	}
 }
-
-// Napi::Value LedMatrixAddon::get_available_pixel_mappers(const Napi::CallbackInfo& info) {
-// 	return NapiAdapter<std::vector<std::string>>::into_value(info.Env(), GetAvailablePixelMappers());
-// }

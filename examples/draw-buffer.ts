@@ -19,7 +19,7 @@ import { matrixOptions, runtimeOptions } from './_config';
     matrix.afterSync(() => {
       useBuffer1 = !useBuffer1;
       matrix.drawBuffer(useBuffer1 ? buffer1 : buffer2);
-      setTimeout(() => matrix.sync(), 17);
+      setTimeout(() => matrix.sync(), 1000);
     });
 
     matrix.sync();
