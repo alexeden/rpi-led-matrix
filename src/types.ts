@@ -133,15 +133,18 @@ export interface LedMatrixAddon {
   LedMatrix: LedMatrix;
 }
 
-interface Pixel extends ColorObject {
+interface Pixel {
   origin: Point;
   x: number;
   y: number;
+  color: number;
 }
 
 type PixelHook = (
+  this: LedMatrixInstance,
+  matrix: LedMatrixInstance,
   pixel: Pixel
-) => Partial<Omit<Pixel, 'origin'>> | null | undefined;
+) => Pixel | null | undefined;
 
 type SyncHook = (
   this: LedMatrixInstance,

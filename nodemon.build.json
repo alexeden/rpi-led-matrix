@@ -1,6 +1,6 @@
 {
   "ext": "ts,json,cc,h,gyp",
-  "exec": "npm run quick-build && sudo npm run example -- examples/filled-polygon.ts",
+  "exec": "npm run quick-build && sudo npm run example -- examples/map-pixels.ts",
   "restartable": true,
   "events": {},
   "watch": [
