@@ -6,17 +6,6 @@
 #include <napi.h>
 
 struct Point {
-	// Convert a [number, number] into a Point
-	static Point from_tuple_value(const Napi::Value& value) {
-		assert(value.IsArray());
-		const auto arr = value.As<Napi::Array>();
-		assert(arr.Length() == 2);
-		int32_t x = arr.Get(uint32_t(0)).As<Napi::Number>().Int32Value();
-		int32_t y = arr.Get(uint32_t(1)).As<Napi::Number>().Int32Value();
-
-		return Point(x, y);
-	}
-
 	Point()
 	  : x(0)
 	  , y(0) {

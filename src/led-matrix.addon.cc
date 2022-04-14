@@ -182,10 +182,7 @@ Napi::Value LedMatrixAddon::brightness(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value LedMatrixAddon::center(const Napi::CallbackInfo& info) {
-	auto point = Napi::Array::New(info.Env(), 2);
-	point.Set(uint32_t(0), Napi::Number::New(info.Env(), this->matrix_->width() / 2));
-	point.Set(uint32_t(1), Napi::Number::New(info.Env(), this->matrix_->height() / 2));
-	return point;
+	return NapiAdapter<Point>::into_value(info.Env(), Point(this->matrix_->width() / 2, this->matrix_->height() / 2));
 }
 
 Napi::Value LedMatrixAddon::clear(const Napi::CallbackInfo& info) {
@@ -256,7 +253,7 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
 	const auto shape_options = default_shape_options_.apply_napi_value(opts);
-	const auto center		 = Point::from_tuple_value(opts.Get("center"));
+	const auto center		 = NapiAdapter<Point>::from_value(opts.Get("center"));
 	const auto x0			 = center.x;
 	const auto y0			 = center.y;
 	const int32_t radius	 = opts.Get("r").As<Napi::Number>().Int32Value();
@@ -303,10 +300,10 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
 	const auto shape_options = default_shape_options_.apply_napi_value(opts);
-	auto p0					 = Point::from_tuple_value(opts.Get("p0"));
+	auto p0					 = NapiAdapter<Point>::from_value(opts.Get("p0"));
 	auto p1
 	  = opts.Has("p1")
-		  ? Point::from_tuple_value(opts.Get("p1"))
+		  ? NapiAdapter<Point>::from_value(opts.Get("p1"))
 		  : Point(p0.x + opts.Get("w").As<Napi::Number>().Int32Value(), p0.y + opts.Get("h").As<Napi::Number>().Int32Value());
 
 	if (!shape_options.fill) {
@@ -339,14 +336,14 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 
 	std::vector<Edge> edges;
 	Point points[count];
-	Point p0	 = Point::from_tuple_value(tuple_array[uint32_t(0)]);
+	Point p0	 = NapiAdapter<Point>::from_value(tuple_array[uint32_t(0)]);
 	auto mins	 = p0;
 	auto maxs	 = p0;
 	Point p_prev = p0;
 	Point p_curr;
 
 	for (uint32_t i = 1; i < count; i++) {
-		p_curr = Point::from_tuple_value(tuple_array[i]);
+		p_curr = NapiAdapter<Point>::from_value(tuple_array[i]);
 		mins.minimize(p_curr);
 		maxs.maximize(p_curr);
 		edges.push_back(Edge(p_curr, p_prev));

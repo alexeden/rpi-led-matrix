@@ -31,6 +31,11 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
       .clear() // clear the display
       .unstable_drawPolygon({ ps: left, fill: true })
       .unstable_drawPolygon({ ps: right })
+      .unstable_drawLine({
+        p0: [0, 0],
+        p1: [matrix.width(), matrix.height()],
+        color: 0xff0000,
+      })
       .sync();
     await wait(999999999);
   } catch (error) {
