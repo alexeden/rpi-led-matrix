@@ -133,13 +133,17 @@ export interface LedMatrixAddon {
 }
 
 interface Pixel {
+  color: number;
   origin: Point;
   x: number;
   y: number;
-  color: number;
 }
 
-type PixelHook = (pixel: Pixel) => Pixel | null | undefined;
+type PixelHook = (
+  pixel: Pixel,
+  dt: number,
+  t: number
+) => Pixel | null | undefined;
 
 type SyncHook = (
   this: LedMatrixInstance,

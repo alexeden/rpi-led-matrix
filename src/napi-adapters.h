@@ -17,6 +17,7 @@
 #ifndef NAPI_ADAPTERS_H
 #define NAPI_ADAPTERS_H
 
+#include "pixel.h"
 #include "point.h"
 #include <led-matrix.h>
 #include <napi.h>
@@ -42,10 +43,6 @@ inline Color NapiAdapter<Color>::from_value(const Napi::Value& value) {
 
 template<>
 inline Napi::Value NapiAdapter<Color>::into_value(const Napi::Env& env, const Color& arg) {
-	auto obj = Napi::Object::New(env);
-	obj["r"] = arg.r;
-	obj["g"] = arg.g;
-	obj["b"] = arg.b;
 	return Napi::Number::From(env, (arg.r << 16) | (arg.g << 8) | arg.b);
 }
 
@@ -138,6 +135,34 @@ inline Napi::Value NapiAdapter<Point>::into_value(const Napi::Env& env, const Po
 	value.Set(uint32_t(0), Napi::Number::New(env, arg.x));
 	value.Set(uint32_t(1), Napi::Number::New(env, arg.y));
 	return value;
+}
+
+/**
+ *
+ * Pixel
+ *
+ */
+template<>
+inline Pixel NapiAdapter<Pixel>::from_value(const Napi::Value& value) {
+	assert(value.IsObject());
+	const auto obj = value.As<Napi::Object>();
+
+	return Pixel(
+	  NapiAdapter<Point>::from_value(obj.Get("origin")),
+	  obj.Get("x").As<Napi::Number>().Int32Value(),
+	  obj.Get("y").As<Napi::Number>().Int32Value(),
+	  NapiAdapter<Color>::from_value(obj.Get("color")));
+}
+
+template<>
+inline Napi::Value NapiAdapter<Pixel>::into_value(const Napi::Env& env, const Pixel& pixel) {
+	auto obj	  = Napi::Object::New(env);
+	obj["origin"] = NapiAdapter<Point>::into_value(env, pixel.origin);
+	obj["x"]	  = Napi::Number::From(env, pixel.x);
+	obj["y"]	  = Napi::Number::From(env, pixel.y);
+	obj["color"]  = NapiAdapter<Color>::into_value(env, pixel.color);
+
+	return obj;
 }
 
 /**

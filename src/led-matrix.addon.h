@@ -5,6 +5,7 @@
 #include "font.addon.h"
 #include "image.h"
 #include "napi-adapters.h"
+#include "pixel.h"
 #include "point.h"
 #include <assert.h>
 #include <cmath>

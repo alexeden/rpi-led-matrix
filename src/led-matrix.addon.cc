@@ -647,7 +647,7 @@ void LedMatrixAddon::native_set_pixel(const Napi::Env env, const int x, const in
 		this->canvas_->SetPixel(x, y, color.r, color.g, color.b);
 	}
 	else {
-		auto mapped = map_pixels_cb_.Call({});
+		auto mapped = map_pixels_cb_.Call({ NapiAdapter<Pixel>::into_value(env, Pixel(origin_, x, y, color)) });
 
 		this->canvas_->SetPixel(x, y, color.r, color.g, color.b);
 	}
