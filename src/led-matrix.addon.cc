@@ -66,6 +66,7 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   , map_pixels_cb_(Napi::FunctionReference())
   , bg_color_(Color(0, 0, 0))
   , fg_color_(Color(0, 0, 0))
+  , origin_(Point())
   , font_(nullptr)
   , font_name_("")
   , t_start_(get_now_ms())
@@ -268,6 +269,7 @@ Napi::Value LedMatrixAddon::draw_circle(const Napi::CallbackInfo& info) {
 
 Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info) {
 	const auto opts = info[0].As<Napi::Object>();
+	const auto env	= info.Env();
 	assert(opts.IsObject());
 	const auto shape_options = default_shape_options_.apply_napi_value(opts);
 	const auto center		 = NapiAdapter<Point>::from_value(opts.Get("center"));
@@ -282,23 +284,23 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 
 	while (y <= x) {
 		if (shape_options.fill && y != radius) {
-			native_draw_line(-y + x0, -x + y0 + 1, y + x0, -x + y0 + 1, shape_options.color);
-			native_draw_line(y + x0, x + y0 - 1, -y + x0, x + y0 - 1, shape_options.color);
-			native_draw_line(x + x0 - 1, y + y0, -x + x0 + 1, y + y0, shape_options.color);
-			native_draw_line(-x + x0 + 1, -y + y0, x + x0 - 1, -y + y0, shape_options.color);
+			native_draw_line(env, -y + x0, -x + y0 + 1, y + x0, -x + y0 + 1, shape_options.color);
+			native_draw_line(env, y + x0, x + y0 - 1, -y + x0, x + y0 - 1, shape_options.color);
+			native_draw_line(env, x + x0 - 1, y + y0, -x + x0 + 1, y + y0, shape_options.color);
+			native_draw_line(env, -x + x0 + 1, -y + y0, x + x0 - 1, -y + y0, shape_options.color);
 		}
 
-		native_set_pixel(-y + x0, -x + y0, shape_options.color);
-		native_set_pixel(y + x0, -x + y0, shape_options.color);
+		native_set_pixel(env, -y + x0, -x + y0, shape_options.color);
+		native_set_pixel(env, y + x0, -x + y0, shape_options.color);
 
-		native_set_pixel(y + x0, x + y0, shape_options.color);
-		native_set_pixel(-y + x0, x + y0, shape_options.color);
+		native_set_pixel(env, y + x0, x + y0, shape_options.color);
+		native_set_pixel(env, -y + x0, x + y0, shape_options.color);
 
-		native_set_pixel(-x + x0, -y + y0, shape_options.color);
-		native_set_pixel(x + x0, -y + y0, shape_options.color);
+		native_set_pixel(env, -x + x0, -y + y0, shape_options.color);
+		native_set_pixel(env, x + x0, -y + y0, shape_options.color);
 
-		native_set_pixel(x + x0, y + y0, shape_options.color);
-		native_set_pixel(-x + x0, y + y0, shape_options.color);
+		native_set_pixel(env, x + x0, y + y0, shape_options.color);
+		native_set_pixel(env, -x + x0, y + y0, shape_options.color);
 
 		y++;
 
@@ -314,6 +316,7 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 }
 
 Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& info) {
+	const auto env	= info.Env();
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
 	const auto shape_options = default_shape_options_.apply_napi_value(opts);
@@ -324,14 +327,14 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 		  : Point(p0.x + opts.Get("w").As<Napi::Number>().Int32Value(), p0.y + opts.Get("h").As<Napi::Number>().Int32Value());
 
 	if (!shape_options.fill) {
-		native_draw_line(p0.x, p0.y, p1.x, p0.y, shape_options.color);
-		native_draw_line(p1.x, p0.y, p1.x, p1.y, shape_options.color);
-		native_draw_line(p1.x, p1.y, p0.x, p1.y, shape_options.color);
-		native_draw_line(p0.x, p1.y, p0.x, p0.y, shape_options.color);
+		native_draw_line(env, p0.x, p0.y, p1.x, p0.y, shape_options.color);
+		native_draw_line(env, p1.x, p0.y, p1.x, p1.y, shape_options.color);
+		native_draw_line(env, p1.x, p1.y, p0.x, p1.y, shape_options.color);
+		native_draw_line(env, p0.x, p1.y, p0.x, p0.y, shape_options.color);
 	}
 	else {
 		for (auto y = p0.y; y <= p1.y; y++) {
-			native_draw_line(p0.x, y, p1.x, y, shape_options.color);
+			native_draw_line(env, p0.x, y, p1.x, y, shape_options.color);
 		}
 	}
 
@@ -343,6 +346,7 @@ bool compareDoublesEqual(double a, double b) {
 }
 
 Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info) {
+	const auto env	= info.Env();
 	const auto opts = info[0].As<Napi::Object>();
 	assert(opts.IsObject());
 	const auto shape_options = default_shape_options_.apply_napi_value(opts);
@@ -364,11 +368,11 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 		mins.minimize(p_curr);
 		maxs.maximize(p_curr);
 		edges.push_back(Edge(p_curr, p_prev));
-		native_draw_line(p_prev.x, p_prev.y, p_curr.x, p_curr.y, shape_options.color);
+		native_draw_line(env, p_prev.x, p_prev.y, p_curr.x, p_curr.y, shape_options.color);
 
 		if (i == count - 1) {
 			edges.push_back(Edge(p_curr, p0));
-			native_draw_line(p_curr.x, p_curr.y, p0.x, p0.y, shape_options.color);
+			native_draw_line(env, p_curr.x, p_curr.y, p0.x, p0.y, shape_options.color);
 		}
 
 		p_prev = p_curr;
@@ -425,7 +429,7 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 
 			// If an imaginary point exists on each of the edges, toggle on and then off. (2 in my old thinking)
 			if (imaginary_0_valid_point & imaginary_1_valid_point) {
-				native_set_pixel(x, y, shape_options.color);
+				native_set_pixel(info.Env(), x, y, shape_options.color);
 			}
 			// If an imaginary point exists on only one line (because of a cusp, for example), we've only crossed one
 			// line, effectively treating this as a side instead of a vertex.  Toggle fill on or off.
@@ -440,7 +444,7 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 		}
 
 		if (fill_flag) {
-			native_set_pixel(x, y, shape_options.color);
+			native_set_pixel(info.Env(), x, y, shape_options.color);
 		}
 		// Fill logic end
 	}
@@ -449,13 +453,14 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 }
 
 Napi::Value LedMatrixAddon::unstable_draw_line(const Napi::CallbackInfo& info) {
+	const auto env = info.Env();
 	assert(info[0].IsObject());
 	const auto opts			 = info[0].As<Napi::Object>();
 	const auto shape_options = default_shape_options_.apply_napi_value(opts);
 	auto p0					 = NapiAdapter<Point>::from_value(opts.Get("p0"));
 	auto p1					 = NapiAdapter<Point>::from_value(opts.Get("p1"));
 
-	native_draw_line(p0, p1, shape_options.color);
+	native_draw_line(env, p0, p1, shape_options.color);
 
 	return info.This();
 }
@@ -545,7 +550,7 @@ Napi::Value LedMatrixAddon::pwm_bits(const Napi::CallbackInfo& info) {
 Napi::Value LedMatrixAddon::set_pixel(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
-	native_set_pixel(x, y, fg_color_);
+	native_set_pixel(info.Env(), x, y, fg_color_);
 
 	return info.This();
 }
@@ -597,11 +602,11 @@ Napi::Value LedMatrixAddon::font(const Napi::CallbackInfo& info) {
 /**
  * Native draw functions
  */
-void LedMatrixAddon::native_draw_line(Point& p0, Point& p1, const Color& color) {
-	native_draw_line(p0.x, p0.y, p1.x, p1.y, color);
+void LedMatrixAddon::native_draw_line(const Napi::Env env, Point& p0, Point& p1, const Color& color) {
+	native_draw_line(env, p0.x, p0.y, p1.x, p1.y, color);
 }
 
-void LedMatrixAddon::native_draw_line(int x0, int y0, int x1, int y1, const Color& color) {
+void LedMatrixAddon::native_draw_line(const Napi::Env env, int x0, int y0, int x1, int y1, const Color& color) {
 	// This implementation is copied directly from the native graphics.cc source
 	int dy = y1 - y0, dx = x1 - x0, gradient, x, y, shift = 0x10;
 
@@ -614,7 +619,7 @@ void LedMatrixAddon::native_draw_line(int x0, int y0, int x1, int y1, const Colo
 		gradient = (dy << shift) / dx;
 
 		for (x = x0, y = 0x8000 + (y0 << shift); x <= x1; ++x, y += gradient) {
-			native_set_pixel(x, y >> shift, color);
+			native_set_pixel(env, x, y >> shift, color);
 		}
 	}
 	else if (dy != 0) {
@@ -625,18 +630,25 @@ void LedMatrixAddon::native_draw_line(int x0, int y0, int x1, int y1, const Colo
 		}
 		gradient = (dx << shift) / dy;
 		for (y = y0, x = 0x8000 + (x0 << shift); y <= y1; ++y, x += gradient) {
-			native_set_pixel(x >> shift, y, color);
+			native_set_pixel(env, x >> shift, y, color);
 		}
 	}
 	else {
-		native_set_pixel(x0, y0, color);
+		native_set_pixel(env, x0, y0, color);
 	}
 }
 
-void LedMatrixAddon::native_set_pixel(const Point& p, const Color& color) {
-	native_set_pixel(p.x, p.y, color);
+void LedMatrixAddon::native_set_pixel(const Napi::Env env, const Point& p, const Color& color) {
+	native_set_pixel(env, p.x, p.y, color);
 }
 
-void LedMatrixAddon::native_set_pixel(const int x, const int y, const Color& color) {
-	this->canvas_->SetPixel(x, y, color.r, color.g, color.b);
+void LedMatrixAddon::native_set_pixel(const Napi::Env env, const int x, const int y, const Color& color) {
+	if (map_pixels_cb_.IsEmpty()) {
+		this->canvas_->SetPixel(x, y, color.r, color.g, color.b);
+	}
+	else {
+		auto mapped = map_pixels_cb_.Call({});
+
+		this->canvas_->SetPixel(x, y, color.r, color.g, color.b);
+	}
 }

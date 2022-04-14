@@ -15,7 +15,7 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions)
       .shapeOptions({ color: 0x0000ff })
-      .mapPixels((mat, pixel) => ({ ...pixel, color: rainbow(pixel.x) }))
+      .mapPixels(pixel => ({ ...pixel, color: rainbow(pixel.x) }))
       .clear();
 
     const n = 10;

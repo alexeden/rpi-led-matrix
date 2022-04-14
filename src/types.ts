@@ -139,11 +139,7 @@ interface Pixel {
   color: number;
 }
 
-type PixelHook = (
-  this: LedMatrixInstance,
-  matrix: LedMatrixInstance,
-  pixel: Pixel
-) => Pixel | null | undefined;
+type PixelHook = (pixel: Pixel) => Pixel | null | undefined;
 
 type SyncHook = (
   this: LedMatrixInstance,

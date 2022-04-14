@@ -110,15 +110,16 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	// These are draw functions that actually call the native matrix methods
 	// They're kept and reimplemented here because we need the ability to
 	// apply middleware to every pixel being set
-	void native_draw_line(Point& p0, Point& p1, const Color& color);
-	void native_draw_line(int x0, int y0, int x1, int y1, const Color& color);
-	void native_set_pixel(const Point& p, const Color& color);
-	void native_set_pixel(const int x, const int y, const Color& color);
+	void native_draw_line(const Napi::Env env, Point& p0, Point& p1, const Color& color);
+	void native_draw_line(const Napi::Env env, int x0, int y0, int x1, int y1, const Color& color);
+	void native_set_pixel(const Napi::Env env, const Point& p, const Color& color);
+	void native_set_pixel(const Napi::Env env, const int x, const int y, const Color& color);
 
 	Napi::FunctionReference after_sync_cb_;
 	Napi::FunctionReference map_pixels_cb_;
 	Color bg_color_;
 	Color fg_color_;
+	Point origin_;
 	Font* font_;
 	std::string font_name_;
 	RGBMatrix* matrix_;
