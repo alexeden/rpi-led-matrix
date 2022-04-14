@@ -43,6 +43,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("height", &LedMatrixAddon::height),
 		InstanceMethod("luminanceCorrect", &LedMatrixAddon::luminance_correct),
 		InstanceMethod("map", &LedMatrixAddon::map),
+		InstanceMethod("mapPixels", &LedMatrixAddon::map_pixels),
 		InstanceMethod("pwmBits", &LedMatrixAddon::pwm_bits),
 		InstanceMethod("setPixel", &LedMatrixAddon::set_pixel),
 		InstanceMethod("shapeOptions", &LedMatrixAddon::shape_options),
@@ -62,6 +63,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   : Napi::ObjectWrap<LedMatrixAddon>(info)
   , after_sync_cb_(Napi::FunctionReference())
+  , map_pixels_cb_(Napi::FunctionReference())
   , bg_color_(Color(0, 0, 0))
   , fg_color_(Color(0, 0, 0))
   , font_(nullptr)
@@ -131,6 +133,21 @@ Napi::Value LedMatrixAddon::after_sync(const Napi::CallbackInfo& info) {
 
 	after_sync_cb_ = Napi::Persistent(cb);
 	after_sync_cb_.SuppressDestruct();
+
+	return info.This();
+}
+
+Napi::Value LedMatrixAddon::map_pixels(const Napi::CallbackInfo& info) {
+	// If not defined, clear the pixel mapper
+	if (info[0].IsUndefined()) {
+		map_pixels_cb_ = Napi::FunctionReference();
+	}
+	else {
+		assert(info[0].IsFunction());
+		auto cb		   = info[0].As<Napi::Function>();
+		map_pixels_cb_ = Napi::Persistent(cb);
+		map_pixels_cb_.SuppressDestruct();
+	}
 
 	return info.This();
 }
@@ -347,11 +364,11 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 		mins.minimize(p_curr);
 		maxs.maximize(p_curr);
 		edges.push_back(Edge(p_curr, p_prev));
-		DrawLine(this->canvas_, p_prev.x, p_prev.y, p_curr.x, p_curr.y, shape_options.color);
+		native_draw_line(p_prev.x, p_prev.y, p_curr.x, p_curr.y, shape_options.color);
 
 		if (i == count - 1) {
 			edges.push_back(Edge(p_curr, p0));
-			DrawLine(this->canvas_, p_curr.x, p_curr.y, p0.x, p0.y, shape_options.color);
+			native_draw_line(p_curr.x, p_curr.y, p0.x, p0.y, shape_options.color);
 		}
 
 		p_prev = p_curr;
@@ -408,7 +425,7 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 
 			// If an imaginary point exists on each of the edges, toggle on and then off. (2 in my old thinking)
 			if (imaginary_0_valid_point & imaginary_1_valid_point) {
-				this->canvas_->SetPixel(x, y, shape_options.color.r, shape_options.color.g, shape_options.color.b);
+				native_set_pixel(x, y, shape_options.color);
 			}
 			// If an imaginary point exists on only one line (because of a cusp, for example), we've only crossed one
 			// line, effectively treating this as a side instead of a vertex.  Toggle fill on or off.
@@ -423,7 +440,7 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 		}
 
 		if (fill_flag) {
-			this->canvas_->SetPixel(x, y, shape_options.color.r, shape_options.color.g, shape_options.color.b);
+			native_set_pixel(x, y, shape_options.color);
 		}
 		// Fill logic end
 	}
@@ -528,7 +545,7 @@ Napi::Value LedMatrixAddon::pwm_bits(const Napi::CallbackInfo& info) {
 Napi::Value LedMatrixAddon::set_pixel(const Napi::CallbackInfo& info) {
 	const auto x = info[0].As<Napi::Number>().Uint32Value();
 	const auto y = info[1].As<Napi::Number>().Uint32Value();
-	this->canvas_->SetPixel(x, y, fg_color_.r, fg_color_.g, fg_color_.b);
+	native_set_pixel(x, y, fg_color_);
 
 	return info.This();
 }
@@ -616,10 +633,10 @@ void LedMatrixAddon::native_draw_line(int x0, int y0, int x1, int y1, const Colo
 	}
 }
 
-void LedMatrixAddon::native_set_pixel(const int x, const int y, const Color& color) {
-	this->canvas_->SetPixel(x, y, color.r, color.g, color.b);
-}
-
 void LedMatrixAddon::native_set_pixel(const Point& p, const Color& color) {
 	native_set_pixel(p.x, p.y, color);
+}
+
+void LedMatrixAddon::native_set_pixel(const int x, const int y, const Color& color) {
+	this->canvas_->SetPixel(x, y, color.r, color.g, color.b);
 }

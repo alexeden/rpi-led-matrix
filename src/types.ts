@@ -34,7 +34,7 @@ export type PolygonOptions = ShapeOptions & PolygonSpec;
 export type RectangleOptions = ShapeOptions & RectangleSpec;
 
 export interface LedMatrixInstance {
-  afterSync(hook: SyncHook): LedMatrixInstance;
+  afterSync(hook: SyncHook): this;
 
   bgColor(color: Color): this;
   bgColor(): ColorObject;
@@ -77,6 +77,8 @@ export interface LedMatrixInstance {
   map(
     cb: (coords: [x: number, y: number, i: number], t: number) => number
   ): this;
+
+  mapPixels(hook?: PixelHook): this;
 
   pwmBits(pwmBits: number): this;
   pwmBits(): number;
@@ -130,6 +132,16 @@ export interface LedMatrixAddon {
   Font: Font;
   LedMatrix: LedMatrix;
 }
+
+interface Pixel extends ColorObject {
+  origin: Point;
+  x: number;
+  y: number;
+}
+
+type PixelHook = (
+  pixel: Pixel
+) => Partial<Omit<Pixel, 'origin'>> | null | undefined;
 
 type SyncHook = (
   this: LedMatrixInstance,

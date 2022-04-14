@@ -80,6 +80,7 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::Value height(const Napi::CallbackInfo& info);
 	Napi::Value luminance_correct(const Napi::CallbackInfo& info);
 	Napi::Value map(const Napi::CallbackInfo& info);
+	Napi::Value map_pixels(const Napi::CallbackInfo& info);
 	Napi::Value pwm_bits(const Napi::CallbackInfo& info);
 	Napi::Value set_pixel(const Napi::CallbackInfo& info);
 	Napi::Value shape_options(const Napi::CallbackInfo& info);
@@ -115,6 +116,7 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	void native_set_pixel(const int x, const int y, const Color& color);
 
 	Napi::FunctionReference after_sync_cb_;
+	Napi::FunctionReference map_pixels_cb_;
 	Color bg_color_;
 	Color fg_color_;
 	Font* font_;
