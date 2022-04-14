@@ -265,23 +265,23 @@ Napi::Value LedMatrixAddon::unstable_draw_circle(const Napi::CallbackInfo& info)
 
 	while (y <= x) {
 		if (shape_options.fill && y != radius) {
-			DrawLine(this->canvas_, -y + x0, -x + y0 + 1, y + x0, -x + y0 + 1, shape_options.color);
-			DrawLine(this->canvas_, y + x0, x + y0 - 1, -y + x0, x + y0 - 1, shape_options.color);
-			DrawLine(this->canvas_, x + x0 - 1, y + y0, -x + x0 + 1, y + y0, shape_options.color);
-			DrawLine(this->canvas_, -x + x0 + 1, -y + y0, x + x0 - 1, -y + y0, shape_options.color);
+			native_draw_line(-y + x0, -x + y0 + 1, y + x0, -x + y0 + 1, shape_options.color);
+			native_draw_line(y + x0, x + y0 - 1, -y + x0, x + y0 - 1, shape_options.color);
+			native_draw_line(x + x0 - 1, y + y0, -x + x0 + 1, y + y0, shape_options.color);
+			native_draw_line(-x + x0 + 1, -y + y0, x + x0 - 1, -y + y0, shape_options.color);
 		}
 
-		this->canvas_->SetPixel(-y + x0, -x + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
-		this->canvas_->SetPixel(y + x0, -x + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
+		native_set_pixel(-y + x0, -x + y0, shape_options.color);
+		native_set_pixel(y + x0, -x + y0, shape_options.color);
 
-		this->canvas_->SetPixel(y + x0, x + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
-		this->canvas_->SetPixel(-y + x0, x + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
+		native_set_pixel(y + x0, x + y0, shape_options.color);
+		native_set_pixel(-y + x0, x + y0, shape_options.color);
 
-		this->canvas_->SetPixel(-x + x0, -y + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
-		this->canvas_->SetPixel(x + x0, -y + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
+		native_set_pixel(-x + x0, -y + y0, shape_options.color);
+		native_set_pixel(x + x0, -y + y0, shape_options.color);
 
-		this->canvas_->SetPixel(x + x0, y + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
-		this->canvas_->SetPixel(-x + x0, y + y0, shape_options.color.r, shape_options.color.g, shape_options.color.b);
+		native_set_pixel(x + x0, y + y0, shape_options.color);
+		native_set_pixel(-x + x0, y + y0, shape_options.color);
 
 		y++;
 
@@ -307,14 +307,14 @@ Napi::Value LedMatrixAddon::unstable_draw_rectangle(const Napi::CallbackInfo& in
 		  : Point(p0.x + opts.Get("w").As<Napi::Number>().Int32Value(), p0.y + opts.Get("h").As<Napi::Number>().Int32Value());
 
 	if (!shape_options.fill) {
-		DrawLine(this->canvas_, p0.x, p0.y, p1.x, p0.y, shape_options.color);
-		DrawLine(this->canvas_, p1.x, p0.y, p1.x, p1.y, shape_options.color);
-		DrawLine(this->canvas_, p1.x, p1.y, p0.x, p1.y, shape_options.color);
-		DrawLine(this->canvas_, p0.x, p1.y, p0.x, p0.y, shape_options.color);
+		native_draw_line(p0.x, p0.y, p1.x, p0.y, shape_options.color);
+		native_draw_line(p1.x, p0.y, p1.x, p1.y, shape_options.color);
+		native_draw_line(p1.x, p1.y, p0.x, p1.y, shape_options.color);
+		native_draw_line(p0.x, p1.y, p0.x, p0.y, shape_options.color);
 	}
 	else {
 		for (auto y = p0.y; y <= p1.y; y++) {
-			DrawLine(this->canvas_, p0.x, y, p1.x, y, shape_options.color);
+			native_draw_line(p0.x, y, p1.x, y, shape_options.color);
 		}
 	}
 
@@ -432,11 +432,13 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 }
 
 Napi::Value LedMatrixAddon::unstable_draw_line(const Napi::CallbackInfo& info) {
-	const auto x0 = info[0].As<Napi::Number>().Uint32Value();
-	const auto y0 = info[1].As<Napi::Number>().Uint32Value();
-	const auto x1 = info[2].As<Napi::Number>().Uint32Value();
-	const auto y1 = info[3].As<Napi::Number>().Uint32Value();
-	DrawLine(this->canvas_, x0, y0, x1, y1, fg_color_);
+	assert(info[0].IsObject());
+	const auto opts			 = info[0].As<Napi::Object>();
+	const auto shape_options = default_shape_options_.apply_napi_value(opts);
+	auto p0					 = NapiAdapter<Point>::from_value(opts.Get("p0"));
+	auto p1					 = NapiAdapter<Point>::from_value(opts.Get("p1"));
+
+	native_draw_line(p0, p1, shape_options.color);
 
 	return info.This();
 }
@@ -579,37 +581,38 @@ Napi::Value LedMatrixAddon::font(const Napi::CallbackInfo& info) {
  * Native draw functions
  */
 void LedMatrixAddon::native_draw_line(Point& p0, Point& p1, const Color& color) {
+	native_draw_line(p0.x, p0.y, p1.x, p1.y, color);
+}
+
+void LedMatrixAddon::native_draw_line(int x0, int y0, int x1, int y1, const Color& color) {
 	// This implementation is copied directly from the native graphics.cc source
-	int dy	  = p1.y - p0.y;
-	int dx	  = p1.x - p0.x;
-	int shift = 0x10;
-	int gradient, x, y, temp_x, temp_y;
+	int dy = y1 - y0, dx = x1 - x0, gradient, x, y, shift = 0x10;
 
 	if (abs(dx) > abs(dy)) {
 		// x variation is bigger than y variation
-		if (p1.x < p0.x) {
-			std::swap(p0.x, p1.x);
-			std::swap(p0.y, p1.y);
+		if (x1 < x0) {
+			std::swap(x0, x1);
+			std::swap(y0, y1);
 		}
 		gradient = (dy << shift) / dx;
 
-		for (x = p0.x, y = 0x8000 + (p0.y << shift); x <= p1.x; ++x, y += gradient) {
+		for (x = x0, y = 0x8000 + (y0 << shift); x <= x1; ++x, y += gradient) {
 			native_set_pixel(x, y >> shift, color);
 		}
 	}
 	else if (dy != 0) {
 		// y variation is bigger than x variation
-		if (p1.y < p0.y) {
-			std::swap(p0.x, p1.x);
-			std::swap(p0.y, p1.y);
+		if (y1 < y0) {
+			std::swap(x0, x1);
+			std::swap(y0, y1);
 		}
 		gradient = (dx << shift) / dy;
-		for (y = p0.y, x = 0x8000 + (p0.x << shift); y <= p1.y; ++y, x += gradient) {
+		for (y = y0, x = 0x8000 + (x0 << shift); y <= y1; ++y, x += gradient) {
 			native_set_pixel(x >> shift, y, color);
 		}
 	}
 	else {
-		native_set_pixel(p0, color);
+		native_set_pixel(x0, y0, color);
 	}
 }
 

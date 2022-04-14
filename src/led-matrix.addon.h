@@ -110,6 +110,7 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	// They're kept and reimplemented here because we need the ability to
 	// apply middleware to every pixel being set
 	void native_draw_line(Point& p0, Point& p1, const Color& color);
+	void native_draw_line(int x0, int y0, int x1, int y1, const Color& color);
 	void native_set_pixel(const Point& p, const Color& color);
 	void native_set_pixel(const int x, const int y, const Color& color);
 
