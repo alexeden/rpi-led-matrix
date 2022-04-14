@@ -31,6 +31,7 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("drawBuffer", &LedMatrixAddon::draw_buffer),
 		InstanceMethod("drawCircle", &LedMatrixAddon::draw_circle),
 		InstanceMethod("unstable_drawCircle", &LedMatrixAddon::unstable_draw_circle),
+		InstanceMethod("unstable_drawLine", &LedMatrixAddon::unstable_draw_line),
 		InstanceMethod("unstable_drawPolygon", &LedMatrixAddon::unstable_draw_polygon),
 		InstanceMethod("unstable_drawRectangle", &LedMatrixAddon::unstable_draw_rectangle),
 		InstanceMethod("drawLine", &LedMatrixAddon::draw_line),
@@ -433,6 +434,16 @@ Napi::Value LedMatrixAddon::unstable_draw_polygon(const Napi::CallbackInfo& info
 	return info.This();
 }
 
+Napi::Value LedMatrixAddon::unstable_draw_line(const Napi::CallbackInfo& info) {
+	const auto x0 = info[0].As<Napi::Number>().Uint32Value();
+	const auto y0 = info[1].As<Napi::Number>().Uint32Value();
+	const auto x1 = info[2].As<Napi::Number>().Uint32Value();
+	const auto y1 = info[3].As<Napi::Number>().Uint32Value();
+	DrawLine(this->canvas_, x0, y0, x1, y1, fg_color_);
+
+	return info.This();
+}
+
 Napi::Value LedMatrixAddon::draw_line(const Napi::CallbackInfo& info) {
 	const auto x0 = info[0].As<Napi::Number>().Uint32Value();
 	const auto y0 = info[1].As<Napi::Number>().Uint32Value();
@@ -565,4 +576,50 @@ Napi::Value LedMatrixAddon::font(const Napi::CallbackInfo& info) {
 	else {
 		return Napi::String::New(info.Env(), font_name_);
 	}
+}
+
+/**
+ * Native draw functions
+ */
+void LedMatrixAddon::native_draw_line(Point& p0, Point& p1, const Color& color) {
+	// This implementation is copied directly from the native graphics.cc source
+	int dy	  = p1.y - p0.y;
+	int dx	  = p1.x - p0.x;
+	int shift = 0x10;
+	int gradient, x, y, temp_x, temp_y;
+
+	if (abs(dx) > abs(dy)) {
+		// x variation is bigger than y variation
+		if (p1.x < p0.x) {
+			std::swap(p0.x, p1.x);
+			std::swap(p0.y, p1.y);
+		}
+		gradient = (dy << shift) / dx;
+
+		for (x = p0.x, y = 0x8000 + (p0.y << shift); x <= p1.x; ++x, y += gradient) {
+			native_set_pixel(x, y >> shift, color);
+		}
+	}
+	else if (dy != 0) {
+		// y variation is bigger than x variation
+		if (p1.y < p0.y) {
+			std::swap(p0.x, p1.x);
+			std::swap(p0.y, p1.y);
+		}
+		gradient = (dx << shift) / dy;
+		for (y = p0.y, x = 0x8000 + (p0.x << shift); y <= p1.y; ++y, x += gradient) {
+			native_set_pixel(x >> shift, y, color);
+		}
+	}
+	else {
+		native_set_pixel(p0, color);
+	}
+}
+
+void LedMatrixAddon::native_set_pixel(const int x, const int y, const Color& color) {
+	this->canvas_->SetPixel(x, y, color.r, color.g, color.b);
+}
+
+void LedMatrixAddon::native_set_pixel(const Point& p, const Color& color) {
+	native_set_pixel(p.x, p.y, color);
 }

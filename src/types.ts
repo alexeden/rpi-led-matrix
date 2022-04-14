@@ -21,6 +21,7 @@ export type ShapeOptions<C = Color> = {
 // A spec represents the minimum information needed to draw a shape;
 // some shapes, like a rectangle, can have more than one spec
 export type CircleSpec = { r: number; center: Point };
+export type LineSpec = { p0: Point; p1: Point };
 export type PolygonSpec = { ps: Point[] };
 export type RectangleSpec = { p0: Point } & (
   | { p1: Point }
@@ -28,6 +29,7 @@ export type RectangleSpec = { p0: Point } & (
 );
 
 export type CircleOptions = ShapeOptions & CircleSpec;
+export type LineOptions = ShapeOptions & LineSpec;
 export type PolygonOptions = ShapeOptions & PolygonSpec;
 export type RectangleOptions = ShapeOptions & RectangleSpec;
 
@@ -51,6 +53,7 @@ export interface LedMatrixInstance {
   drawRect(x0: number, y0: number, width: number, height: number): this;
   drawText(text: string, x: number, y: number, kerning?: number): this;
   unstable_drawCircle(opts: CircleOptions): this;
+  unstable_drawLine(opts: LineOptions): this;
   unstable_drawPolygon(opts: PolygonOptions): this;
   unstable_drawRectangle(opts: RectangleOptions): this;
 

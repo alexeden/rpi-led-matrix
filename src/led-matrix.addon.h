@@ -84,6 +84,7 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 	Napi::Value set_pixel(const Napi::CallbackInfo& info);
 	Napi::Value shape_options(const Napi::CallbackInfo& info);
 	Napi::Value unstable_draw_circle(const Napi::CallbackInfo& info);
+	Napi::Value unstable_draw_line(const Napi::CallbackInfo& info);
 	Napi::Value unstable_draw_polygon(const Napi::CallbackInfo& info);
 	Napi::Value unstable_draw_rectangle(const Napi::CallbackInfo& info);
 	Napi::Value width(const Napi::CallbackInfo& info);
@@ -104,6 +105,13 @@ class LedMatrixAddon : public Napi::ObjectWrap<LedMatrixAddon> {
 
   private:
 	static Napi::FunctionReference constructor;
+
+	// These are draw functions that actually call the native matrix methods
+	// They're kept and reimplemented here because we need the ability to
+	// apply middleware to every pixel being set
+	void native_draw_line(Point& p0, Point& p1, const Color& color);
+	void native_set_pixel(const Point& p, const Color& color);
+	void native_set_pixel(const int x, const int y, const Color& color);
 
 	Napi::FunctionReference after_sync_cb_;
 	Color bg_color_;
