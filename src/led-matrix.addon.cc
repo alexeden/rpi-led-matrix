@@ -42,7 +42,6 @@ Napi::Object LedMatrixAddon::Init(Napi::Env env, Napi::Object exports) {
 		InstanceMethod("font", &LedMatrixAddon::font),
 		InstanceMethod("height", &LedMatrixAddon::height),
 		InstanceMethod("luminanceCorrect", &LedMatrixAddon::luminance_correct),
-		InstanceMethod("map", &LedMatrixAddon::map),
 		InstanceMethod("mapPixels", &LedMatrixAddon::map_pixels),
 		InstanceMethod("pwmBits", &LedMatrixAddon::pwm_bits),
 		InstanceMethod("setPixel", &LedMatrixAddon::set_pixel),
@@ -72,6 +71,7 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
   , t_start_(get_now_ms())
   , t_sync_ms_(0)
   , t_dsync_ms_(0)
+  , t_needs_recalc_(true)
   , default_shape_options_(ShapeOptions()) {
 	auto env = info.Env();
 	if (!info[0].IsObject()) {
@@ -95,6 +95,14 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
 LedMatrixAddon::~LedMatrixAddon(void) {
 	std::cerr << "Destroying matrix" << std::endl;
 	delete matrix_;
+}
+
+void LedMatrixAddon::recalc_times() {
+	auto now		= get_now_ms();
+	auto now_ms		= now - t_start_;
+	t_dsync_ms_		= now_ms - t_sync_ms_;
+	t_sync_ms_		= now_ms;
+	t_needs_recalc_ = false;
 }
 
 Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
@@ -123,6 +131,7 @@ Napi::Value LedMatrixAddon::sync(const Napi::CallbackInfo& info) {
 			sync(info);
 		}
 	}
+	t_needs_recalc_ = true;
 
 	return Napi::Number::New(env, 0);
 }
@@ -153,40 +162,40 @@ Napi::Value LedMatrixAddon::map_pixels(const Napi::CallbackInfo& info) {
 	return info.This();
 }
 
-Napi::Value LedMatrixAddon::map(const Napi::CallbackInfo& info) {
-	auto cb = info[0].As<Napi::Function>();
+// Napi::Value LedMatrixAddon::map(const Napi::CallbackInfo& info) {
+// 	auto cb = info[0].As<Napi::Function>();
 
-	assert(cb.IsFunction());
+// 	assert(cb.IsFunction());
 
-	auto env	= info.Env();
-	auto now	= get_now_ms();
-	auto now_ms = Napi::Number::New(env, now - t_start_);
+// 	auto env	= info.Env();
+// 	auto now	= get_now_ms();
+// 	auto now_ms = Napi::Number::New(env, now - t_start_);
 
-	Napi::Array coord_array = Napi::Array::New(env, 3);
-	uint32_t zero			= 0; // The compiler can't match the overloaded signature if given 0 explicitly
-	uint32_t one			= 1;
-	uint32_t two			= 2;
+// 	Napi::Array coord_array = Napi::Array::New(env, 3);
+// 	uint32_t zero			= 0; // The compiler can't match the overloaded signature if given 0 explicitly
+// 	uint32_t one			= 1;
+// 	uint32_t two			= 2;
 
-	auto i = 0;
+// 	auto i = 0;
 
-	for (int x = 0; x < this->matrix_->width(); x++) {
-		coord_array.Set(zero, x);
+// 	for (int x = 0; x < this->matrix_->width(); x++) {
+// 		coord_array.Set(zero, x);
 
-		for (int y = 0; y < this->matrix_->height(); y++) {
-			coord_array.Set(one, y);
-			coord_array.Set(two, i++);
+// 		for (int y = 0; y < this->matrix_->height(); y++) {
+// 			coord_array.Set(one, y);
+// 			coord_array.Set(two, i++);
 
-			auto color = cb.Call(info.This(), { coord_array, now_ms });
+// 			auto color = cb.Call(info.This(), { coord_array, now_ms });
 
-			assert(color.IsNumber());
+// 			assert(color.IsNumber());
 
-			const auto hex = color.As<Napi::Number>().Uint32Value();
-			this->matrix_->SetPixel(x, y, 0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex);
-		}
-	}
+// 			const auto hex = color.As<Napi::Number>().Uint32Value();
+// 			this->matrix_->SetPixel(x, y, 0xFF & (hex >> 16), 0xFF & (hex >> 8), 0xFF & hex);
+// 		}
+// 	}
 
-	return info.This();
-}
+// 	return info.This();
+// }
 
 Napi::Value LedMatrixAddon::brightness(const Napi::CallbackInfo& info) {
 	if (info.Length() > 0 && info[0].IsNumber()) {
@@ -647,7 +656,11 @@ void LedMatrixAddon::native_set_pixel(const Napi::Env env, const int x, const in
 		this->canvas_->SetPixel(x, y, color.r, color.g, color.b);
 	}
 	else {
-		auto mapped = map_pixels_cb_.Call({ NapiAdapter<Pixel>::into_value(env, Pixel(origin_, x, y, color)) });
+		if (t_needs_recalc_) recalc_times();
+
+		auto mapped = map_pixels_cb_.Call({ NapiAdapter<Pixel>::into_value(env, Pixel(origin_, x, y, color)),
+											Napi::Number::From(env, t_dsync_ms_),
+											Napi::Number::From(env, t_sync_ms_) });
 		auto pixel	= NapiAdapter<Pixel>::from_value(mapped);
 
 		this->canvas_->SetPixel(pixel.x, pixel.y, pixel.color.r, pixel.color.g, pixel.color.b);

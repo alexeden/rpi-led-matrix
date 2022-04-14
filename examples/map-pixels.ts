@@ -9,14 +9,10 @@ const rainbow64 = Array.from(Array(64))
 const rainbow = (i: number) =>
   rainbow64[Math.min(rainbow64.length - 1, Math.max(i % 64, 0))];
 
-const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
+// const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
 
 (async () => {
   try {
-    const matrix = new LedMatrix(matrixOptions, runtimeOptions)
-      .mapPixels(pixel => ({ ...pixel, color: rainbow(pixel.x) }))
-      .clear();
-
     const n = 10;
     const spacing = (Math.PI * 2) / n;
     const r = 30;
@@ -30,11 +26,22 @@ const wait = (t: number) => new Promise(ok => setTimeout(ok, t));
     const left: Point[] = ps.map(([x, y]) => [x + 32, y + 32 + 64]);
     const right: Point[] = ps.map(([x, y]) => [x + 32 + 64, y + 32 + 64]);
 
-    matrix
-      .unstable_drawPolygon({ ps: left, fill: true })
-      .unstable_drawPolygon({ ps: right })
+    new LedMatrix(matrixOptions, runtimeOptions)
+      .mapPixels((pixel, _, t) => ({
+        ...pixel,
+        color: rainbow(pixel.x + Math.ceil(t / 50)),
+      }))
+      .clear()
+      .afterSync(mat => {
+        mat
+          .unstable_drawPolygon({ ps: left, fill: true })
+          .unstable_drawPolygon({ ps: right });
+
+        setTimeout(() => mat.sync(), 0);
+      })
       .sync();
-    await wait(999999999);
+
+    // await wait(999999999);
   } catch (error) {
     console.error(`${__filename} caught: `, error);
   }

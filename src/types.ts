@@ -73,10 +73,6 @@ export interface LedMatrixInstance {
   luminanceCorrect(correct: boolean): this;
   luminanceCorrect(): boolean;
 
-  map(
-    cb: (coords: [x: number, y: number, i: number], t: number) => number
-  ): this;
-
   mapPixels(hook?: PixelHook): this;
 
   pwmBits(pwmBits: number): this;
