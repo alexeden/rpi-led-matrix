@@ -17,6 +17,7 @@
 #ifndef NAPI_ADAPTERS_H
 #define NAPI_ADAPTERS_H
 
+#include "point.h"
 #include <led-matrix.h>
 #include <napi.h>
 
@@ -133,6 +134,30 @@ NapiAdapter<RGBMatrix::Options>::into_value(const Napi::Env& env, const RGBMatri
 	obj["showRefreshRate"]		  = Napi::Boolean::New(env, options.show_refresh_rate);
 
 	return obj;
+}
+
+/**
+ *
+ * Point
+ *
+ */
+template<>
+inline Point NapiAdapter<Point>::from_value(const Napi::Value& value) {
+	assert(value.IsArray());
+	const auto arr = value.As<Napi::Array>();
+	assert(arr.Length() == 2);
+	int32_t x = arr.Get(uint32_t(0)).As<Napi::Number>().Int32Value();
+	int32_t y = arr.Get(uint32_t(1)).As<Napi::Number>().Int32Value();
+
+	return Point(x, y);
+}
+
+template<>
+inline Napi::Value NapiAdapter<Point>::into_value(const Napi::Env& env, const Point& arg) {
+	auto value = Napi::Array::New(env, 2);
+	value.Set(uint32_t(0), Napi::Number::New(env, arg.x));
+	value.Set(uint32_t(1), Napi::Number::New(env, arg.y));
+	return value;
 }
 
 /**
