@@ -1,8 +1,8 @@
-![build](https://img.shields.io/github/workflow/status/alexeden/rpi-led-matrix/Build%20-%20Raspberry%20Pi%203?label=RPI3%20BUILD&style=for-the-badge)
-![npm version](https://img.shields.io/npm/v/rpi-led-matrix/latest?style=for-the-badge)
-![types](https://img.shields.io/npm/types/rpi-led-matrix?style=for-the-badge)
-![dependencies](https://img.shields.io/librariesio/release/npm/rpi-led-matrix?style=for-the-badge&logoColor=white)
-![node version](https://img.shields.io/node/v/rpi-led-matrix?style=for-the-badge&logo=node.js&logoColor=white)
+[![Build - Raspberry Pi 3](https://github.com/alexeden/rpi-led-matrix/actions/workflows/raspberry-pi-3-build.yml/badge.svg?style=flat-square)](https://github.com/alexeden/rpi-led-matrix/actions/workflows/raspberry-pi-3-build.yml)
+![npm version](https://img.shields.io/npm/v/rpi-led-matrix/latest)
+![types](https://img.shields.io/npm/types/rpi-led-matrix)
+![dependencies](https://img.shields.io/librariesio/release/npm/rpi-led-matrix?logoColor=white)
+![node version](https://img.shields.io/node/v/rpi-led-matrix?logo=node.js&logoColor=white)
 
 # Raspberry Pi LED Matrix
 
