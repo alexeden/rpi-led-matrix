@@ -256,12 +256,12 @@ Napi::Value LedMatrixAddon::draw_rect(const Napi::CallbackInfo& info) {
 
 Napi::Value LedMatrixAddon::draw_text(const Napi::CallbackInfo& info) {
 	if (!font_) { throw Napi::Error::New(info.Env(), "Cannot draw text because the font has not been set!"); }
-	const auto text		= std::string(info[0].As<Napi::String>()).c_str();
+	const auto text		= std::string(info[0].As<Napi::String>());
 	const auto x		= info[1].As<Napi::Number>().Int32Value();
 	const auto y		= info[2].As<Napi::Number>().Int32Value();
 	const auto k		= info[3].IsNumber() ? info[3].As<Napi::Number>().Int32Value() : 0;
 	const auto bg_color = bg_color_.r == 0 && bg_color_.g == 0 && bg_color_.b == 0 ? nullptr : &bg_color_;
-	DrawText(this->canvas_, *font_, x, y + font_->baseline(), fg_color_, bg_color, text, k);
+	DrawText(this->canvas_, *font_, x, y + font_->baseline(), fg_color_, bg_color, text.c_str(), k);
 
 	return info.This();
 }
