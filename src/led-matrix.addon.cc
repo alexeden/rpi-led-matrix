@@ -187,6 +187,8 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 	const auto buffer = info[0].As<Napi::Buffer<uint8_t> >();
 	const auto w	  = info[1].IsNumber() ? info[1].As<Napi::Number>().Uint32Value() : this->matrix_->width();
 	const auto h	  = info[2].IsNumber() ? info[2].As<Napi::Number>().Uint32Value() : this->matrix_->height();
+	const auto xO	  = info[3].IsNumber() ? info[3].As<Napi::Number>().Int32Value() : 0; //Offset for x Coordinate
+	const auto yO	  = info[4].IsNumber() ? info[4].As<Napi::Number>().Int32Value() : 0; //Offset for y Coordinate
 	const auto data	  = buffer.Data();
 	const auto len	  = buffer.Length();
 
@@ -211,8 +213,10 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 		if (y > h) break;
 		for (unsigned int x = 0; x < w; x++) {
 			if (x > w) break;
+			if (x + xO > this->matrix_->width() || x + xO < 0 || y + yO > this->matrix_->height() || y + yO < 0) continue; //Skip anything that wont be drawn
+
 			auto pixel = img->getPixel(x, y);
-			this->canvas_->SetPixel(x, y, pixel.r(), pixel.g(), pixel.b());
+			this->canvas_->SetPixel(x + xO, y + yO, pixel.r(), pixel.g(), pixel.b());
 		}
 	}
 
