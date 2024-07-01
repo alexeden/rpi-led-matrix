@@ -43,7 +43,8 @@
     "prepublishOnly": "npm run lint && npm run build",
     "preversion": "npm run lint && npm run build",
     "quick-build": "npm run clean && node-gyp build && tsc -p src",
-    "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json"
+    "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "bindings": "^1.5.0",
