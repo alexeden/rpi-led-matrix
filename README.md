@@ -148,7 +148,9 @@ interface MatrixOptions {
   hardwareMapping: GpioMapping;
   inverseColors: boolean;
   ledRgbSequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
+  limitRefreshRateHz: number;
   multiplexing: MuxType;
+  panelType: '' | 'FM6126A' | 'FM6127';
   parallel: 1 | 2 | 3 | 4;
   pixelMapperConfig: string;
   pwmBits: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
