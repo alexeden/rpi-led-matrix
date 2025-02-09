@@ -1,16 +1,15 @@
-import globby = require('globby');
+import globby from 'globby';
+import ora from 'ora';
 import { basename } from 'path';
-import ora = require('ora');
 import prompts from 'prompts';
-
 import {
   Font,
-  LedMatrix,
-  type FontInstance,
-  type Color,
-  LayoutUtils,
   HorizontalAlignment,
+  LayoutUtils,
+  LedMatrix,
   VerticalAlignment,
+  type Color,
+  type FontInstance,
 } from '../src';
 import { matrixOptions, runtimeOptions } from './_config';
 
