@@ -41,7 +41,7 @@
   "scripts": {
     "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",
     "build": "npm run clean && node-gyp rebuild && tsc -p src",
-    "check": "npx tsc --noEmit",
+    "check": "npx tsc -p .",
     "clean": "rm -rf build dist",
     "docs": "rm -rf typedoc && typedoc --out typedoc src/index.ts",
     "example": "sudo tsx",
@@ -50,11 +50,9 @@
     "merge-submodule-upstream": "(cd vendor && git fetch && git merge origin/master)",
     "prepublishOnly": "npm run lint && npm run build",
     "preversion": "npm run lint && npm run build",
-    "quick-build": "npm run clean && node-gyp build && tsc -p src",
     "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json"
   },
   "dependencies": {
-    "bindings": "^1.5.0",
     "node-addon-api": "^8.3.0"
   },
   "devDependencies": {

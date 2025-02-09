@@ -3,20 +3,18 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": false,
-    "lib": ["esnext"],
+    "lib": [ "esnext" ],
     "module": "NodeNext",
+    "noEmit": true,
     "moduleResolution": "NodeNext",
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
-    "skipLibCheck": true,
-    "sourceMap": false,
-    "strictNullChecks": true,
+    "skipLibCheck": false,
     "strict": true,
-    "strictPropertyInitialization": true,
-    "types": ["node"],
-    "target": "esnext"
+    "target": "esnext",
+    "types": [ "node" ]
   },
-  "exclude": ["node_modules"]
+  "exclude": [ "node_modules" ]
 }

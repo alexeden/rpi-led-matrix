@@ -6,15 +6,16 @@
  *  - directory
  *  - quiet (optional)
  */
+import chalk from 'chalk';
+import Rsync from 'rsync';
+import { readFile } from 'node:fs/promises';
+
 const {
   username,
   hostname,
   directory,
   quiet = false,
-} = require('./sync.config');
-
-const chalk = require('chalk');
-const Rsync = require('rsync');
+} = JSON.parse(await readFile('./sync.config.json'));
 
 // Build the command
 const rsync = Rsync.build({
@@ -30,7 +31,7 @@ const rsync = Rsync.build({
     '.vscode',
     'dist',
   ],
-  source: __dirname,
+  source: process.cwd(),
   destination: `${username}@${hostname}:${directory}`,
 });
 
