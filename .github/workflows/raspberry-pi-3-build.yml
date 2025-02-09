@@ -15,7 +15,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
-          submodules: "recursive"
+          submodules: 'recursive'
       - name: Install ARM64 binfmt
         run: docker run --privileged --rm tonistiigi/binfmt --install arm
       - name: Build for Raspberry Pi 3

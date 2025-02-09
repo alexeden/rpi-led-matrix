@@ -7,7 +7,11 @@ const rainbow64 = Array.from(Array(384))
   .map(hue => color.hsl(hue, 100, 50).rgb().array());
 
 class Pulser {
-  constructor(readonly x: number, readonly y: number, readonly f: number) {}
+  constructor(
+    readonly x: number,
+    readonly y: number,
+    readonly f: number
+  ) {}
 
   nextColor(t: number): number {
     const brightness = Math.max(0, Math.sin((this.f * t) / 1000));

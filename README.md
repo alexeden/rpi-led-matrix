@@ -306,7 +306,11 @@ If we wanted to write a program such that all of the matrix's LEDs pulsed indivi
 
 ```ts
 class Pulser {
-  constructor(readonly x: number, readonly y: number, readonly f: number) {}
+  constructor(
+    readonly x: number,
+    readonly y: number,
+    readonly f: number
+  ) {}
 
   nextColor(t: number): number {
     /** You could easily work position-dependent logic into this expression */
@@ -447,7 +451,7 @@ Create a file called `sync.config.json` on the machine on which you'll be develo
   "username": "<username>",
   "hostname": "<hostname or IP address of your Pi>",
   "directory": "<parent directory on Pi into which the repo was cloned>",
-  "quiet": false // Disable most rsync logs (defaults to false)
+  "quiet": false, // Disable most rsync logs (defaults to false)
 }
 ```
 

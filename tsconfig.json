@@ -1,11 +1,9 @@
 {
   "compilerOptions": {
-    "allowJs": false,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": false,
-    "lib": [
-      "esnext"
-    ],
+    "lib": ["esnext"],
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "noImplicitAny": true,
@@ -17,12 +15,8 @@
     "strictNullChecks": true,
     "strict": true,
     "strictPropertyInitialization": true,
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "target": "esnext"
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

@@ -2,10 +2,10 @@ import {
   GpioMapping,
   LedMatrix,
   LedMatrixUtils,
-  MatrixOptions,
+  type MatrixOptions,
   PixelMapperType,
   RuntimeFlag,
-  RuntimeOptions,
+  type RuntimeOptions,
 } from '../src';
 
 export const matrixOptions: MatrixOptions = {

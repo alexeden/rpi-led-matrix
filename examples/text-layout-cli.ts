@@ -6,8 +6,8 @@ import prompts from 'prompts';
 import {
   Font,
   LedMatrix,
-  FontInstance,
-  Color,
+  type FontInstance,
+  type Color,
   LayoutUtils,
   HorizontalAlignment,
   VerticalAlignment,
@@ -40,7 +40,7 @@ enum CliMode {
   VerticalAlignment = 'verticalAlignment',
 }
 
-type FontMap = { [name: string]: FontInstance };
+type FontMap = Record<string, FontInstance>;
 
 const prependChoiceToGoBack = (choices: prompts.Choice[]) => [
   { title: '⬅️  Go back', value: '' },
@@ -60,9 +60,9 @@ const createBrightnessPrompter =
 
 const createColorSelector = (
   colorType: string,
-  colors: { [name: string]: number }
+  colors: Record<string, number>
 ) => {
-  const colorIndex: { [hex: number]: string } = Object.entries(colors).reduce(
+  const colorIndex: Record<number, string> = Object.entries(colors).reduce(
     (index, [name, value]) => ({ ...index, [value]: name }),
     {}
   );
@@ -170,7 +170,6 @@ const createModeSelector = () => (): Promise<{ mode: CliMode }> =>
     ],
   });
 
-// tslint:disable-next-line: cyclomatic-complexity
 (async () => {
   try {
     const matrix = new LedMatrix(matrixOptions, runtimeOptions).afterSync(

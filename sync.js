@@ -21,7 +21,15 @@ const rsync = Rsync.build({
   shell: 'ssh',
   flags: 'ahP',
   recursive: true,
-  exclude: ['.git', '.DS_Store', 'node_modules', 'build', 'package-lock.json', '.vscode', 'dist'],
+  exclude: [
+    '.git',
+    '.DS_Store',
+    'node_modules',
+    'build',
+    'package-lock.json',
+    '.vscode',
+    'dist',
+  ],
   source: __dirname,
   destination: `${username}@${hostname}:${directory}`,
 });
@@ -30,12 +38,17 @@ console.log(chalk.magenta(`\n🚀\t$ ${rsync.command()}`));
 
 // Execute the command
 rsync
-  .output(data => quiet || console.log(chalk.blue(`📤\t${data.toString().split('\n').slice(0, 1).join('')}`)))
+  .output(
+    data =>
+      quiet ||
+      console.log(
+        chalk.blue(`📤\t${data.toString().split('\n').slice(0, 1).join('')}`)
+      )
+  )
   .execute((error, code) => {
     if (error) {
       console.error(chalk.red('👎\t', error));
-    }
-    else {
+    } else {
       console.log(chalk.green(`👍\tDone! [exit code ${code}]\n\n`));
     }
   });
