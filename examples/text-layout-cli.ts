@@ -1,7 +1,8 @@
 import globby = require('globby');
 import { basename } from 'path';
 import ora = require('ora');
-import * as prompts from 'prompts';
+import prompts from 'prompts';
+
 import {
   Font,
   LedMatrix,
