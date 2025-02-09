@@ -1,26 +1,21 @@
 {
   "compilerOptions": {
     "allowJs": false,
-    "allowSyntheticDefaultImports": false,
-    "alwaysStrict": true,
-    "diagnostics": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": false,
     "lib": [
       "esnext"
     ],
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedLocals": true,
-    "skipLibCheck": false,
+    "skipLibCheck": true,
     "sourceMap": false,
     "strictNullChecks": true,
     "strict": true,
-    "suppressImplicitAnyIndexErrors": false,
     "strictPropertyInitialization": true,
     "types": [
       "node"
