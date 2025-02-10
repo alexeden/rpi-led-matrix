@@ -3,7 +3,7 @@
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": false,
-    "lib": [ "esnext" ],
+    "lib": ["esnext"],
     "module": "NodeNext",
     "noEmit": true,
     "moduleResolution": "NodeNext",
@@ -14,7 +14,7 @@
     "skipLibCheck": false,
     "strict": true,
     "target": "esnext",
-    "types": [ "node" ]
+    "types": ["node"]
   },
-  "exclude": [ "node_modules" ]
+  "exclude": ["node_modules"]
 }
