@@ -27,7 +27,7 @@ jobs:
           cache: "npm"
       - name: Install Dependencies
         shell: bash
-        run: npm install
+        run: npm install --ignore-scripts
       - run: npm run format
       - run: npm run lint
       - run: npm run check
