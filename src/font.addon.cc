@@ -60,7 +60,7 @@ Napi::Value FontAddon::string_width(const Napi::CallbackInfo& info) {
 		uint32_t codepoint = uint_least32_t(c);
 		int		 width	   = font.CharacterWidth(codepoint) + kerning;
 		if (width < 0) {
-			std::cout << "\"" << c << "\" character not found for the " << name_ << " font." << std::endl;
+			// std::cout << "\"" << c << "\" character not found for the " << name_ << " font." << std::endl;
 			width = 0;
 		}
 		sum += width;
