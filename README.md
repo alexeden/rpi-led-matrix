@@ -353,25 +353,23 @@ After that, we're left with this (click for video):
 
 [![full demo](./docs/sync-hook-thumbnail.png)_You can run this yourself using `examples/sync-hooks.ts`_](https://apemedia.s3.us-east-2.amazonaws.com/twinkle720.mp4)
 
-# Running /examples
+# Running Examples
 
-The examples can be run by using the `example` npm script:
+Clone/fork this repo onto both your local machine and your Raspberry Pi.
 
-```
-$ sudo npm run example -- examples/<example-filename>.ts
-```
-
-e.g. to run the text-layout CLI example:
-
-```
-$ sudo npm run example -- examples/text-layout-cli.ts
+```bash
+git clone --recurse-submodules https://github.com/alexeden/rpi-led-matrix
+cd rpi-led-matrix
+npm i
 ```
 
-### Using your own config
+Update the file `examples/_config.ts` with your own matrix configuration. All of the examples will import the configuration objects exported by the file.
 
-Inside the examples directory is a file named `_config.ts`, which exports the two matrix configuration types: `MatrixOptions` and `RuntimeOptions`.
+Examples can be run using `tsx`. e.g. to run the `kitchen-sink` example:
 
-You can customize this script to fit your needs. All of the examples will import the configuration objects exported by the file.
+```bash
+sudo npx tsx examples/kitchen-sink.ts
+```
 
 # API
 

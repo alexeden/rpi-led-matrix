@@ -1,3 +1,10 @@
+[Unreleased]
+
+### Changed
+
+- **BREAKING**: [#46](https://github.com/alexeden/rpi-led-matrix/pull/46) The `node-addon-api` dependency has been updated to the latest version; this means that the package now *requires Node.js 18 or higher*
+- [#46](https://github.com/alexeden/rpi-led-matrix/pull/46) Updates the underlying [`rpi-rgb-led-matrix`](https://github.com/hzeller/rpi-rgb-led-matrix) submodule to the latest version
+
 # 1.12.0
 
 ### Changes
