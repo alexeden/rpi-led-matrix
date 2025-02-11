@@ -1,4 +1,4 @@
-import { PixelMapper, PixelMapperType } from './types';
+import { type PixelMapper, PixelMapperType } from './types';
 
 export class LedMatrixUtils {
   static encodeMappers(...mappers: PixelMapper[]): string {

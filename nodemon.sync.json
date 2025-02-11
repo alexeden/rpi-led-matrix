@@ -1,12 +1,6 @@
 {
   "ext": "ts,json,cc,h,gyp",
-  "exec": "node sync",
+  "exec": "node sync.mjs",
   "events": {},
-  "watch": [
-    "src/**",
-    "examples/**",
-    "vendor/**",
-    "package.json",
-    "binding.gyp"
-  ]
+  "watch": ["src/**", "examples/**", "vendor/**", "package.json", "binding.gyp"]
 }

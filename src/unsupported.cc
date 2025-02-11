@@ -5,12 +5,12 @@
 
 #if __linux__
 #else
-// Disable some diagnostics and issue a compiler warning
-#	pragma GCC diagnostic ignored "-Wunused-private-field"
-#	pragma GCC diagnostic ignored "-Wunused-variable"
-#	ifdef __GNUC__
-#		warning "Skipping link of rpi-rgb-led-matrix library."
-#	else
-#		pragma message("Skipping link of rpi-rgb-led-matrix library.")
-#	endif
+	// Disable some diagnostics and issue a compiler warning
+	#pragma GCC diagnostic ignored "-Wunused-private-field"
+	#pragma GCC diagnostic ignored "-Wunused-variable"
+	#ifdef __GNUC__
+		#warning "Skipping link of rpi-rgb-led-matrix library."
+	#else
+		#pragma message("Skipping link of rpi-rgb-led-matrix library.")
+	#endif
 #endif

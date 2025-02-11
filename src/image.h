@@ -20,8 +20,8 @@ class Image {
 	}
 	void Reset() {
 		pixels_ = NULL;
-		w_	  	= 0;
-		h_	  	= 0;
+		w_		= 0;
+		h_		= 0;
 	}
 
 	Pixel* getPixels() {
@@ -29,8 +29,8 @@ class Image {
 	}
 
 	void setPixels(uint32_t w, uint32_t h, Pixel* ps) {
-		w_	  = w;
-		h_	  = h;
+		w_		= w;
+		h_		= h;
 		pixels_ = ps;
 	}
 
@@ -47,7 +47,7 @@ class Image {
   private:
 	uint32_t w_;
 	uint32_t h_;
-	Pixel* pixels_;
+	Pixel*	 pixels_;
 };
 
 #endif

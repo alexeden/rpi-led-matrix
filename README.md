@@ -125,8 +125,6 @@ const matrix = new LedMatrix(
 );
 ```
 
-The best part of the configuration is that it's all typed. If you try to use an invalid option or option value, the compiler will berate you for your incompetence.
-
 For most options with a fixed, discrete set of valid values, like `hardwareMapping`, there is a corresponding `enum` you can use to see the possible values.
 
 `pixelMapperConfig`, which specifies special mappings that describe the physical configuration of your LED matrices, requires a more complex value with the desired mapping encoded as a string. For that, you can use `LedMatrixUtils`, which provides the static method `encodeMappers` that generates the encoded string for you.
@@ -148,7 +146,9 @@ interface MatrixOptions {
   hardwareMapping: GpioMapping;
   inverseColors: boolean;
   ledRgbSequence: 'RGB' | 'BGR' | 'BRG' | 'RBG' | 'GRB' | 'GBR';
+  limitRefreshRateHz: number;
   multiplexing: MuxType;
+  panelType: '' | 'FM6126A' | 'FM6127';
   parallel: 1 | 2 | 3 | 4;
   pixelMapperConfig: string;
   pwmBits: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
@@ -304,7 +304,11 @@ If we wanted to write a program such that all of the matrix's LEDs pulsed indivi
 
 ```ts
 class Pulser {
-  constructor(readonly x: number, readonly y: number, readonly f: number) {}
+  constructor(
+    readonly x: number,
+    readonly y: number,
+    readonly f: number
+  ) {}
 
   nextColor(t: number): number {
     /** You could easily work position-dependent logic into this expression */
@@ -349,25 +353,23 @@ After that, we're left with this (click for video):
 
 [![full demo](./docs/sync-hook-thumbnail.png)_You can run this yourself using `examples/sync-hooks.ts`_](https://apemedia.s3.us-east-2.amazonaws.com/twinkle720.mp4)
 
-# Running /examples
+# Running Examples
 
-The examples can be run by using the `example` npm script:
+Clone/fork this repo onto both your local machine and your Raspberry Pi.
 
-```
-$ sudo npm run example -- examples/<example-filename>.ts
-```
-
-e.g. to run the text-layout CLI example:
-
-```
-$ sudo npm run example -- examples/text-layout-cli.ts
+```bash
+git clone --recurse-submodules https://github.com/alexeden/rpi-led-matrix
+cd rpi-led-matrix
+npm i
 ```
 
-### Using your own config
+Update the file `examples/_config.ts` with your own matrix configuration. All of the examples will import the configuration objects exported by the file.
 
-Inside the examples directory is a file named `_config.ts`, which exports the two matrix configuration types: `MatrixOptions` and `RuntimeOptions`.
+Examples can be run using `tsx`. e.g. to run the `kitchen-sink` example:
 
-You can customize this script to fit your needs. All of the examples will import the configuration objects exported by the file.
+```bash
+sudo npx tsx examples/kitchen-sink.ts
+```
 
 # API
 
@@ -445,7 +447,7 @@ Create a file called `sync.config.json` on the machine on which you'll be develo
   "username": "<username>",
   "hostname": "<hostname or IP address of your Pi>",
   "directory": "<parent directory on Pi into which the repo was cloned>",
-  "quiet": false // Disable most rsync logs (defaults to false)
+  "quiet": false, // Disable most rsync logs (defaults to false)
 }
 ```
 

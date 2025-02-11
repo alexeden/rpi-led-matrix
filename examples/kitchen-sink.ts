@@ -1,7 +1,7 @@
 import * as color from 'color';
 import {
   LedMatrix,
-  LedMatrixInstance,
+  type LedMatrixInstance,
   Font,
   LayoutUtils,
   HorizontalAlignment,

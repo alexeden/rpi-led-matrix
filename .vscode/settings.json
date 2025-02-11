@@ -13,9 +13,7 @@
     "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks"
   ],
   "C_Cpp.default.compilerPath": "/usr/bin/clang",
-  "C_Cpp.default.defines": [
-    "REMOVE_DEPRECATED_TRANSFORMERS"
-  ],
+  "C_Cpp.default.defines": ["REMOVE_DEPRECATED_TRANSFORMERS"],
   "files.associations": {
     "*.config": "yaml",
     "*.cc": "cpp",
