@@ -30,7 +30,7 @@ Control an RGB LED matrix connected to a Raspberry Pi using using Node.js. This 
 
 Click the image below (links to a video) to see what this library can empower you to easily create:
 
-[![full demo](./docs/demo-thumbnail.png)_This sequence is available in `examples/kitchen-sink.ts`_](https://apemedia.s3.us-east-2.amazonaws.com/matrix+3-28-19.mp4)
+[![full demo](./media/demo-thumbnail.png)_This sequence is available in `examples/kitchen-sink.ts`_](https://apemedia.s3.us-east-2.amazonaws.com/matrix+3-28-19.mp4)
 
 ## Features
 
@@ -93,7 +93,7 @@ const matrix = new LedMatrix(
 
 # Configuration
 
-![extending defaults](./docs/text-layout-center-middle.jpg)_There's an extensive CLI you can use for testing text rendering/alignment/manipulation in `examples/text-layout-cli.ts`_
+![extending defaults](./media/text-layout-center-middle.jpg)_There's an extensive CLI you can use for testing text rendering/alignment/manipulation in `examples/text-layout-cli.ts`_
 
 The `LedMatrix` constructor expects _all_ configuration properties to be defined. So, identify the options you want to change, and extend the default options.
 
@@ -288,7 +288,7 @@ matrix
 
 And we'll get this:
 
-![simple-shapes](/docs/simple-shapes.jpg)
+![simple-shapes](/media/simple-shapes.jpg)
 
 ## Sync Hook
 
@@ -351,7 +351,7 @@ This pattern is somewhat reflective of `requestAnimationFrame` recursion on the 
 
 After that, we're left with this (click for video):
 
-[![full demo](./docs/sync-hook-thumbnail.png)_You can run this yourself using `examples/sync-hooks.ts`_](https://apemedia.s3.us-east-2.amazonaws.com/twinkle720.mp4)
+[![full demo](./media/sync-hook-thumbnail.png)_You can run this yourself using `examples/sync-hooks.ts`_](https://apemedia.s3.us-east-2.amazonaws.com/twinkle720.mp4)
 
 # Running Examples
 
