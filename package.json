@@ -44,12 +44,9 @@
     "check": "npx tsc -p .",
     "clean": "rm -rf build dist",
     "docs": "rm -rf typedoc && typedoc --out typedoc src/index.ts",
-    "example": "sudo tsx",
     "format": "prettier --check . --ignore-path .gitignore --ignore-path .prettierignore",
     "lint": "eslint",
     "merge-submodule-upstream": "(cd vendor && git fetch && git merge origin/master)",
-    "prepublishOnly": "npm run lint && npm run build",
-    "preversion": "npm run lint && npm run build",
     "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json"
   },
   "dependencies": {
