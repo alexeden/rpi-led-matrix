@@ -1,6 +1,6 @@
 {
   "name": "rpi-led-matrix",
-  "version": "1.16.0-rc0",
+  "version": "1.16.0-rc1",
   "description": "Node.js/Typescript bindings for hzeller/rpi-rgb-led-matrix",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,13 +8,6 @@
   "license": "MITNFA",
   "engines": {
     "node": ">=18.0.0"
-  },
-  "exports": {
-    ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js",
-      "types": "./dist/index.d.ts"
-    }
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
@@ -46,6 +39,7 @@
     "docs": "typedoc --out docs src/index.ts",
     "format": "prettier --check . --ignore-path .gitignore --ignore-path .prettierignore",
     "lint": "eslint",
+    "prepublishOnly": "npm run clean &&npm run build",
     "merge-submodule-upstream": "(cd vendor && git fetch && git merge origin/master)",
     "sync-changes": "echo 'Changes will be pushed to Raspberry Pi' && nodemon --config nodemon.sync.json"
   },

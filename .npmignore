@@ -1,6 +1,7 @@
 /build
 /.vscode
 /docs
+/media
 .clang-format
 .editorconfig
 .github
