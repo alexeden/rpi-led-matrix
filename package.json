@@ -43,7 +43,7 @@
     "build": "npm run clean && node-gyp rebuild && tsc -p src",
     "check": "npx tsc -p .",
     "clean": "rm -rf build dist",
-    "docs": "rm -rf typedoc && typedoc --out typedoc src/index.ts",
+    "docs": "typedoc --out docs src/index.ts",
     "format": "prettier --check . --ignore-path .gitignore --ignore-path .prettierignore",
     "lint": "eslint",
     "merge-submodule-upstream": "(cd vendor && git fetch && git merge origin/master)",
