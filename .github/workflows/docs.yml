@@ -1,0 +1,42 @@
+name: Documentation
+
+on:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    name: Generate Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: docs
+      - name: Sync with main
+        run: |
+          git config pull.rebase true
+          git config user.name docs-action
+          git config user.email github-actions@github.com
+          git fetch -ap
+          git reset --hard origin/main
+          git clean -d --force
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+      - name: Install Dependencies
+        shell: bash
+        run: npm install --ignore-scripts
+      - name: Build docs
+        run: npm run docs
+      - name: Commit docs
+        run: |
+          git add .
+          git commit --no-verify --allow-empty -m "Documentation (automated)"
+          git push --force --no-verify

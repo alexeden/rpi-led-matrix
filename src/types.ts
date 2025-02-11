@@ -389,10 +389,7 @@ export interface FontInstance {
   stringWidth(str: string, kerning?: number): number;
 }
 
-export interface Font {
-  // tslint:disable-next-line:callable-types
-  new (name: string, path: string): FontInstance;
-}
+export type Font = new (name: string, path: string) => FontInstance;
 
 export interface LedMatrixAddon {
   isSupported: boolean;

@@ -3,10 +3,5 @@
   "exec": "npm run quick-build && sudo npm run example -- examples/kitchen-sink.ts",
   "restartable": true,
   "events": {},
-  "watch": [
-    "src/**",
-    "examples/**",
-    "package.json",
-    "binding.gyp"
-  ]
+  "watch": ["src/**", "examples/**", "package.json", "binding.gyp"]
 }

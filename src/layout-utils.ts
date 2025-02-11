@@ -1,4 +1,4 @@
-import { FontInstance } from './types';
+import { type FontInstance } from './types';
 
 export interface Glyph {
   h: number;

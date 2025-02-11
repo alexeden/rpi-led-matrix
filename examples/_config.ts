@@ -1,27 +1,30 @@
 import {
   GpioMapping,
   LedMatrix,
-  // LedMatrixUtils,
-  MatrixOptions,
+  LedMatrixUtils,
+  type MatrixOptions,
+  PixelMapperType,
   RuntimeFlag,
-  // PixelMapperType,
-  RuntimeOptions,
+  type RuntimeOptions,
 } from '../src';
 
 export const matrixOptions: MatrixOptions = {
   ...LedMatrix.defaultMatrixOptions(),
-  rows: 64,
+  rows: 32,
   cols: 64,
   chainLength: 2,
   hardwareMapping: GpioMapping.Regular,
-  parallel: 2,
-  // panelType: 'FM6127',
-  // limitRefreshRateHz: 1,
-  showRefreshRate: true,
-  // pixelMapperConfig: LedMatrixUtils.encodeMappers(
-  //   { type: PixelMapperType.Chainlink }
-  // ),
-  // pixelMapperConfig: LedMatrixUtils.encodeMappers({ type: PixelMapperType.U }),
+  parallel: 3,
+  brightness: 100,
+  pixelMapperConfig: LedMatrixUtils.encodeMappers(
+    {
+      type: PixelMapperType.Chainlink,
+    },
+    {
+      type: PixelMapperType.Rotate,
+      angle: 180,
+    }
+  ),
 };
 
 console.log('matrix options: ', JSON.stringify(matrixOptions, null, 2));
