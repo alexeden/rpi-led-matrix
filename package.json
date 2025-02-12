@@ -1,9 +1,20 @@
 {
   "name": "rpi-led-matrix",
-  "version": "1.16.0-rc1",
+  "version": "1.16.0-rc2",
   "description": "Node.js/Typescript bindings for hzeller/rpi-rgb-led-matrix",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
   "author": "Alex Eden",
   "license": "MITNFA",
   "engines": {
@@ -33,11 +44,11 @@
   ],
   "scripts": {
     "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",
-    "build": "npm run clean && node-gyp rebuild && tsc -p src",
+    "build": "npm run clean && node-gyp rebuild && tsup-node src/index.ts --dts --format esm,cjs --target node18",
     "check": "npx tsc -p .",
     "clean": "rm -rf build dist",
     "docs": "typedoc --out docs src/index.ts",
-    "format": "prettier --check . --ignore-path .gitignore --ignore-path .prettierignore",
+    "format": "prettier --check .",
     "lint": "eslint",
     "prepublishOnly": "npm run clean &&npm run build",
     "merge-submodule-upstream": "(cd vendor && git fetch && git merge origin/master)",
@@ -61,6 +72,7 @@
     "prettier": "^3.4.2",
     "prompts": "^2.3.2",
     "rsync": "^0.6.1",
+    "tsup": "^8.3.6",
     "tsx": "^4.19.2",
     "typedoc": "^0.27.6",
     "typescript": "^5.7.3",
