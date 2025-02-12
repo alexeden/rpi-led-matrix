@@ -1,6 +1,6 @@
 {
   "name": "rpi-led-matrix",
-  "version": "1.16.0-rc2",
+  "version": "1.16.0-rc3",
   "description": "Node.js/Typescript bindings for hzeller/rpi-rgb-led-matrix",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -12,8 +12,10 @@
     }
   },
   "files": [
+    "binding.gyp",
     "dist",
-    "src"
+    "src",
+    "vendor"
   ],
   "author": "Alex Eden",
   "license": "MITNFA",
@@ -44,7 +46,7 @@
   ],
   "scripts": {
     "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",
-    "build": "npm run clean && node-gyp rebuild && tsup-node src/index.ts --dts --format esm,cjs --target node18",
+    "build": "npm run clean && node-gyp rebuild && tsup-node src/index.ts --dts --format esm,cjs --target node18 --external '../build/Release/rpi-led-matrix.node'",
     "check": "npx tsc -p .",
     "clean": "rm -rf build dist",
     "docs": "typedoc --out docs src/index.ts",
