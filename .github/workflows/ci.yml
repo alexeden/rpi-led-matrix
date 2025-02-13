@@ -16,10 +16,12 @@ env: {}
 
 jobs:
   format:
-    name: Format,Lint, Type Check
+    name: Format, Lint, Check, Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
@@ -31,3 +33,4 @@ jobs:
       - run: npm run format
       - run: npm run lint
       - run: npm run check
+      - run: npm run build
