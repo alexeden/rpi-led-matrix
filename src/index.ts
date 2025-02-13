@@ -3,9 +3,13 @@ import { type LedMatrixAddon } from './types';
 export * from './layout-utils';
 export * from './types';
 export * from './utils';
-
-const require = globalThis.require ?? createRequire(import.meta.url);
-// createRequire(import.meta.url);
-
-export const { Font, isSupported, LedMatrix } =
-  require('../build/Release/rpi-led-matrix.node') as LedMatrixAddon;
+export const { Font, isSupported, LedMatrix } = (() => {
+  try {
+    return createRequire(import.meta.url)(
+      '../build/Release/rpi-led-matrix.node'
+    ) as LedMatrixAddon;
+  } catch {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require('../build/Release/rpi-led-matrix.node') as LedMatrixAddon;
+  }
+})();
