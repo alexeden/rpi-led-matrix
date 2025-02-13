@@ -1,14 +1,15 @@
 {
   "name": "rpi-led-matrix",
-  "version": "1.16.0-rc4",
+  "version": "1.16.0-rc5",
   "description": "Node.js/Typescript bindings for hzeller/rpi-rgb-led-matrix",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "files": [
@@ -46,7 +47,7 @@
   ],
   "scripts": {
     "build-changes": "echo 'Source will rebuild on changes' && nodemon --config nodemon.build.json",
-    "build": "npm run clean && node-gyp rebuild && tsup-node src/index.ts --dts --format esm,cjs --target node18 --external '../build/Release/rpi-led-matrix.node'",
+    "build": "npm run clean && node-gyp rebuild && tsup-node src/index.ts --dts --format esm,cjs --target node18 --cjsInterop --external '../build/Release/rpi-led-matrix.node'",
     "check": "npx tsc -p .",
     "clean": "rm -rf build dist",
     "docs": "typedoc --out docs src/index.ts",
