@@ -196,6 +196,10 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 	
 	Image* img	  = new Image();
 	Pixel* pixels = (Pixel*) malloc(sizeof(Pixel) * pixel_count);
+	if (pixels == NULL) {
+		delete img;
+		throw Napi::Error::New(info.Env(), "Failed to allocate the pixel buffer");
+	}
 	for (unsigned int i = 0; i < w * h; i++) {
 		auto  j = i * 3;
 		Pixel p;
