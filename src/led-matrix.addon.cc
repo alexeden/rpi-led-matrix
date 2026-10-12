@@ -73,9 +73,9 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
 	auto runtimeOpts = create_runtime_options(env, info[1].As<Napi::Object>());
 
 	this->matrix_ = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
-	this->canvas_ = this->matrix_->CreateFrameCanvas();
-
 	if (this->matrix_ == NULL) { throw Napi::Error::New(env, "Failed to create matrix."); }
+
+	this->canvas_ = this->matrix_->CreateFrameCanvas();
 }
 
 LedMatrixAddon::~LedMatrixAddon(void) {
