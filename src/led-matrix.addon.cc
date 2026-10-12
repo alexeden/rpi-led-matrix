@@ -188,10 +188,14 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 	const auto data	  = buffer.Data();
 	const auto len	  = buffer.Length();
 
-	assert(len == w * h * 3);
-
+	const size_t pixel_count = (size_t) w * (size_t) h;
+	if (pixel_count > len / 3 || len != pixel_count * 3) {
+		throw Napi::RangeError::New(info.Env(),
+			"Buffer length does not match the given width and height");
+	}
+	
 	Image* img	  = new Image();
-	Pixel* pixels = (Pixel*) malloc(sizeof(Pixel) * w * h);
+	Pixel* pixels = (Pixel*) malloc(sizeof(Pixel) * pixel_count);
 	for (unsigned int i = 0; i < w * h; i++) {
 		auto  j = i * 3;
 		Pixel p;
