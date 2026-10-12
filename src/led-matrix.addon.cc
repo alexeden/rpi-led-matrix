@@ -73,9 +73,9 @@ LedMatrixAddon::LedMatrixAddon(const Napi::CallbackInfo& info)
 	auto runtimeOpts = create_runtime_options(env, info[1].As<Napi::Object>());
 
 	this->matrix_ = CreateMatrixFromOptions(matrixOpts, runtimeOpts);
-	this->canvas_ = this->matrix_->CreateFrameCanvas();
-
 	if (this->matrix_ == NULL) { throw Napi::Error::New(env, "Failed to create matrix."); }
+
+	this->canvas_ = this->matrix_->CreateFrameCanvas();
 }
 
 LedMatrixAddon::~LedMatrixAddon(void) {
@@ -188,10 +188,18 @@ Napi::Value LedMatrixAddon::draw_buffer(const Napi::CallbackInfo& info) {
 	const auto data	  = buffer.Data();
 	const auto len	  = buffer.Length();
 
-	assert(len == w * h * 3);
-
+	const size_t pixel_count = (size_t) w * (size_t) h;
+	if (pixel_count > len / 3 || len != pixel_count * 3) {
+		throw Napi::RangeError::New(info.Env(),
+			"Buffer length does not match the given width and height");
+	}
+	
 	Image* img	  = new Image();
-	Pixel* pixels = (Pixel*) malloc(sizeof(Pixel) * w * h);
+	Pixel* pixels = (Pixel*) malloc(sizeof(Pixel) * pixel_count);
+	if (pixels == NULL) {
+		delete img;
+		throw Napi::Error::New(info.Env(), "Failed to allocate the pixel buffer");
+	}
 	for (unsigned int i = 0; i < w * h; i++) {
 		auto  j = i * 3;
 		Pixel p;
